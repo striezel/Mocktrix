@@ -5,7 +5,7 @@ a Matrix homeserver.
 
 ## Prerequisites
 
-To run the `updater` program you need the .NET 8 runtime.
+To run the program you need the .NET 8 runtime.
 The current .NET 8 runtime can be downloaded from
 <https://dotnet.microsoft.com/en-us/download/dotnet/8.0/runtime>.
 
