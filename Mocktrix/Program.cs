@@ -33,6 +33,7 @@ namespace Mocktrix
             app.UseAuthorization();
 
             client.Versions.AddEndpoints(app);
+            client.Login.AddEndpoints(app);
 
             app.Run();
         }
