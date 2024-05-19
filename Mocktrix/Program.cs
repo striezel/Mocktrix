@@ -64,6 +64,8 @@ namespace Mocktrix
             .WithName("GetWeatherForecast")
             .WithOpenApi();
 
+            client.Versions.AddEndpoints(app);
+
             app.Run();
         }
     }
