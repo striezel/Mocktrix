@@ -1,6 +1,0 @@
-@Mocktrix_HostAddress = http://localhost:5289
-
-GET {{Mocktrix_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
