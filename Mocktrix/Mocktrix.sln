@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix", "Mocktrix.csproj", "{EA72A05F-8EC0-40B0-9E46-F85146276318}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix", "Mocktrix.csproj", "{EA72A05F-8EC0-40B0-9E46-F85146276318}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MocktrixTests", "..\MocktrixTests\MocktrixTests.csproj", "{6DE0D9DC-FEB8-4E2F-AAB8-BFAFC8562FE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EA72A05F-8EC0-40B0-9E46-F85146276318}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA72A05F-8EC0-40B0-9E46-F85146276318}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA72A05F-8EC0-40B0-9E46-F85146276318}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DE0D9DC-FEB8-4E2F-AAB8-BFAFC8562FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DE0D9DC-FEB8-4E2F-AAB8-BFAFC8562FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DE0D9DC-FEB8-4E2F-AAB8-BFAFC8562FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DE0D9DC-FEB8-4E2F-AAB8-BFAFC8562FE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
