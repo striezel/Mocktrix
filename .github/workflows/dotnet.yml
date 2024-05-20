@@ -1,0 +1,24 @@
+name: .NET
+
+on: push
+
+jobs:
+  dotnet:
+    runs-on: ubuntu-22.04
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE.
+      - uses: actions/checkout@v4
+      - name: Install Debian packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore projects
+        run: |
+          dotnet restore ./Mocktrix/Mocktrix.sln
+      - name: Build projects
+        run: |
+          dotnet build ./Mocktrix/Mocktrix.sln
