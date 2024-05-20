@@ -9,3 +9,9 @@ build:
     - dotnet restore ./Mocktrix/Mocktrix.sln
     # Build projects.
     - dotnet build ./Mocktrix/Mocktrix.sln
+    # Run tests.
+    - cd Mocktrix/
+    - dotnet run &
+    - sleep 5
+    - cd ../MocktrixTests/
+    - dotnet test
