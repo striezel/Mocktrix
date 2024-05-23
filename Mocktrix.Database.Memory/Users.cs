@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Mocktrix.data;
+using Mocktrix.Data;
 
 namespace Mocktrix.database.memory
 {
@@ -37,7 +37,7 @@ namespace Mocktrix.database.memory
         /// <param name="id">user id, e. g. "@alice:example.com"</param>
         /// <param name="password">the user's password</param>
         /// <returns>Returns the created user.</returns>
-        public User CreateUser(string id, string password)
+        public static User CreateUser(string id, string password)
         {
             string hash = utilities.Hashing.CreateHashedSaltedPassword(password, out byte[] salt);
             User user = new(id, hash, salt);

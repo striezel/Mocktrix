@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Mocktrix.data
+namespace Mocktrix.Data
 {
     /// <summary>
     /// Holds user data.
