@@ -47,11 +47,11 @@ namespace Mocktrix.Database.Memory
 
 
         /// <summary>
-        /// Gets an existing user.
+        /// Gets an existing device.
         /// </summary>
         /// <param name="dev_id">id of the device</param>
         /// <param name="user_id">id of the user</param>
-        /// <returns>Returns a user with the matching id, if it exists.
+        /// <returns>Returns a device with the matching ids, if it exists.
         /// Returns null, if no match was found.</returns>
         public static Device? GetDevice(string dev_id, string user_id)
         {
