@@ -18,7 +18,7 @@
 
 using Mocktrix.Data;
 
-namespace Mocktrix.database.memory
+namespace Mocktrix.Database.Memory
 {
     /// <summary>
     /// In-memory implementation of user database.
