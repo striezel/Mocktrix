@@ -12,6 +12,9 @@ build:
     # Run tests for Mocktrix.Data.
     - cd Mocktrix.Data.Tests
     - dotnet test
+    # Run tests for Mocktrix.Database.Memory.
+    - cd ../Mocktrix.Database.Memory.Tests
+    - dotnet test
     # Run tests for Mocktrix server.
     - cd ../Mocktrix/
     - dotnet run &
