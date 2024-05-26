@@ -53,11 +53,11 @@ namespace Mocktrix.Database.Memory.Tests
 
 
         [Fact]
-        public void GetToken_NonExistentTokenNotFound()
+        public void FindByUserAndDevice_NonExistentTokenNotFound()
         {
             const string dev_id = "NotFoundHere";
             const string user_id = "@mango-eating_mungo:matrix.example.com";
-            var token = AccessTokens.GetToken(user_id, dev_id);
+            var token = AccessTokens.FindByUserAndDevice(user_id, dev_id);
 
             // Token does not exist, function shall return null.
             Assert.Null(token);
@@ -65,7 +65,7 @@ namespace Mocktrix.Database.Memory.Tests
 
 
         [Fact]
-        public void GetToken_ExistentToken()
+        public void FindByUserAndDevice_ExistentToken()
         {
             const string dev_id = "TheIdIsReallyHere";
             const string user_id = "@bob:matrix.example.com";
@@ -73,7 +73,7 @@ namespace Mocktrix.Database.Memory.Tests
             // Create a token.
             var some_token = AccessTokens.CreateToken(user_id, dev_id);
             // Query the created token.
-            var token = AccessTokens.GetToken(user_id, dev_id);
+            var token = AccessTokens.FindByUserAndDevice(user_id, dev_id);
             Assert.NotNull(token);
             // Values of created token and queried token must match.
             Assert.Equal(some_token.user_id, token.user_id);
@@ -86,7 +86,7 @@ namespace Mocktrix.Database.Memory.Tests
 
 
         [Fact]
-        public void GetToken_OneOfSeveralExistentTokens()
+        public void FindByUserAndDevice_OneOfSeveralExistentTokens()
         {
             const string user_id = "@bob:matrix.example.com";
 
@@ -97,7 +97,7 @@ namespace Mocktrix.Database.Memory.Tests
             const string dev_id = "SomeOtherDevice";
             var second_token = AccessTokens.CreateToken(user_id, dev_id);
             // Query the created token.
-            var token = AccessTokens.GetToken(user_id, dev_id);
+            var token = AccessTokens.FindByUserAndDevice(user_id, dev_id);
             Assert.NotNull(token);
             // Values must not match old token.
             Assert.NotEqual(first_token.device_id, second_token.device_id);
@@ -110,7 +110,7 @@ namespace Mocktrix.Database.Memory.Tests
 
 
         [Fact]
-        public void GetToken_WithWrongDeviceId()
+        public void FindByUserAndDevice_WithWrongDeviceId()
         {
             const string user_id = "@alice:matrix.example.com";
             const string dev_id = "JustTheDeviceId";
@@ -120,7 +120,7 @@ namespace Mocktrix.Database.Memory.Tests
 
             // Query the created device with wrong device id.
             const string wrong_dev_id = "NotTheDeviceId";
-            var wrong_device = AccessTokens.GetToken(user_id, wrong_dev_id);
+            var wrong_device = AccessTokens.FindByUserAndDevice(user_id, wrong_dev_id);
             // Token must be null, because users may have several different
             // devices and different tokens on different devices.
             Assert.Null(wrong_device);
@@ -128,7 +128,7 @@ namespace Mocktrix.Database.Memory.Tests
 
 
         [Fact]
-        public void GetToken_WithWrongUserId()
+        public void FindByUserAndDevice_WithWrongUserId()
         {
             const string alice_id = "@alice:matrix.example.com";
             const string bob_id = "@bob:matrix.example.com";
@@ -138,11 +138,43 @@ namespace Mocktrix.Database.Memory.Tests
             _ = AccessTokens.CreateToken(bob_id, dev_id);
 
             // Query the created token with wrong user id.
-            var alice_token = AccessTokens.GetToken(alice_id, dev_id);
+            var alice_token = AccessTokens.FindByUserAndDevice(alice_id, dev_id);
             // Token must be null, because other users may have the same device
             // id (device ids can be supplied by the user) by accident. However,
             // that is then a different device.
             Assert.Null(alice_token);
+        }
+
+
+        [Fact]
+        public void Find_NonExistentTokenNotFound()
+        {
+            const string access_token = "not_an_existing_token_value";
+            var token = AccessTokens.Find(access_token);
+
+            // Token does not exist, function shall return null.
+            Assert.Null(token);
+        }
+
+
+        [Fact]
+        public void Find_ExistentToken()
+        {
+            const string dev_id = "TheDeviceIsReallyHere";
+            const string user_id = "@charlie:matrix.example.com";
+
+            // Create a token.
+            var some_token = AccessTokens.CreateToken(user_id, dev_id);
+            // Query the created token.
+            var token = AccessTokens.Find(some_token.token);
+            Assert.NotNull(token);
+            // Values of created token and queried token must match.
+            Assert.Equal(some_token.user_id, token.user_id);
+            Assert.Equal(some_token.device_id, token.device_id);
+            Assert.Equal(some_token.token, token.token);
+            // That particular implementation even uses the same object instance
+            // for both.
+            Assert.True(ReferenceEquals(some_token, token));
         }
     }
 }

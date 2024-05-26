@@ -41,7 +41,7 @@ namespace Mocktrix.Database.Memory
         /// <returns>Returns the created access token.</returns>
         public static AccessToken CreateToken(string user_id, string dev_id)
         {
-            AccessToken? old_token = GetToken(user_id, dev_id);
+            AccessToken? old_token = FindByUserAndDevice(user_id, dev_id);
             if (old_token != null)
             {
                 // Generate new token, invalidating older token.
@@ -56,15 +56,27 @@ namespace Mocktrix.Database.Memory
 
 
         /// <summary>
-        /// Gets an existing token.
+        /// Gets an existing token by matching user id and device id.
         /// </summary>
         /// <param name="user_id">id of the user</param>
         /// <param name="dev_id">id of the device</param>
         /// <returns>Returns a matching token, if it exists.
         /// Returns null, if no match was found.</returns>
-        public static AccessToken? GetToken(string user_id, string dev_id)
+        public static AccessToken? FindByUserAndDevice(string user_id, string dev_id)
         {
             return tokens.Find(element => element.user_id == user_id && element.device_id == dev_id);
+        }
+
+
+        /// <summary>
+        /// Finds an existing token by matching plain token value.
+        /// </summary>
+        /// <param name="token">the access token</param>
+        /// <returns>Returns a matching token, if it exists.
+        /// Returns null, if no match was found.</returns>
+        public static AccessToken? Find(string token)
+        {
+            return tokens.Find(element => element.token == token);
         }
     }
 }

@@ -106,9 +106,9 @@ namespace Mocktrix.client
     public class Login
     {
         /// <summary>
-        /// Adds login flow request endpoint to the web application.
+        /// Adds login-related endpoints to the web application.
         /// </summary>
-        /// <param name="app">the app to which the endpoint shall be added</param>
+        /// <param name="app">the app to which the endpoints shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-login.

@@ -29,7 +29,7 @@ namespace Mocktrix
         public static void Add()
         {
             var alice = Database.Memory.Users.CreateUser("@alice:matrix.example.org", "secret password");
-            _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice.user_id, "Alice's Matrix-enable comm badge");
+            _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice.user_id, "Alice's Matrix-enabled comm badge");
         }
     }
 }
