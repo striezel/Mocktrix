@@ -57,5 +57,18 @@ namespace Mocktrix.Database.Memory
         {
             return devices.Find(dev => dev.device_id == dev_id && dev.user_id == user_id);
         }
+
+
+        /// <summary>
+        /// Removes a device with a given device id.
+        /// </summary>
+        /// <param name="dev_id">id of the device to remove</param>
+        /// <param name="user_id">id of the user that the device belongs to</param>
+        /// <returns>Returns true, if the device was removed.
+        /// Returns false, if no match was found.</returns>
+        public static bool Remove(string dev_id, string user_id)
+        {
+            return devices.RemoveAll(dev => dev.device_id == dev_id && dev.user_id == user_id) > 0;
+        }
     }
 }

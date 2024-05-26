@@ -176,5 +176,32 @@ namespace Mocktrix.Database.Memory.Tests
             // for both.
             Assert.True(ReferenceEquals(some_token, token));
         }
+
+
+        [Fact]
+        public void Revoke_NonExistentTokenNotRevoke()
+        {
+            const string access_token = "not_an_existing_token_value";
+            // Token does not exist, function shall return false.
+            Assert.False(AccessTokens.Revoke(access_token));
+        }
+
+
+        [Fact]
+        public void Revoke_ExistentToken()
+        {
+            const string dev_id = "RevokableDeviceHere";
+            const string user_id = "@alice:matrix.example.org";
+
+            // Create a token.
+            var original_token = AccessTokens.CreateToken(user_id, dev_id);
+            // Query the created token.
+            var find_token = AccessTokens.Find(original_token.token);
+            Assert.NotNull(find_token);
+            // Revoke the token.
+            Assert.True(AccessTokens.Revoke(original_token.token));
+            // Token shall not be found anymore.
+            Assert.Null(AccessTokens.Find(original_token.token));
+        }
     }
 }

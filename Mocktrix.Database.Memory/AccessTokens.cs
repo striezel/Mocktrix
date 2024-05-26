@@ -78,5 +78,17 @@ namespace Mocktrix.Database.Memory
         {
             return tokens.Find(element => element.token == token);
         }
+
+
+        /// <summary>
+        /// Removes an existing token.
+        /// </summary>
+        /// <param name="token">the access token to remove</param>
+        /// <returns>Returns true, if the token was removed.
+        /// Returns false, if no match was found.</returns>
+        public static bool Revoke(string token)
+        {
+            return tokens.RemoveAll(element => element.token == token) > 0;
+        }
     }
 }

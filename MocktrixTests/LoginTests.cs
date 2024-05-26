@@ -355,5 +355,90 @@ namespace MocktrixTests
             Assert.NotNull(expected_response.access_token);
             Assert.Equal(expected_response.device_id, content.device_id);
         }
+
+
+        [Fact]
+        public async Task TestLogout_NoAuthorization()
+        {
+
+            var response = await client.PostAsync("/_matrix/client/r0/logout", new StringContent(""));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestLogout_WithUnknownAccessToken()
+        {
+            HttpClient client_with_header = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            client_with_header.DefaultRequestHeaders.Add("Authorization", "Bearer SomeNonExistentToken");
+
+            var response = await client_with_header.PostAsync("/_matrix/client/r0/logout", new StringContent(""));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unknown access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestLogout_ProperlyDone()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                initial_device_display_name = "The soon to be logged out device"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            // Finally log that token out.
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/logout", new StringContent(""));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var expected = new { };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected, content);
+        }
     }
 }

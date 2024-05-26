@@ -29,13 +29,12 @@ namespace Mocktrix.client
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami.
             app.MapGet("/_matrix/client/r0/account/whoami", (HttpContext context) =>
             {
-                var auth = context.Request.Headers.Authorization.Count > 0 ? context.Request.Headers.Authorization.First() : "";
-                if (string.IsNullOrWhiteSpace(auth) || !auth.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase))
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
                 {
                     return Results.Unauthorized();
                 }
-                auth = auth.Remove(0, "Bearer ".Length);
-                var token = Database.Memory.AccessTokens.Find(auth);
+                var token = Database.Memory.AccessTokens.Find(access_token);
                 if (token == null)
                 {
                     return Results.Unauthorized();

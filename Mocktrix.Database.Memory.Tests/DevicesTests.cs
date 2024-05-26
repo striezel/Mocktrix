@@ -138,5 +138,76 @@ namespace Mocktrix.Database.Memory.Tests
             // that is then a different device.
             Assert.Null(alice_device);
         }
+
+
+        [Fact]
+        public void Remove_NonExistentDeviceNotRemoved()
+        {
+            const string dev_id = "NotFoundHere";
+            const string user_id = "@bob:matrix.example.com";
+            // Device does not exist, function shall return false.
+            Assert.False(Devices.Remove(dev_id, user_id));
+        }
+
+
+        [Fact]
+        public void Remove_ExistentDevice()
+        {
+            const string dev_id = "TheDeviceWillBeRemovedHere";
+            const string user_id = "@bob:matrix.example.com";
+            const string name = "Bob's removable device";
+
+            // Create a device.
+            _ = Devices.CreateDevice(dev_id, user_id, name);
+            // Query the created device.
+            Assert.NotNull(Devices.GetDevice(dev_id, user_id));
+            // Remove the device.
+            Assert.True(Devices.Remove(dev_id, user_id));
+            // Device shall not be found anymore.
+            Assert.Null(Devices.GetDevice(dev_id, user_id));
+        }
+
+
+        [Fact]
+        public void Remove_OneOfSeveralExistentDevices()
+        {
+            const string user_id = "@bob:matrix.example.com";
+
+            // Create first device.
+            var first_device = Devices.CreateDevice("NonRemovedDeviceId", user_id, "Bob's permanent device");
+
+            // Create second device.
+            const string dev_id = "IdOfDeviceToBeRemoved";
+            const string name = "Bob's removed device";
+            var second_device = Devices.CreateDevice(dev_id, user_id, name);
+            // Query the created device - must exist.
+            Assert.NotNull(Devices.GetDevice(dev_id, user_id));
+            // Remove device - shall succeed.
+            Assert.True(Devices.Remove(dev_id, second_device.user_id));
+            // Removed device shall not longer be found.
+            Assert.Null(Devices.GetDevice(dev_id, second_device.user_id));
+            // But the first device must still be there.
+            Assert.NotNull(Devices.GetDevice(first_device.device_id, first_device.user_id));
+        }
+
+
+        [Fact]
+        public void Remove_DeviceWithWrongUserIdNotDeleted()
+        {
+            const string alice_id = "@alice:matrix.example.org";
+            const string bob_id = "@bob:matrix.example.org";
+            const string dev_id = "DeviceOfBobOrIsIt?";
+
+            // Create Bob's device.
+            var bob_device = Devices.CreateDevice(dev_id, bob_id, "Bob's permanent device");
+            // Create second device with different user id.
+            var alice_device = Devices.CreateDevice(dev_id, alice_id, "Alices's non-permanent device");
+            // Remove device - shall succeed.
+            Assert.True(Devices.Remove(dev_id, alice_id));
+            // Removed device shall not longer be found.
+            Assert.Null(Devices.GetDevice(dev_id, alice_device.user_id));
+            // But the first device must still be there.
+            Assert.NotNull(Devices.GetDevice(bob_device.device_id, bob_device.user_id));
+        }
     }
 }
