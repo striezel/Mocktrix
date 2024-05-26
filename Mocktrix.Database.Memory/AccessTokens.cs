@@ -32,11 +32,13 @@ namespace Mocktrix.Database.Memory
 
 
         /// <summary>
-        /// Creates and adds a new device for a specific user.
+        /// Creates a new access token for a specific user's device.
+        /// If a token for that device already exists, then a new token is
+        /// generated and the old token is invalidated.
         /// </summary>
         /// <param name="user_id">user id, e. g. "@alice:example.com"</param>
         /// <param name="dev_id">the device id</param>
-        /// <returns>Returns the created device.</returns>
+        /// <returns>Returns the created access token.</returns>
         public static AccessToken CreateToken(string user_id, string dev_id)
         {
             AccessToken? old_token = GetToken(user_id, dev_id);

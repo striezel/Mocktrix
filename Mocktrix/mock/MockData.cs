@@ -1,4 +1,4 @@
-/*
+﻿/*
     This file is part of Mocktrix.
     Copyright (C) 2024  Dirk Stolle
 
@@ -18,26 +18,18 @@
 
 namespace Mocktrix
 {
-    public class Program
+    /// <summary>
+    /// Handles mock data for test cases.
+    /// </summary>
+    public class MockData
     {
-        public static void Main(string[] args)
+        /// <summary>
+        /// Adds data for use in tests.
+        /// </summary>
+        public static void Add()
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Services.AddAuthorization();
-
-            var app = builder.Build();
-
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
-
-            client.Versions.AddEndpoints(app);
-            client.Login.AddEndpoints(app);
-
-            MockData.Add();
-
-            app.Run();
+            var alice = Database.Memory.Users.CreateUser("@alice:matrix.example.org", "secret password");
+            _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice.user_id, "Alice's Matrix-enable comm badge");
         }
     }
 }
