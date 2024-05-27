@@ -81,6 +81,18 @@ namespace Mocktrix.Database.Memory
 
 
         /// <summary>
+        /// Gets all existing tokens for an user id.
+        /// </summary>
+        /// <param name="user_id">id of the user</param>
+        /// <returns>Returns a list of all matching tokens.
+        /// Returns an empty list, if no match was found.</returns>
+        public static List<AccessToken> FindByUser(string user_id)
+        {
+            return tokens.FindAll(element => element.user_id == user_id);
+        }
+
+
+        /// <summary>
         /// Removes an existing token.
         /// </summary>
         /// <param name="token">the access token to remove</param>

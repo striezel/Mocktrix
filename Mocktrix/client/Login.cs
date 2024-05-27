@@ -265,6 +265,36 @@ namespace Mocktrix.client
 
                 return Results.Ok(new { });
             });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-logout-all.
+            app.MapPost("/_matrix/client/r0/logout/all", (HttpContext context) =>
+            {
+                var auth = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(auth))
+                {
+                    string json = "{\"errcode\":\"M_MISSING_TOKEN\",\"error\":\"Missing access token.\"}";
+                    return Results.Content(json, "application/json",
+                        System.Text.Encoding.UTF8, StatusCodes.Status401Unauthorized);
+                }
+                var access_token = Database.Memory.AccessTokens.Find(auth);
+                if (access_token == null)
+                {
+                    string json = "{\"errcode\":\"M_UNKNOWN_TOKEN\",\"error\":\"Unknown access token.\"}";
+                    return Results.Content(json, "application/json",
+                        System.Text.Encoding.UTF8, StatusCodes.Status401Unauthorized);
+                }
+
+                var all_tokens_of_user = Database.Memory.AccessTokens.FindByUser(access_token.user_id);
+                foreach (var token in all_tokens_of_user)
+                {
+                    // Revoke access token.
+                    _ = Database.Memory.AccessTokens.Revoke(token.token);
+                    // Delete the associated device.
+                    _ = Database.Memory.Devices.Remove(token.device_id, token.user_id);
+                }
+
+                return Results.Ok(new { });
+            });
         }
     }
 }

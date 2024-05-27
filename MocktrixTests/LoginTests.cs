@@ -440,5 +440,121 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected);
             Assert.Equal(expected, content);
         }
+
+
+        [Fact]
+        public async Task TestLogoutAll_NoAuthorization()
+        {
+
+            var response = await client.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestLogoutAll_WithUnknownAccessToken()
+        {
+            HttpClient client_with_header = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            client_with_header.DefaultRequestHeaders.Add("Authorization", "Bearer SomeNonExistentToken");
+
+            var response = await client_with_header.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unknown access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestLogoutAll_ProperlyDone()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                initial_device_display_name = "The soon to be logged out device"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token_one = login_content.access_token;
+            // Do another login.
+            login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            login_content = Utilities.GetContent(login_response, login_data);
+            var access_token_two = login_content.access_token;
+
+            // Tokens should differ.
+            Assert.NotEqual(access_token_one, access_token_two);
+
+            {
+                HttpClient authenticated_client = new()
+                {
+                    BaseAddress = Utilities.BaseAddress
+                };
+                authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token_one);
+
+                // Finally log both tokens out.
+
+                var response = await authenticated_client.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
+
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                var expected = new { };
+
+                var content = Utilities.GetContent(response, expected);
+                Assert.Equal(expected, content);
+            }
+
+            // Logout with second token should fail, because it is already logged out.
+            {
+                HttpClient authenticated_client_two = new()
+                {
+                    BaseAddress = Utilities.BaseAddress
+                };
+                authenticated_client_two.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token_two);
+                var response = await authenticated_client_two.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
+                Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+                var expected = new
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unknown access token."
+                };
+
+                var content = Utilities.GetContent(response, expected);
+                Assert.Equal(expected.errcode, content.errcode);
+                Assert.Equal(expected.error, content.error);
+            }
+        }
     }
 }

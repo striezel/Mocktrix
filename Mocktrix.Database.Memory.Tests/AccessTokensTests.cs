@@ -179,6 +179,61 @@ namespace Mocktrix.Database.Memory.Tests
 
 
         [Fact]
+        public void FindByUser_NonExistentTokenNotFound()
+        {
+            const string user_id = "@mango-eating_mungo:matrix.example.com";
+            var tokens = AccessTokens.FindByUser(user_id);
+
+            // Token does not exist, function shall return empty list.
+            Assert.NotNull(tokens);
+            Assert.Empty(tokens);
+        }
+
+
+        [Fact]
+        public void FindByUser_MultipleExistingTokenFound()
+        {
+            const string user_id = "@user-for-tokens-find-by-user-1:matrix.example.com";
+
+            // Create a few tokens.
+            _ = AccessTokens.CreateToken(user_id, "TheDeviceId_1");
+            _ = AccessTokens.CreateToken(user_id, "TheDeviceId_2");
+            _ = AccessTokens.CreateToken(user_id, "TheDeviceId_3");
+
+            var tokens = AccessTokens.FindByUser(user_id);
+
+            // Tokens exist, function shall list of those tokens.
+            Assert.NotNull(tokens);
+            Assert.Equal(3, tokens.Count);
+        }
+
+
+        [Fact]
+        public void FindByUser_TokensOfOtherUsersNotFound()
+        {
+            const string user_id = "@user-for-tokens-find-by-user-2:matrix.example.com";
+            const string charlie_id = "@charlie:matrix.example.com";
+            const string dev_id = "FindByUser_Device";
+
+            // Create a few tokens.
+            _ = AccessTokens.CreateToken(charlie_id, dev_id);
+            _ = AccessTokens.CreateToken(charlie_id, dev_id + "_next");
+            _ = AccessTokens.CreateToken(user_id, dev_id);
+            _ = AccessTokens.CreateToken(user_id, "AnotherDeviceId");
+            _ = AccessTokens.CreateToken(user_id, "YetAnotherDevice");
+
+            var tokens = AccessTokens.FindByUser(user_id);
+
+            // Token exist, function shall list of those tokens.
+            Assert.NotNull(tokens);
+            Assert.Equal(3, tokens.Count);
+            Assert.Contains(tokens, t => t.user_id == user_id && t.device_id == dev_id);
+            Assert.Contains(tokens, t => t.user_id == user_id && t.device_id == "AnotherDeviceId");
+            Assert.Contains(tokens, t => t.user_id == user_id && t.device_id == "YetAnotherDevice");
+        }
+
+
+        [Fact]
         public void Revoke_NonExistentTokenNotRevoke()
         {
             const string access_token = "not_an_existing_token_value";
