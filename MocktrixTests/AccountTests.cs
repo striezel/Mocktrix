@@ -34,6 +34,39 @@ namespace MocktrixTests
             var response = await client.GetAsync("/_matrix/client/r0/account/whoami");
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestWhoami_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/account/whoami");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
         }
 
         [Fact]

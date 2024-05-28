@@ -32,12 +32,22 @@ namespace Mocktrix.client
                 var access_token = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(access_token))
                 {
-                    return Results.Unauthorized();
+                    var error = new
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
                 }
                 var token = Database.Memory.AccessTokens.Find(access_token);
                 if (token == null)
                 {
-                    return Results.Unauthorized();
+                    var error = new
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
                 // Token was found.

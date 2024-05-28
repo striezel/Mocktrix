@@ -223,6 +223,15 @@ namespace MocktrixTests
             var response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_error = new
+            {
+                errcode = "M_FORBIDDEN"
+            };
+            var content = Utilities.GetContent(response, expected_error);
+            Assert.NotNull(content);
+            Assert.Equal(expected_error.errcode, content.errcode);
         }
 
         [Fact]

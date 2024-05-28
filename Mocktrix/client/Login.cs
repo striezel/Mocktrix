@@ -197,11 +197,9 @@ namespace Mocktrix.client
                 if (string.IsNullOrWhiteSpace(data.Password) ||
                     utilities.Hashing.HashPassword(data.Password, user.salt) != user.password_hash)
                 {
-                    return Results.StatusCode(403);
-                    // TODO: Add JSON output, like:
-                    //  {
-                    //    errcode: "M_FORBIDDEN"
-                    //  }
+                    return Results.Json(new { errcode = "M_FORBIDDEN" },
+                        contentType: "application/json",
+                        statusCode: StatusCodes.Status403Forbidden);
                 }
 
                 // Handle device.
