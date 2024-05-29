@@ -30,6 +30,10 @@ namespace Mocktrix
         {
             var alice = Database.Memory.Users.CreateUser("@alice:matrix.example.org", "secret password");
             _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice.user_id, "Alice's Matrix-enabled comm badge");
+
+            var base_address = new Uri("http://localhost:5289");
+            var alice_local = Database.Memory.Users.CreateUser("@alice:" + base_address.Host, "Alice's secret password");
+            _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice_local.user_id, "Alice's Matrix-enabled comm badge");
         }
     }
 }

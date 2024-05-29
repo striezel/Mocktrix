@@ -186,6 +186,14 @@ namespace Mocktrix.client
                 var user = Database.Memory.Users.GetUser(user_id);
                 if (user == null)
                 {
+                    // Not found? Maybe it is not a full id but just the localpart?
+                    var server_address = new Uri(app.Urls.FirstOrDefault("http://localhost/"));
+                    user_id = "@" + user_id + ":" + server_address.Host;
+                    user = Database.Memory.Users.GetUser(user_id);
+                }
+                // If user does not exist, then no login can be performed.
+                if (user == null)
+                {
                     return Results.BadRequest(new
                     {
                         errcode = "M_INVALID_USERNAME",

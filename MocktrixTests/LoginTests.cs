@@ -235,6 +235,34 @@ namespace MocktrixTests
         }
 
         [Fact]
+        public async Task TestLogin_WrongPasswordWithLocalpartOnly()
+        {
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "alice"
+                },
+                password = "this is really the wrong password",
+                initial_device_display_name = "My device"
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_error = new
+            {
+                errcode = "M_FORBIDDEN"
+            };
+            var content = Utilities.GetContent(response, expected_error);
+            Assert.NotNull(content);
+            Assert.Equal(expected_error.errcode, content.errcode);
+        }
+
+        [Fact]
         public async Task TestLogin_CorrectCredentials()
         {
             var body = new
@@ -268,6 +296,40 @@ namespace MocktrixTests
         }
 
         [Fact]
+        public async Task TestLogin_CorrectCredentialsWithLocalpartOnly()
+        {
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "alice"
+                },
+                password = "Alice's secret password",
+                initial_device_display_name = "My device"
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var base_address = Utilities.BaseAddress;
+            var expected_response = new
+            {
+                user_id = "@alice:" + base_address.Host,
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+
+            var content = Utilities.GetContent(response, expected_response);
+            Assert.NotNull(content);
+            Assert.Equal(expected_response.user_id, content.user_id);
+            Assert.NotNull(expected_response.access_token);
+            Assert.Matches("^[A-Z]+$", content.device_id);
+        }
+
+        [Fact]
         public async Task TestLogin_CorrectCredentialsUsingDeprecatedJsonMembers()
         {
             var body = new
@@ -287,6 +349,37 @@ namespace MocktrixTests
             var expected_response = new
             {
                 user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+
+            var content = Utilities.GetContent(response, expected_response);
+            Assert.NotNull(content);
+            Assert.Equal(expected_response.user_id, content.user_id);
+            Assert.NotNull(expected_response.access_token);
+            Assert.Matches("^[A-Z]+$", content.device_id);
+        }
+
+        [Fact]
+        public async Task TestLogin_CorrectCredentialsUsingDeprecatedJsonMembersWithLocalpartOnly()
+        {
+            var body = new
+            {
+                type = "m.login.password",
+                // user was deprecated in favour of identifier.user + identifier.type,
+                // but the server should still support this for older clients.
+                user = "alice",
+                password = "Alice's secret password",
+                initial_device_display_name = "Old device using older protocol version"
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_response = new
+            {
+                user_id = "@alice:" + Utilities.BaseAddress.Host,
                 access_token = "random ...",
                 device_id = "also random ..."
             };
