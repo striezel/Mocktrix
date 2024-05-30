@@ -35,6 +35,7 @@ namespace Mocktrix
             client.Versions.AddEndpoints(app);
             client.Login.AddEndpoints(app);
             client.Account.AddEndpoints(app);
+            client.Capabilities.AddEndpoints(app);
 
             MockData.Add();
 

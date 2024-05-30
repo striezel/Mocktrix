@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Database.Memory", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Data.Tests", "..\Mocktrix.Data.Tests\Mocktrix.Data.Tests.csproj", "{206658A0-8CCA-41D4-AF06-1FD84096D1B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Database.Memory.Tests", "..\Mocktrix.Database.Memory.Tests\Mocktrix.Database.Memory.Tests.csproj", "{7D8E0E89-5CDC-4301-821B-0721AB03E953}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Database.Memory.Tests", "..\Mocktrix.Database.Memory.Tests\Mocktrix.Database.Memory.Tests.csproj", "{7D8E0E89-5CDC-4301-821B-0721AB03E953}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Protocol.Types", "..\Mocktrix.Protocol.Types\Mocktrix.Protocol.Types.csproj", "{8B06FD60-A82B-4D72-AD9C-1F029233D7EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{7D8E0E89-5CDC-4301-821B-0721AB03E953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D8E0E89-5CDC-4301-821B-0721AB03E953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D8E0E89-5CDC-4301-821B-0721AB03E953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B06FD60-A82B-4D72-AD9C-1F029233D7EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B06FD60-A82B-4D72-AD9C-1F029233D7EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B06FD60-A82B-4D72-AD9C-1F029233D7EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B06FD60-A82B-4D72-AD9C-1F029233D7EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
