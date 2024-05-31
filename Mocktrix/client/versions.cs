@@ -21,7 +21,7 @@ namespace Mocktrix.client
     /// <summary>
     /// See https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-versions.
     /// </summary>
-    public class Versions
+    public static class Versions
     {
         /// <summary>
         /// Adds versions endpoint to the web application.

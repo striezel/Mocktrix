@@ -103,7 +103,7 @@ namespace Mocktrix.client
     }
 
 
-    public class Login
+    public static class Login
     {
         /// <summary>
         /// Adds login-related endpoints to the web application.

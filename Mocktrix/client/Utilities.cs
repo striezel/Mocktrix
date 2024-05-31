@@ -21,7 +21,7 @@ namespace Mocktrix.client
     /// <summary>
     /// Small utilities to ease handling of client API requests.
     /// </summary>
-    internal class Utilities
+    internal static class Utilities
     {
         /// <summary>
         /// Retrieves the client API access token from a request's context.

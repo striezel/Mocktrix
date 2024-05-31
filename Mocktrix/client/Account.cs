@@ -18,7 +18,7 @@
 
 namespace Mocktrix.client
 {
-    public class Account
+    public static class Account
     {
         /// <summary>
         /// Adds account management endpoint to the web application.
