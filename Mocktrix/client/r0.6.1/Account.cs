@@ -16,20 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Mocktrix.Protocol.Types.Capabilities;
-
-namespace Mocktrix.client
+namespace Mocktrix.client.r0_6_1
 {
-    public static class Capabilities
+    /// <summary>
+    /// Contains implementation of account management endpoints for version r0.6.1.
+    /// </summary>
+    public static class Account
     {
         /// <summary>
-        /// Adds capabilities negotiation endpoint to the web application.
+        /// Adds account management endpoint to the web application.
         /// </summary>
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-capabilities.
-            app.MapGet("/_matrix/client/r0/capabilities", (HttpContext context) =>
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami.
+            app.MapGet("/_matrix/client/r0/account/whoami", (HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(access_token))
@@ -52,25 +53,8 @@ namespace Mocktrix.client
                     return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
-                // Token was found, so get capabilities.
-                var result = new
-                { 
-                    capabilities = new ServerCapabilities
-                    {
-                        ChangePassword = new ChangePasswordCapability { Enabled = true },
-                        RoomVersions = new RoomVersionsCapability
-                        {
-                            DefaultVersion = "1",
-                            Available = new Dictionary<string, string>(3)
-                            {
-                                { "1", "stable" },
-                                { "2", "unstable" },
-                                { "3", "unstable" },
-                            }
-                        }
-                    }
-                };
-                return Results.Ok(result);
+                // Token was found.
+                return Results.Ok(new { token.user_id });
             });
         }
     }

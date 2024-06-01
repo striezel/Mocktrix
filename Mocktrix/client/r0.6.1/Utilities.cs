@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Mocktrix.client
+namespace Mocktrix.client.r0_6_1
 {
     /// <summary>
     /// Small utilities to ease handling of client API requests.

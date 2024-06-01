@@ -19,7 +19,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Mocktrix.client
+namespace Mocktrix.client.r0_6_1
 {
 #pragma warning disable IDE1006
     internal record LoginFlow(string type);
@@ -103,6 +103,9 @@ namespace Mocktrix.client
     }
 
 
+    /// <summary>
+    /// Contains implementation of login and logout-related endpoints for version r0.6.1.
+    /// </summary>
     public static class Login
     {
         /// <summary>

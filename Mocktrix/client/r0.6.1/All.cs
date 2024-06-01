@@ -1,4 +1,4 @@
-/*
+﻿/*
     This file is part of Mocktrix.
     Copyright (C) 2024  Dirk Stolle
 
@@ -16,27 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Mocktrix
+namespace Mocktrix.client.r0_6_1
 {
-    public class Program
+    /// <summary>
+    /// Provides convenience methods for use of the client-server API.
+    /// </summary>
+    public static class All
     {
-        public static void Main(string[] args)
+        /// <summary>
+        /// Adds all implemented endpoints of this version of the client-server
+        /// API to the web application.
+        /// </summary>
+        /// <param name="app">the app to which the endpoint shall be added</param>
+        public static void AddEndpoints(WebApplication app)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Services.AddAuthorization();
-
-            var app = builder.Build();
-
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
-
-            client.r0_6_1.All.AddEndpoints(app);
-
-            MockData.Add();
-
-            app.Run();
+            Versions.AddEndpoints(app);
+            Login.AddEndpoints(app);
+            Account.AddEndpoints(app);
+            Capabilities.AddEndpoints(app);
+            Registration.AddEndpoints(app);
         }
     }
 }

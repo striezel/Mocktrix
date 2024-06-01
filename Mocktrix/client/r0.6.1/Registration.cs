@@ -16,12 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Mocktrix.client
+namespace Mocktrix.client.r0_6_1
 {
+    /// <summary>
+    /// Contains implementation of account registration endpoints for version r0.6.1.
+    /// </summary>
     public static class Registration
     {
         /// <summary>
-        /// Adds account management endpoint to the web application.
+        /// Adds account registration endpoints to the web application.
         /// </summary>
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
