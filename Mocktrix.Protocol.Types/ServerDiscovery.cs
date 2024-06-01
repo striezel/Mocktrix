@@ -16,26 +16,29 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Mocktrix.client.r0_6_1
+using System.Text.Json.Serialization;
+
+namespace Mocktrix.Protocol.Types
 {
     /// <summary>
-    /// Provides convenience methods for use of the client-server API.
+    /// Holds information about the Matrix homeserver.
     /// </summary>
-    public static class All
+    public struct HomeserverInformation
     {
         /// <summary>
-        /// Adds all implemented endpoints of this version of the client-server
-        /// API to the web application.
+        /// The base URL for the homeserver for client-server connections, e. g.
+        /// "https://matrix.example.org".
         /// </summary>
-        /// <param name="app">the app to which the endpoint shall be added</param>
-        public static void AddEndpoints(WebApplication app)
-        {
-            Versions.AddEndpoints(app);
-            ServerDiscovery.AddEndpoints(app);
-            Login.AddEndpoints(app);
-            Account.AddEndpoints(app);
-            Capabilities.AddEndpoints(app);
-            Registration.AddEndpoints(app);
-        }
+        [JsonPropertyName("base_url")]
+        public string BaseUrl { get; set; }
+    }
+
+    public struct DiscoveryInformation
+    {
+        /// <summary>
+        /// Information about the homeserver.
+        /// </summary>
+        [JsonPropertyName("m.homeserver")]
+        public HomeserverInformation Homeserver { get; set; }
     }
 }

@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Mocktrix.Protocol.Types;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -84,22 +85,6 @@ namespace Mocktrix.client.r0_6_1
         /// </summary>
         [JsonPropertyName("initial_device_display_name")]
         public string? InitialDeviceDisplayName { get; set; } = null;
-    }
-
-    public struct HomeserverInformation
-    {
-        /// <summary>
-        /// The base URL for the homeserver for client-server connections, e. g.
-        /// "https://matrix.example.org".
-        /// </summary>
-        [JsonPropertyName("base_url")]
-        public string BaseUrl { get; set; }
-    }
-
-    public struct DiscoveryInformation
-    {
-        [JsonPropertyName("m.homeserver")]
-        public HomeserverInformation Homeserver { get; set; }
     }
 
 

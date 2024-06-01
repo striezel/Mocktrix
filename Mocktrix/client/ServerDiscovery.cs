@@ -16,26 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Mocktrix.client.r0_6_1
+using Mocktrix.Protocol.Types;
+
+namespace Mocktrix.client
 {
     /// <summary>
-    /// Provides convenience methods for use of the client-server API.
+    /// Implements the server discovery endpoint.
     /// </summary>
-    public static class All
+    public static class ServerDiscovery
     {
         /// <summary>
-        /// Adds all implemented endpoints of this version of the client-server
-        /// API to the web application.
+        /// Adds server discovery endpoint to the web application.
         /// </summary>
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            Versions.AddEndpoints(app);
-            ServerDiscovery.AddEndpoints(app);
-            Login.AddEndpoints(app);
-            Account.AddEndpoints(app);
-            Capabilities.AddEndpoints(app);
-            Registration.AddEndpoints(app);
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-well-known-matrix-client.
+            app.MapGet("/.well-known/matrix/client", (HttpContext httpContext) =>
+            {
+                var result = new DiscoveryInformation()
+                {
+                    Homeserver = new HomeserverInformation()
+                    {
+                        BaseUrl = app.Urls.First()
+                    }
+                };
+                return Results.Json(result);
+            });
         }
     }
 }
