@@ -23,7 +23,7 @@ namespace Mocktrix.Database.Memory
     /// <summary>
     /// In-memory implementation of access token database.
     /// </summary>
-    public class AccessTokens
+    public static class AccessTokens
     {
         /// <summary>
         /// in-memory token list

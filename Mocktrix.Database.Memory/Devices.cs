@@ -23,7 +23,7 @@ namespace Mocktrix.Database.Memory
     /// <summary>
     /// In-memory implementation of device database.
     /// </summary>
-    public class Devices
+    public static class Devices
     {
         /// <summary>
         /// in-memory device list

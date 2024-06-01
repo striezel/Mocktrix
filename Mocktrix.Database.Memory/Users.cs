@@ -23,7 +23,7 @@ namespace Mocktrix.Database.Memory
     /// <summary>
     /// In-memory implementation of user database.
     /// </summary>
-    public class Users
+    public static class Users
     {
         /// <summary>
         /// in-memory user list
