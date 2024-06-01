@@ -28,12 +28,17 @@ namespace Mocktrix
         /// </summary>
         public static void Add()
         {
+            // User "alice" on homeserver at example domain.
             var alice = Database.Memory.Users.CreateUser("@alice:matrix.example.org", "secret password");
             _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice.user_id, "Alice's Matrix-enabled comm badge");
 
+            // User "alice" for domain name of the server.
             var base_address = new Uri("http://localhost:5289");
             var alice_local = Database.Memory.Users.CreateUser("@alice:" + base_address.Host, "Alice's secret password");
             _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice_local.user_id, "Alice's Matrix-enabled comm badge");
+
+            // User for test of logging out all access tokens of a user at once.
+            _ = Database.Memory.Users.CreateUser("@all_alice:matrix.example.org", "my secret password");
         }
     }
 }

@@ -598,15 +598,15 @@ namespace MocktrixTests
                 identifier = new
                 {
                     type = "m.id.user",
-                    user = "@alice:matrix.example.org"
+                    user = "@all_alice:matrix.example.org"
                 },
-                password = "secret password",
+                password = "my secret password",
                 initial_device_display_name = "The soon to be logged out device"
             };
             var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
             var login_data = new
             {
-                user_id = "@alice:matrix.example.org",
+                user_id = "@all_alice:matrix.example.org",
                 access_token = "random ...",
                 device_id = "also random ..."
             };
