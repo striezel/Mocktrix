@@ -291,7 +291,7 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content);
             Assert.Equal(expected_response.user_id, content.user_id);
-            Assert.NotNull(expected_response.access_token);
+            Assert.NotNull(content.access_token);
             Assert.Matches("^[A-Z]+$", content.device_id);
         }
 
@@ -325,7 +325,7 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content);
             Assert.Equal(expected_response.user_id, content.user_id);
-            Assert.NotNull(expected_response.access_token);
+            Assert.NotNull(content.access_token);
             Assert.Matches("^[A-Z]+$", content.device_id);
         }
 
@@ -356,7 +356,7 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content);
             Assert.Equal(expected_response.user_id, content.user_id);
-            Assert.NotNull(expected_response.access_token);
+            Assert.NotNull(content.access_token);
             Assert.Matches("^[A-Z]+$", content.device_id);
         }
 
@@ -387,7 +387,7 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content);
             Assert.Equal(expected_response.user_id, content.user_id);
-            Assert.NotNull(expected_response.access_token);
+            Assert.NotNull(content.access_token);
             Assert.Matches("^[A-Z]+$", content.device_id);
         }
 
@@ -420,7 +420,7 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content);
             Assert.Equal(expected_response.user_id, content.user_id);
-            Assert.NotNull(expected_response.access_token);
+            Assert.NotNull(content.access_token);
             Assert.Equal(expected_response.device_id, content.device_id);
         }
 
@@ -454,7 +454,7 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content);
             Assert.Equal(expected_response.user_id, content.user_id);
-            Assert.NotNull(expected_response.access_token);
+            Assert.NotNull(content.access_token);
             Assert.Equal(expected_response.device_id, content.device_id);
         }
 
