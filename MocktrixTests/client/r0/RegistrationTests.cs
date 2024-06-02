@@ -84,5 +84,111 @@ namespace MocktrixTests
             Assert.Equal(expected.errcode, content.errcode);
             Assert.Equal(expected.error, content.error);
         }
+
+
+        [Fact]
+        public async Task TestAvailable_NoUserNameGiven()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/register/available");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_PARAM",
+                error = "Query parameter 'username' is missing."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestAvailable_EmptyUserName()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_INVALID_USERNAME",
+                error = "User name cannot be empty."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestAvailable_UserNameWithNonAsciiCharacters()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=smørrebrød");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_INVALID_USERNAME",
+                error = "User ID can only contain the characters a-z, 0-9, '.', '-' and '_'."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestAvailable_UserNameWithDisallowedCharacters()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=no spaces allowed");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_INVALID_USERNAME",
+                error = "User ID can only contain the characters a-z, 0-9, '.', '-' and '_'."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestAvailable_UserNameAlreadyTaken()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=alice");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_USER_IN_USE",
+                error = "User ID is already used by someone else."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+
+        [Fact]
+        public async Task TestAvailable_UserNameStillAvailable()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=not_alice_but_bob");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                available = true
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.True(content.available);
+        }
     }
 }

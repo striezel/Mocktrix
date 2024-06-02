@@ -39,11 +39,63 @@ namespace Mocktrix.client.r0_6_1
                 };
                 return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
             };
+
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-register-email-requesttoken.
             app.MapPost("/_matrix/client/r0/register/email/requestToken", NotSupported);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-register-msisdn-requesttoken.
             app.MapPost("/_matrix/client/r0/register/msisdn/requestToken", NotSupported);
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-register-available.
+            app.MapGet("/_matrix/client/r0/register/available", (HttpContext context) =>
+            {
+                if (!context.Request.Query.ContainsKey("username"))
+                {
+                    return Results.BadRequest(new
+                    {
+                        errcode = "M_MISSING_PARAM",
+                        error = "Query parameter 'username' is missing."
+                    });
+                }
+
+                string? username = context.Request.Query["username"].FirstOrDefault("")?.Trim();
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    return Results.BadRequest(new
+                    {
+                        errcode = "M_INVALID_USERNAME",
+                        error = "User name cannot be empty."
+                    });
+                }
+
+                var valid_char = (char c) => {
+                    return char.IsAsciiLetterOrDigit(c) || c == '_'
+                    || c == '-' || c == '.';
+                };
+                if (!username.All(valid_char))
+                {
+                    return Results.BadRequest(new
+                    {
+                        errcode = "M_INVALID_USERNAME",
+                        error = "User ID can only contain the characters a-z, 0-9, '.', '-' and '_'."
+                    });
+                }
+
+                var server_address = new Uri(app.Urls.FirstOrDefault("http://localhost/"));
+                var user_id = "@" + username + ":" + server_address.Host;
+                var user = Database.Memory.Users.GetUser(user_id);
+                if (user != null)
+                {
+                    return Results.BadRequest(new
+                    {
+                        errcode = "M_USER_IN_USE",
+                        error = "User ID is already used by someone else."
+                    });
+                }
+
+                // User id is still available.
+                return Results.Json(new { available = true });
+            });
         }
     }
 }
