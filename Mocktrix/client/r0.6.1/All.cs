@@ -36,6 +36,7 @@ namespace Mocktrix.client.r0_6_1
             Account.AddEndpoints(app);
             Capabilities.AddEndpoints(app);
             Registration.AddEndpoints(app);
+            DeviceManagement.AddEndpoints(app);
         }
     }
 }
