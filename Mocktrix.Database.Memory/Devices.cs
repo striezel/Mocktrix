@@ -60,6 +60,17 @@ namespace Mocktrix.Database.Memory
 
 
         /// <summary>
+        /// Gets all devices of a user.
+        /// </summary>
+        /// <param name="user_id">Matrix id of the user</param>
+        /// <returns>Returns a list of all available devices.</returns>
+        public static List<Device> GetDevicesOfUser(string user_id)
+        {
+            return devices.FindAll(dev => dev.user_id == user_id);
+        }
+
+
+        /// <summary>
         /// Removes a device with a given device id.
         /// </summary>
         /// <param name="dev_id">id of the device to remove</param>

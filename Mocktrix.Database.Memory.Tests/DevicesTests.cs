@@ -141,6 +141,41 @@ namespace Mocktrix.Database.Memory.Tests
 
 
         [Fact]
+        public void GetDevicesOfUser_NonExistentUserNotFound()
+        {
+            const string user_id = "@mango-eating_mungo:matrix.example.com";
+            var devices = Devices.GetDevicesOfUser(user_id);
+
+            // User does not exist, function shall return empty list.
+            Assert.NotNull(devices);
+            Assert.Empty(devices);
+        }
+
+
+        [Fact]
+        public void GetDevicesOfUser_ExistingUserFound()
+        {
+            const string alice_id = "@alice:matrix.example.com";
+            const string bob_id = "@bob:matrix.example.com";
+            const string dev_id = "DeviceIdForDevicesRetrievalTestCase";
+
+            // Create device.
+            _ = Devices.CreateDevice(dev_id, alice_id, "Alice's random device");
+            _ = Devices.CreateDevice(dev_id, bob_id, "Bob's random device");
+            var devices = Devices.GetDevicesOfUser(alice_id);
+
+            Assert.NotNull(devices);
+            Assert.NotEmpty(devices);
+            // List must contain at least the one device from the mock data.
+            var item = devices.Find(dev => dev.device_id == dev_id);
+            Assert.NotNull(item);
+            Assert.Equal(dev_id, item.device_id);
+            Assert.Equal(alice_id, item.user_id);
+            Assert.Equal("Alice's random device", item.display_name);
+        }
+
+
+        [Fact]
         public void Remove_NonExistentDeviceNotRemoved()
         {
             const string dev_id = "NotFoundHere";

@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Mocktrix.Protocol.Types.DeviceManagement;
+
 namespace Mocktrix.client.r0_6_1
 {
     /// <summary>
@@ -29,6 +31,47 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices.
+            app.MapGet("/_matrix/client/r0/devices", (HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                var devices = Database.Memory.Devices.GetDevicesOfUser(token.user_id);
+                
+                var result = new List<DeviceData>(devices.Count);
+                foreach (var device in devices)
+                {
+                    result.Add(new DeviceData()
+                    {
+                        DeviceId = device.device_id,
+                        DisplayName = device.display_name,
+                        LastSeenIP = null,
+                        LastSeenTimestamp = null
+                    });
+                }
+                return Results.Ok(new { devices = result });
+            });
+
+
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid.
             app.MapGet("/_matrix/client/r0/devices/{deviceId}", (string deviceId, HttpContext context) =>
             {
@@ -63,15 +106,13 @@ namespace Mocktrix.client.r0_6_1
                     });
                 }
 
-                // Token was found.
-                string? nulledString = null;
-                long? nulledInt = null;
-                return Results.Ok(new
+                // Device was found.
+                return Results.Ok(new DeviceData
                 {
-                    device_id = dev.device_id,
-                    display_name = dev.display_name,
-                    last_seen_ip = nulledString,
-                    last_seen_ts = nulledInt
+                    DeviceId = dev.device_id,
+                    DisplayName = dev.display_name,
+                    LastSeenIP = null,
+                    LastSeenTimestamp = null
                 });
             });
         }
