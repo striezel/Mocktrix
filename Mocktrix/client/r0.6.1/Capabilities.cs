@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Capabilities;
 
 namespace Mocktrix.client.r0_6_1
@@ -39,7 +40,7 @@ namespace Mocktrix.client.r0_6_1
                 var access_token = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(access_token))
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_MISSING_TOKEN",
                         error = "Missing access token."
@@ -49,7 +50,7 @@ namespace Mocktrix.client.r0_6_1
                 var token = Database.Memory.AccessTokens.Find(access_token);
                 if (token == null)
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_UNKNOWN_TOKEN",
                         error = "Unrecognized access token."

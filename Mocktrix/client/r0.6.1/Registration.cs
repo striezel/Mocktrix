@@ -18,6 +18,7 @@
 
 using Mocktrix.Data;
 using Mocktrix.Database.Memory;
+using Mocktrix.Protocol.Types;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -133,7 +134,7 @@ namespace Mocktrix.client.r0_6_1
             var NotSupported = (HttpContext context) =>
             {
                 // This registration method is not allowed / not implemented.
-                var error = new
+                var error = new ErrorResponse
                 {
                     errcode = "M_THREEPID_DENIED",
                     error = "Third party identifier is not allowed."
@@ -155,7 +156,7 @@ namespace Mocktrix.client.r0_6_1
             {
                 if (!context.Request.Query.ContainsKey("username"))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_MISSING_PARAM",
                         error = "Query parameter 'username' is missing."
@@ -165,7 +166,7 @@ namespace Mocktrix.client.r0_6_1
                 string? username = context.Request.Query["username"].FirstOrDefault("")?.Trim();
                 if (string.IsNullOrWhiteSpace(username))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_INVALID_USERNAME",
                         error = "User name cannot be empty."
@@ -174,7 +175,7 @@ namespace Mocktrix.client.r0_6_1
 
                 if (!IsValidUserName(username))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_INVALID_USERNAME",
                         error = "User ID can only contain the characters a-z, 0-9, '.', '-' and '_'."
@@ -183,7 +184,7 @@ namespace Mocktrix.client.r0_6_1
 
                 if (!UsernameAvailable(app, username))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_USER_IN_USE",
                         error = "User ID is already used by someone else."
@@ -208,7 +209,7 @@ namespace Mocktrix.client.r0_6_1
                 }
                 if (kind != "user" && kind != "guest")
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_UNRECOGNIZED",
                         error = "Membership kind must be either 'user' or 'guest'."
@@ -217,7 +218,7 @@ namespace Mocktrix.client.r0_6_1
                 // Currently, guest accounts are not supported.
                 if (kind == "guest")
                 {
-                    return Results.Json(new
+                    return Results.Json(new ErrorResponse
                     {
                         errcode = "M_FORBIDDEN",
                         error = "Registration of guest accounts is not allowed."
@@ -241,7 +242,7 @@ namespace Mocktrix.client.r0_6_1
                 }
                 if (data == null)
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_NOT_JSON",
                         error = "The request does not contain JSON or contains invalid JSON."
@@ -251,7 +252,7 @@ namespace Mocktrix.client.r0_6_1
                 string username = data.UserName ?? GenerateUserId();
                 if (!IsValidUserName(username))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_INVALID_USERNAME",
                         error = "User ID can only contain the characters a-z, 0-9, '.', '-' and '_'."
@@ -260,7 +261,7 @@ namespace Mocktrix.client.r0_6_1
 
                 if (!UsernameAvailable(app, username))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_USER_IN_USE",
                         error = "User ID is already used by someone else."
@@ -270,7 +271,7 @@ namespace Mocktrix.client.r0_6_1
                 string password = data.Password ?? string.Empty;
                 if (string.IsNullOrWhiteSpace(password) || password.Length < 12)
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_WEAK_PASSWORD",
                         error = "No password was specified, or the provided password is too weak."

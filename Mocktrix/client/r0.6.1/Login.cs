@@ -120,14 +120,15 @@ namespace Mocktrix.client.r0_6_1
                 const int maxReadSize = 10000;
                 if (context.Request.ContentLength is not null && context.Request.ContentLength > maxReadSize)
                 {
-                    return Results.BadRequest(new {
+                    return Results.BadRequest(new ErrorResponse
+                    {
                         errcode = "M_TOO_LARGE",
                         error = "Request body is too large."
                     });
                 }
                 if (context.Request.ContentType is null || !context.Request.ContentType.StartsWith("application/json"))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_UNKNOWN",
                         error = "Content type of the request was not set to application/json."
@@ -140,10 +141,18 @@ namespace Mocktrix.client.r0_6_1
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
                 };
-                var data = await context.Request.ReadFromJsonAsync<LoginPostData>(options);
+                LoginPostData? data;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<LoginPostData>(options);
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
                 if (data == null)
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_NOT_JSON",
                         error = "The request does not contain JSON or contains invalid JSON."
@@ -153,7 +162,7 @@ namespace Mocktrix.client.r0_6_1
                 // Only password-based login is currently supported.
                 if (data.Type != "m.login.password")
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_UNKNOWN",
                         error = "Unsupported login type specified. This server only supports password-based login (\"m.login.password\")."
@@ -184,7 +193,7 @@ namespace Mocktrix.client.r0_6_1
                 // If user does not exist, then no login can be performed.
                 if (user == null)
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_INVALID_USERNAME",
                         error = "User id does not exist on this server."
