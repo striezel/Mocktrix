@@ -17,6 +17,7 @@
 */
 
 using Mocktrix.Protocol.Types.DeviceManagement;
+using System.Text.Json;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -114,6 +115,74 @@ namespace Mocktrix.client.r0_6_1
                     LastSeenIP = null,
                     LastSeenTimestamp = null
                 });
+            });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-devices-deviceid,
+            // i. e. the possibility to chance the display name of a device.
+            app.MapPut("/_matrix/client/r0/devices/{deviceId}", async (string deviceId, HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+                if (dev == null)
+                {
+                    return Results.NotFound(new
+                    {
+                        errcode = "M_NOT_FOUND",
+                        error = "Device not found"
+                    });
+                }
+
+                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
+                {
+                    AllowTrailingCommas = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                };
+                DeviceNameChangeData? data = null;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<DeviceNameChangeData>(options);
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                
+                if (data == null)
+                {
+                    return Results.BadRequest(new
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.DisplayName))
+                {
+                    dev.display_name = data.DisplayName;
+                }
+
+                // Update done.
+                return Results.Ok(new { });
             });
         }
     }

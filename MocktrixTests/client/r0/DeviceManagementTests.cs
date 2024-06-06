@@ -280,5 +280,217 @@ namespace MocktrixTests
             Assert.Null(content.LastSeenIP);
             Assert.Null(content.LastSeenTimestamp);
         }
+
+        [Fact]
+        public async Task TestDeviceChangeName_NoAuthorization()
+        {
+            DeviceNameChangeData data = new() { DisplayName = "something else" };
+            var response = await client.PutAsync("/_matrix/client/r0/devices/foobar", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDeviceChangeName_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+            DeviceNameChangeData data = new() { DisplayName = "something else" };
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/devices/foobar", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDeviceChangeName_IdNotFound()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_name_change_id_1",
+                initial_device_display_name = "My name changed device #1"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+            Assert.Equal(body.device_id, login_content.device_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            DeviceNameChangeData data = new() { DisplayName = "something else" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/NonExistentDeviceId2", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+            var expected_response = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "Device not found"
+            };
+            var content = Utilities.GetContent(response, expected_response);
+            Assert.Equal(expected_response.errcode, content.errcode);
+            Assert.Equal(expected_response.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDeviceChangeName_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_name_change_id_2",
+                initial_device_display_name = "My name changed device #2"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+            Assert.Equal(body.device_id, login_content.device_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            DeviceNameChangeData data = new() { DisplayName = "This is a new name!" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/" + login_content.device_id, JsonContent.Create(data));
+            // Request should be successful ...
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // ... and only contain an empty JSON object.
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            // Getting the data of the device should reflect the new name.
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var expected_response = new DeviceData
+            {
+                DeviceId = body.device_id,
+                DisplayName = data.DisplayName,
+                LastSeenIP = null,
+                LastSeenTimestamp = null
+            };
+            var device_content = Utilities.GetContent(response, expected_response);
+            Assert.Equal(expected_response.DeviceId, device_content.DeviceId);
+            Assert.Equal(data.DisplayName, device_content.DisplayName);
+            Assert.Null(device_content.LastSeenIP);
+            Assert.Null(device_content.LastSeenTimestamp);
+        }
+
+        [Fact]
+        public async Task TestDeviceChangeName_SuccessNameUnchanged()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_name_change_id_3",
+                initial_device_display_name = "My name changed device #3"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+            Assert.Equal(body.device_id, login_content.device_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            DeviceNameChangeData data = new() { DisplayName = null };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/" + login_content.device_id, JsonContent.Create(data));
+            // Request should be successful ...
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // ... and only contain an empty JSON object.
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            // Getting the data of the device should still contain the old name.
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var expected_response = new DeviceData
+            {
+                DeviceId = body.device_id,
+                DisplayName = body.initial_device_display_name,
+                LastSeenIP = null,
+                LastSeenTimestamp = null
+            };
+            var device_content = Utilities.GetContent(response, expected_response);
+            Assert.Equal(expected_response.DeviceId, device_content.DeviceId);
+            Assert.Equal(expected_response.DisplayName, device_content.DisplayName);
+        }
     }
 }

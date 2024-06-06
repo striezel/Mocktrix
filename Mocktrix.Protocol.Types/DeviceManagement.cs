@@ -50,4 +50,18 @@ namespace Mocktrix.Protocol.Types.DeviceManagement
         [JsonPropertyName("last_seen_ts")]
         public long? LastSeenTimestamp { get; set; }
     }
+
+
+    /// <summary>
+    /// Data sent by a client via PUT request to change the display name of a
+    /// device.
+    /// </summary>
+    public class DeviceNameChangeData
+    {
+        /// <summary>
+        /// New display name of the device, if any.
+        /// </summary>
+        [JsonPropertyName("display_name")]
+        public string? DisplayName { get; set; }
+    }
 }
