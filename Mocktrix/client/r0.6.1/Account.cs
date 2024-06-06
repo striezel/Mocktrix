@@ -29,7 +29,8 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami,
+            // i. e. gets the user id associated with an access token.
             app.MapGet("/_matrix/client/r0/account/whoami", (HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);

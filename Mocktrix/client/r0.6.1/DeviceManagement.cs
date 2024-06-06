@@ -32,7 +32,8 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices,
+            // i. e. the endpoint to list all devices of the user.
             app.MapGet("/_matrix/client/r0/devices", (HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
@@ -73,7 +74,8 @@ namespace Mocktrix.client.r0_6_1
             });
 
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
+            // i. e. the endpoint to get information about a specific device.
             app.MapGet("/_matrix/client/r0/devices/{deviceId}", (string deviceId, HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);

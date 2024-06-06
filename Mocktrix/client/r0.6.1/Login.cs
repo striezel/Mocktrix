@@ -99,7 +99,8 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoints shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-login.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-login,
+            // i. e. the endpoint to query the server's supported authentication types.
             app.MapGet("/_matrix/client/r0/login", (HttpContext httpContext) =>
             {
                 var flows = new
@@ -112,7 +113,8 @@ namespace Mocktrix.client.r0_6_1
                 return flows;
             });
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-login.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-login,
+            // i. e. the endpoint to perform the actual login of a user.
             app.MapPost("/_matrix/client/r0/login", async (HttpContext context) =>
             {
                 const int maxReadSize = 10000;
@@ -234,7 +236,9 @@ namespace Mocktrix.client.r0_6_1
                 return Results.Ok(response);
             });
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-logout.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-logout,
+            // i. e. the endpoint to log out a single access token of a user and
+            // delete the corresponding device.
             app.MapPost("/_matrix/client/r0/logout", (HttpContext context) =>
             {
                 var auth = Utilities.GetAccessToken(context);
@@ -260,7 +264,9 @@ namespace Mocktrix.client.r0_6_1
                 return Results.Ok(new { });
             });
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-logout-all.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-logout-all,
+            // i. e. the endpoint to log out all access tokens of a user and
+            // delete the corresponding devices.
             app.MapPost("/_matrix/client/r0/logout/all", (HttpContext context) =>
             {
                 var auth = Utilities.GetAccessToken(context);

@@ -31,7 +31,9 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-capabilities.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-capabilities,
+            // i. e. the endpoint to get information about the server's
+            // capabilities and features.
             app.MapGet("/_matrix/client/r0/capabilities", (HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
