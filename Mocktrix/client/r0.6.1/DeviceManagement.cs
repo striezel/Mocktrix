@@ -227,6 +227,27 @@ namespace Mocktrix.client.r0_6_1
                 // TODO: Device deletion should use the user-interactive
                 // authentication API and require the user to re-submit the
                 // current password for the account.
+                //
+                // A possible response could be HTTP 401 and then:
+                // {
+                //  "session": "random server-generated session ID here",
+                //  "flows": [{
+                //    "stages": ["m.login.password"]
+                //  }],
+                //  "params": {}
+                // }
+                //
+                // Then the client has to resubmit the request, but with auth
+                // data containing the current password, for example:
+                // {
+                //   "auth": {
+                //     "type": "m.login.password",
+                //     "session": "same session ID that the server gave",
+                //     "password": "the actual secret password"
+                //   }
+                // }
+                //
+                // Then the actual deletion can be performed.
 
                 // Device was found. Now find associated access token and revoke it.
                 var token_to_revoke = Database.Memory.AccessTokens.FindByUserAndDevice(dev.user_id, deviceId);
