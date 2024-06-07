@@ -187,6 +187,57 @@ namespace Mocktrix.client.r0_6_1
                 // Update done.
                 return Results.Ok(new { });
             });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-devices-deviceid,
+            // i. e. the endpoint to remove a specific device and the
+            // corresponding access token.
+            app.MapDelete("/_matrix/client/r0/devices/{deviceId}", (string deviceId, HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+                if (dev == null)
+                {
+                    // As per specification, status code 200 is also send for a
+                    // device that cannot be found, because the assumption is
+                    // that it was deleted earlier. Assumption is not that it
+                    // never existed in the first place.
+                    return Results.Ok(new { });
+                }
+
+                // TODO: Device deletion should use the user-interactive
+                // authentication API and require the user to re-submit the
+                // current password for the account.
+
+                // Device was found. Now find associated access token and revoke it.
+                var token_to_revoke = Database.Memory.AccessTokens.FindByUserAndDevice(dev.user_id, deviceId);
+                if (token_to_revoke != null)
+                {
+                    Database.Memory.AccessTokens.Revoke(token_to_revoke.token);
+                }
+                // Delete device.
+                _ = Database.Memory.Devices.Remove(dev.device_id, token.user_id);
+                return Results.Ok(new { });
+            });
         }
     }
 }
