@@ -174,7 +174,7 @@ namespace Mocktrix.client.r0_6_1
                     || string.IsNullOrWhiteSpace(data.Password)
                     || ((data.Identifier!= null) && (data.Identifier.Type != "m.id.user")))
                 {
-                    return Results.BadRequest(new
+                    return Results.BadRequest(new ErrorResponse
                     {
                         errcode = "M_BAD_JSON",
                         error = "User id or password is missing, or identifier.type is not \"m.id.user\"."
@@ -253,16 +253,22 @@ namespace Mocktrix.client.r0_6_1
                 var auth = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(auth))
                 {
-                    string json = "{\"errcode\":\"M_MISSING_TOKEN\",\"error\":\"Missing access token.\"}";
-                    return Results.Content(json, "application/json",
-                        System.Text.Encoding.UTF8, StatusCodes.Status401Unauthorized);
+                    ErrorResponse json = new()
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(json, statusCode: StatusCodes.Status401Unauthorized);
                 }
                 var token = Database.Memory.AccessTokens.Find(auth);
                 if (token == null)
                 {
-                    string json = "{\"errcode\":\"M_UNKNOWN_TOKEN\",\"error\":\"Unknown access token.\"}";
-                    return Results.Content(json, "application/json",
-                        System.Text.Encoding.UTF8, StatusCodes.Status401Unauthorized);
+                    ErrorResponse json = new()
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unknown access token."
+                    };
+                    return Results.Json(json, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
                 // Revoke access token.
@@ -281,16 +287,22 @@ namespace Mocktrix.client.r0_6_1
                 var auth = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(auth))
                 {
-                    string json = "{\"errcode\":\"M_MISSING_TOKEN\",\"error\":\"Missing access token.\"}";
-                    return Results.Content(json, "application/json",
-                        System.Text.Encoding.UTF8, StatusCodes.Status401Unauthorized);
+                    ErrorResponse json = new()
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(json, statusCode: StatusCodes.Status401Unauthorized);
                 }
                 var access_token = Database.Memory.AccessTokens.Find(auth);
                 if (access_token == null)
                 {
-                    string json = "{\"errcode\":\"M_UNKNOWN_TOKEN\",\"error\":\"Unknown access token.\"}";
-                    return Results.Content(json, "application/json",
-                        System.Text.Encoding.UTF8, StatusCodes.Status401Unauthorized);
+                    ErrorResponse json = new()
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unknown access token."
+                    };
+                    return Results.Json(json, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
                 var all_tokens_of_user = Database.Memory.AccessTokens.FindByUser(access_token.user_id);

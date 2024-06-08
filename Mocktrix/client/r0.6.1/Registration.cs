@@ -195,7 +195,8 @@ namespace Mocktrix.client.r0_6_1
                 return Results.Json(new { available = true });
             });
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-register.
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-register,
+            // i. e. the possibility to register an account on the homeserver.
             app.MapPost("/_matrix/client/r0/register", async (HttpContext context) =>
             {
                 string kind;
@@ -225,6 +226,12 @@ namespace Mocktrix.client.r0_6_1
                     },
                     statusCode: StatusCodes.Status403Forbidden);
                 }
+
+                // Note: According to the specification, this endpoint uses the
+                // user-interactive authentication API, but this requires
+                // ReCaptcha or a similar mechanism - which is currently not
+                // implemented here for simplicity.
+
                 var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
                 {
                     AllowTrailingCommas = true,

@@ -107,6 +107,7 @@ namespace MocktrixTests
 
             var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
             var expected_response = new
             {
@@ -218,6 +219,7 @@ namespace MocktrixTests
 
             var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/NonExistentDeviceId1");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
             var expected_response = new
             {
@@ -266,6 +268,7 @@ namespace MocktrixTests
 
             var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
             var expected_response = new DeviceData
             {
@@ -362,6 +365,7 @@ namespace MocktrixTests
             DeviceNameChangeData data = new() { DisplayName = "something else" };
             var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/NonExistentDeviceId2", JsonContent.Create(data));
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
             var expected_response = new
             {
@@ -413,6 +417,7 @@ namespace MocktrixTests
             // Request should be successful ...
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             // ... and only contain an empty JSON object.
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             string content = await response.Content.ReadAsStringAsync();
             Assert.Equal("{}", content);
 
@@ -474,12 +479,14 @@ namespace MocktrixTests
             // Request should be successful ...
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             // ... and only contain an empty JSON object.
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             string content = await response.Content.ReadAsStringAsync();
             Assert.Equal("{}", content);
 
             // Getting the data of the device should still contain the old name.
             response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
             var expected_response = new DeviceData
             {
@@ -573,6 +580,7 @@ namespace MocktrixTests
             // per specification it is assumed that the device has been deleted
             // earlier.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var content = await response.Content.ReadAsStringAsync();
             Assert.Equal("{}", content);
         }
@@ -633,6 +641,7 @@ namespace MocktrixTests
             var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/devices/" + second_device_id);
             // Deletion should succeed.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var content = await response.Content.ReadAsStringAsync();
             Assert.Equal("{}", content);
 

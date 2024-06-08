@@ -466,6 +466,7 @@ namespace MocktrixTests
             var response = await client.PostAsync("/_matrix/client/r0/logout", new StringContent(""));
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
             {
                 errcode = "M_MISSING_TOKEN",
@@ -490,6 +491,7 @@ namespace MocktrixTests
             var response = await client_with_header.PostAsync("/_matrix/client/r0/logout", new StringContent(""));
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
             {
                 errcode = "M_UNKNOWN_TOKEN",
@@ -537,6 +539,7 @@ namespace MocktrixTests
             var response = await authenticated_client.PostAsync("/_matrix/client/r0/logout", new StringContent(""));
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new { };
 
             var content = Utilities.GetContent(response, expected);
@@ -551,6 +554,7 @@ namespace MocktrixTests
             var response = await client.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
             {
                 errcode = "M_MISSING_TOKEN",
@@ -575,6 +579,7 @@ namespace MocktrixTests
             var response = await client_with_header.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
             {
                 errcode = "M_UNKNOWN_TOKEN",
@@ -632,6 +637,7 @@ namespace MocktrixTests
                 var response = await authenticated_client.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
 
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
                 var expected = new { };
 
                 var content = Utilities.GetContent(response, expected);
@@ -647,6 +653,7 @@ namespace MocktrixTests
                 authenticated_client_two.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token_two);
                 var response = await authenticated_client_two.PostAsync("/_matrix/client/r0/logout/all", new StringContent(""));
                 Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+                Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
                 var expected = new
                 {
                     errcode = "M_UNKNOWN_TOKEN",

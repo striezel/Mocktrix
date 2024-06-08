@@ -104,6 +104,7 @@ namespace MocktrixTests
 
             var response = await authenticated_client.GetAsync("/_matrix/client/r0/account/whoami");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
             var expected_response = new
             {

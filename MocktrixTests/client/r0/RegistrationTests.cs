@@ -302,13 +302,18 @@ namespace MocktrixTests
         }
 
 
-        [Fact]
-        public async Task TestRegister_WeakPassword()
+        [Theory]
+        [InlineData("password")]
+        [InlineData("1234")]
+        [InlineData("      ")]
+        [InlineData("bad")]
+        [InlineData("quite weak")]
+        public async Task TestRegister_WeakPassword(string inline_password)
         {
             var data = new
             {
                 username = "ray_weak_pass",
-                password = "password"
+                password = inline_password
             };
             var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data));
 

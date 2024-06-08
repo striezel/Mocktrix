@@ -40,7 +40,7 @@ namespace Mocktrix.client.r0_6_1
                 var access_token = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(access_token))
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_MISSING_TOKEN",
                         error = "Missing access token."
@@ -50,7 +50,7 @@ namespace Mocktrix.client.r0_6_1
                 var token = Database.Memory.AccessTokens.Find(access_token);
                 if (token == null)
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_UNKNOWN_TOKEN",
                         error = "Unrecognized access token."
@@ -82,7 +82,7 @@ namespace Mocktrix.client.r0_6_1
                 var access_token = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(access_token))
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_MISSING_TOKEN",
                         error = "Missing access token."
@@ -92,7 +92,7 @@ namespace Mocktrix.client.r0_6_1
                 var token = Database.Memory.AccessTokens.Find(access_token);
                 if (token == null)
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_UNKNOWN_TOKEN",
                         error = "Unrecognized access token."
@@ -103,7 +103,7 @@ namespace Mocktrix.client.r0_6_1
                 Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
                 if (dev == null)
                 {
-                    return Results.NotFound(new
+                    return Results.NotFound(new ErrorResponse
                     {
                         errcode = "M_NOT_FOUND",
                         error = "Device not found"
@@ -196,7 +196,7 @@ namespace Mocktrix.client.r0_6_1
                 var access_token = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(access_token))
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_MISSING_TOKEN",
                         error = "Missing access token."
@@ -206,22 +206,12 @@ namespace Mocktrix.client.r0_6_1
                 var token = Database.Memory.AccessTokens.Find(access_token);
                 if (token == null)
                 {
-                    var error = new
+                    var error = new ErrorResponse
                     {
                         errcode = "M_UNKNOWN_TOKEN",
                         error = "Unrecognized access token."
                     };
                     return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
-                if (dev == null)
-                {
-                    // As per specification, status code 200 is also send for a
-                    // device that cannot be found, because the assumption is
-                    // that it was deleted earlier. Assumption is not that it
-                    // never existed in the first place.
-                    return Results.Ok(new { });
                 }
 
                 // TODO: Device deletion should use the user-interactive
@@ -248,6 +238,16 @@ namespace Mocktrix.client.r0_6_1
                 // }
                 //
                 // Then the actual deletion can be performed.
+
+                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+                if (dev == null)
+                {
+                    // As per specification, status code 200 is also send for a
+                    // device that cannot be found, because the assumption is
+                    // that it was deleted earlier. Assumption is not that it
+                    // never existed in the first place.
+                    return Results.Ok(new { });
+                }
 
                 // Device was found. Now find associated access token and revoke it.
                 var token_to_revoke = Database.Memory.AccessTokens.FindByUserAndDevice(dev.user_id, deviceId);
