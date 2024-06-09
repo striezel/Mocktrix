@@ -19,9 +19,20 @@
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.DeviceManagement;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Mocktrix.client.r0_6_1
 {
+    internal class DeleteDevicesData
+    {
+        /// <summary>
+        /// Contains ids of the devices that shall be deleted.
+        /// </summary>
+        [JsonPropertyName("devices")]
+        public required List<string> Devices { get; set; }
+    }
+
+
     /// <summary>
     /// Contains implementation of device management endpoints for version r0.6.1.
     /// </summary>
@@ -59,7 +70,7 @@ namespace Mocktrix.client.r0_6_1
                 }
 
                 var devices = Database.Memory.Devices.GetDevicesOfUser(token.user_id);
-                
+
                 var result = new List<DeviceData>(devices.Count);
                 foreach (var device in devices)
                 {
@@ -169,7 +180,7 @@ namespace Mocktrix.client.r0_6_1
                 {
                     data = null;
                 }
-                
+
                 if (data == null)
                 {
                     return Results.BadRequest(new ErrorResponse
@@ -257,6 +268,79 @@ namespace Mocktrix.client.r0_6_1
                 }
                 // Delete device.
                 _ = Database.Memory.Devices.Remove(dev.device_id, token.user_id);
+                return Results.Ok(new { });
+            });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-delete-devices,
+            // i. e. the endpoint to delete a list of specified devices and
+            // revoke the associated access tokens.
+            app.MapPost("/_matrix/client/r0/delete_devices", async (HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                // TODO: Device deletion should use the user-interactive
+                // authentication API and require the user to re-submit the
+                // current password for the account.
+
+                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
+                {
+                    AllowTrailingCommas = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                };
+                DeleteDevicesData? data;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<DeleteDevicesData>(options);
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                if (data == null || data.Devices == null)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+
+                foreach (string deviceId in data.Devices)
+                {
+                    Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+                    if (dev != null)
+                    {
+                        // Find and revoke access token.
+                        var token_to_revoke = Database.Memory.AccessTokens.FindByUserAndDevice(dev.user_id, deviceId);
+                        if (token_to_revoke != null)
+                        {
+                            Database.Memory.AccessTokens.Revoke(token_to_revoke.token);
+                        }
+                        // Delete device.
+                        _ = Database.Memory.Devices.Remove(dev.device_id, token.user_id);
+                    }
+                }
+
                 return Results.Ok(new { });
             });
         }

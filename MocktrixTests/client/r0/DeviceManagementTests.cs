@@ -672,5 +672,193 @@ namespace MocktrixTests
             var second_device = device_content.devices.Find(dev => dev.DeviceId == second_device_id);
             Assert.Null(second_device);
         }
+
+        [Fact]
+        public async Task TestMultipleDeviceDelete_NoAuthorization()
+        {
+            var data = new {
+                devices = new List<string>() { "foo", "bar" }
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestMultipleDeviceDeletion_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+            var data = new
+            {
+                devices = new List<string>() { "foo", "bar" }
+            };
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestMultipleDeviceDeletion_IdNotFound()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_delete_id_5",
+                initial_device_display_name = "My deletion device #5"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+            Assert.Equal(body.device_id, login_content.device_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var data = new
+            {
+                devices = new List<string>() { "foo", "bar" }
+            };
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            // Deleting a non-existent device will return "200 OK", because as
+            // per specification it is assumed that the device has been deleted
+            // earlier.
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+        }
+
+        [Fact]
+        public async Task TestMultipleDeviceDeletion_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_delete_id_6",
+                initial_device_display_name = "My deletion device #6"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+            Assert.Equal(body.device_id, login_content.device_id);
+            string first_device_id = login_content.device_id;
+
+            // Second login for second device.
+            body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_delete_id_7",
+                initial_device_display_name = "My deletion device #7"
+            };
+            login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            login_content = Utilities.GetContent(login_response, login_data);
+            var second_access_token = login_content.access_token;
+            string second_device_id = login_content.device_id;
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var data = new
+            {
+                devices = new List<string>() { second_device_id }
+            };
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            // Deletion should succeed.
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            // Get current devices to check it.
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var device_response = new
+            {
+                devices = new List<DeviceData>()
+                {
+                    new ()
+                    {
+                        DeviceId = body.device_id,
+                        DisplayName = "My device mgmt. dev #2",
+                        LastSeenIP = null,
+                        LastSeenTimestamp = null
+                    }
+                }
+            };
+
+            var device_content = Utilities.GetContent(response, device_response);
+            Assert.NotNull(device_content.devices);
+            // Device list should still contain the first device, ...
+            var first_dev = device_content.devices.Find(dev => dev.DeviceId == first_device_id);
+            Assert.NotNull(first_dev);
+            // ... but the second device should be deleted.
+            var second_device = device_content.devices.Find(dev => dev.DeviceId == second_device_id);
+            Assert.Null(second_device);
+        }
     }
 }
