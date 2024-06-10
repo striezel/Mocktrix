@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Mocktrix.Configuration\Mocktrix.Configuration.csproj" />
     <ProjectReference Include="..\Mocktrix.Database.Memory\Mocktrix.Database.Memory.csproj" />
     <ProjectReference Include="..\Mocktrix.Data\Mocktrix.Data.csproj" />
     <ProjectReference Include="..\Mocktrix.Protocol.Types\Mocktrix.Protocol.Types.csproj" />

@@ -22,6 +22,7 @@ using Mocktrix.Protocol.Types;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ConfigurationManager = Mocktrix.Configuration.ConfigurationManager;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -215,6 +216,16 @@ namespace Mocktrix.client.r0_6_1
                         errcode = "M_UNRECOGNIZED",
                         error = "Membership kind must be either 'user' or 'guest'."
                     });
+                }
+                // Check whether account registration is enabled.
+                if (!ConfigurationManager.Current.EnableRegistration)
+                {
+                    return Results.Json(new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "Registration of accounts is disabled."
+                    },
+                    statusCode: StatusCodes.Status403Forbidden);
                 }
                 // Currently, guest accounts are not supported.
                 if (kind == "guest")

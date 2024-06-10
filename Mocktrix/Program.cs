@@ -20,8 +20,53 @@ namespace Mocktrix
 {
     public class Program
     {
-        public static void Main(string[] args)
+        /// <summary>
+        /// Parses and handles command-line arguments of the program.
+        /// </summary>
+        /// <param name="args">the array of arguments</param>
+        /// <returns>Returns zero, if parsing was successful.
+        /// Returns a non-zero value, if an error occurred.</returns>
+        public static int ParseArguments(string[] args)
         {
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "--conf")
+                {
+                    if (i + 1 >= args.Length)
+                    {
+                        Console.Error.WriteLine("Error: Parameter " + args[i]
+                            + " must be followed by a file path for the configuration file!");
+                        return 1;
+                    }
+                    if (!Configuration.ConfigurationManager.Current.LoadFromFile(args[i+1]))
+                    {
+                        Console.Error.WriteLine("Failed to load configuration file!");
+                        return 1;
+                    }
+                    Console.WriteLine("Information: Configuration was loaded from file "
+                        + args[i + 1] + ".");
+                    // Skip next argument, that is the file name.
+                    ++i;
+                }
+                else
+                {
+                    Console.Error.WriteLine("Error: " + args[i]
+                        + " is not a valid command line option!");
+                    return 1;
+                }
+            }
+
+            return 0;
+        }
+
+        public static int Main(string[] args)
+        {
+            int rc = ParseArguments(args);
+            if (rc != 0)
+            {
+                return rc;
+            }
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -37,6 +82,8 @@ namespace Mocktrix
             MockData.Add();
 
             app.Run();
+            
+            return 0;
         }
     }
 }
