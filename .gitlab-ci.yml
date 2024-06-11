@@ -9,8 +9,11 @@ build:
     - dotnet restore ./Mocktrix/Mocktrix.sln
     # Build projects.
     - dotnet build ./Mocktrix/Mocktrix.sln
+    # Run tests for Mocktrix.Configuration.
+    - cd Mocktrix.Configuration.Tests
+    - dotnet test
     # Run tests for Mocktrix.Data.
-    - cd Mocktrix.Data.Tests
+    - cd ../Mocktrix.Data.Tests
     - dotnet test
     # Run tests for Mocktrix.Database.Memory.
     - cd ../Mocktrix.Database.Memory.Tests

@@ -22,6 +22,10 @@ jobs:
       - name: Build projects
         run: |
           dotnet build ./Mocktrix/Mocktrix.sln
+      - name: Run tests for Mocktrix.Configuration
+        run: |
+          cd "$GITHUB_WORKSPACE"/Mocktrix.Configuration.Tests/
+          dotnet test
       - name: Run tests for Mocktrix.Data
         run: |
           cd "$GITHUB_WORKSPACE"/Mocktrix.Data.Tests/
