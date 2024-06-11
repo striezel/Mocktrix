@@ -16,28 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Mocktrix.client.r0_6_1
+using System.Text.Json.Serialization;
+
+namespace Mocktrix.Protocol.Types.Media
 {
     /// <summary>
-    /// Provides convenience methods for use of the client-server API.
+    /// Contains configuration information for the media repository.
     /// </summary>
-    public static class All
+    public class MediaConfiguration
     {
         /// <summary>
-        /// Adds all implemented endpoints of this version of the client-server
-        /// API to the web application.
+        /// The maximum size an upload can be in bytes.
         /// </summary>
-        /// <param name="app">the app to which the endpoint shall be added</param>
-        public static void AddEndpoints(WebApplication app)
-        {
-            Versions.AddEndpoints(app);
-            ServerDiscovery.AddEndpoints(app);
-            Login.AddEndpoints(app);
-            Account.AddEndpoints(app);
-            Capabilities.AddEndpoints(app);
-            Registration.AddEndpoints(app);
-            DeviceManagement.AddEndpoints(app);
-            Media.AddEndpoints(app);
-        }
+        [JsonPropertyName("m.upload.size")]
+        public required ulong? UploadSize { get; set; } = null;
     }
 }
