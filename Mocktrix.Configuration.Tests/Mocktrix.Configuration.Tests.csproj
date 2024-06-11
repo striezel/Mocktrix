@@ -7,6 +7,10 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <Authors>Dirk Stolle</Authors>
+    <Description>Contains tests for Mocktrix.Configuration.</Description>
+    <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

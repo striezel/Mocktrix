@@ -4,6 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Authors>Dirk Stolle</Authors>
+    <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <Description>Contains configuration classes for Mocktrix.</Description>
   </PropertyGroup>
 
 </Project>
