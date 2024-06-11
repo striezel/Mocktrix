@@ -59,7 +59,9 @@ namespace Mocktrix.Configuration.Tests
         public void SaveToFile_Failure()
         {
             var conf = new Configuration();
-            var path = "C:\\Path\\Does\\Not\\Exist.tmp";
+            var path = System.OperatingSystem.IsWindows()
+                ? "C:\\Path\\Here\\Does\\Not\\Exist.tmp"
+                : "/path/here/does/not/exist.tmp";
             try
             {
                 var success = conf.SaveToFile(path);
