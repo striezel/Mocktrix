@@ -49,6 +49,44 @@ namespace Mocktrix.client.r0_6_1
             // by not allowing it.
             app.MapPost("/_matrix/client/r0/account/password/msisdn/requestToken", DoNotAllowThreePID);
 
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-3pid,
+            // i. e. gets list of associated third-party ids for the user id
+            // associated with an access token.
+            app.MapGet("/_matrix/client/r0/account/3pid", (HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                // Third-party ids are not implemented, so the list is always empty.
+                return Results.Ok(new { threepid = new List<object>(0) { } });
+            });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-email-requesttoken
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/3pid/email/requestToken", DoNotAllowThreePID);
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-msisdn-requesttoken
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/3pid/msisdn/requestToken", DoNotAllowThreePID);
+
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami,
             // i. e. gets the user id associated with an access token.
             app.MapGet("/_matrix/client/r0/account/whoami", (HttpContext context) =>
