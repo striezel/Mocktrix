@@ -29,6 +29,61 @@ namespace MocktrixTests
         };
 
         [Fact]
+        public async Task TestMailAccountToken()
+        {
+            var postData = new
+            {
+                client_secret = "not so secret",
+                email = "alice@example.org",
+                send_attempt = 1,
+                next_link = "https://example.org/congratulations.html",
+                id_server = "id.example.com",
+                id_access_token = "some_string"
+            };
+
+            var response = await client.PostAsync("/_matrix/client/r0/account/password/email/requestToken", JsonContent.Create(postData));
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_THREEPID_DENIED",
+                error = "Third-party identifier is not allowed here."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestPhoneAccountToken()
+        {
+            var postData = new
+            {
+                client_secret = "not so secret",
+                country = "GB",
+                phone_number = "07700900001",
+                send_attempt = 1,
+                next_link = "https://example.org/congratulations.html",
+                id_server = "id.example.com",
+                id_access_token = "some_string"
+            };
+
+            var response = await client.PostAsync("/_matrix/client/r0/account/password/msisdn/requestToken", JsonContent.Create(postData));
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_THREEPID_DENIED",
+                error = "Third-party identifier is not allowed here."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
         public async Task TestWhoami_NoAuthorization()
         {
             var response = await client.GetAsync("/_matrix/client/r0/account/whoami");

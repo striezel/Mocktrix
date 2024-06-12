@@ -31,6 +31,24 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
+            var DoNotAllowThreePID = (HttpContext context) =>
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_THREEPID_DENIED",
+                    error = "Third-party identifier is not allowed here."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
+            };
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-password-email-requesttoken
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/password/email/requestToken", DoNotAllowThreePID);
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-password-msisdn-requesttoken
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/password/msisdn/requestToken", DoNotAllowThreePID);
+
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami,
             // i. e. gets the user id associated with an access token.
             app.MapGet("/_matrix/client/r0/account/whoami", (HttpContext context) =>
