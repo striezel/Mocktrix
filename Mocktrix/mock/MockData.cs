@@ -39,6 +39,13 @@ namespace Mocktrix
 
             // User for test of logging out all access tokens of a user at once.
             _ = Database.Memory.Users.CreateUser("@all_alice:matrix.example.org", "my secret password");
+
+            // Users for display name testing.
+            var display_name_user = Database.Memory.Users.CreateUser("@unnamed_user:" + base_address.Host, "bad password");
+            display_name_user.display_name = null;
+
+            var user_with_name = Database.Memory.Users.CreateUser("@named_user:" + base_address.Host, "some password");
+            user_with_name.display_name = "Nomen Nominandum";
         }
     }
 }

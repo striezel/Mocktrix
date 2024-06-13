@@ -29,6 +29,7 @@ namespace Mocktrix.Data.Tests
             Assert.Equal("@alice:matrix.example.com", user.user_id);
             Assert.Equal("affeaffeaffe0123456789", user.password_hash);
             Assert.Equal([65, 66, 67, 68, 69], user.salt);
+            Assert.Null(user.display_name);
         }
     }
 }

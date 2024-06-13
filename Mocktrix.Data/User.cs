@@ -42,5 +42,11 @@ namespace Mocktrix.Data
         /// the salt used in password hashing
         /// </summary>
         public byte[] salt = salty;
+
+
+        /// <summary>
+        /// the user's display name
+        /// </summary>
+        public string? display_name = default;
     }
 }
