@@ -46,6 +46,9 @@ namespace Mocktrix
 
             var user_with_name = Database.Memory.Users.CreateUser("@named_user:" + base_address.Host, "some password");
             user_with_name.display_name = "Nomen Nominandum";
+
+            var name_change_user = Database.Memory.Users.CreateUser("@name_change_user:" + base_address.Host, "some password");
+            name_change_user.display_name = "No Name";
         }
     }
 }
