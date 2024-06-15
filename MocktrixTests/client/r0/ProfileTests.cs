@@ -207,5 +207,47 @@ namespace MocktrixTests
             var retrieval_content = Utilities.GetContent(response, expected);
             Assert.Equal(expected.displayname, retrieval_content.displayname);
         }
+
+        [Fact]
+        public async Task TestRetrieveAvatarUrl_NonExistentUser()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host + "/avatar_url");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "The user profile was not found."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestRetrieveAvatarUrl_ExistingUserWithoutAvatar()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@no_avatar:" + client.BaseAddress?.Host + "/avatar_url");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+        }
+
+        [Fact]
+        public async Task TestRetrieveAvatarUrl_ExistingUserWithAvatar()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_user:" + client.BaseAddress?.Host + "/avatar_url");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                avatar_url = "mxc://matrix.org/FooBar"
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.avatar_url, content.avatar_url);
+        }
     }
 }

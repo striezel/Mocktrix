@@ -129,6 +129,37 @@ namespace Mocktrix.client.r0_6_1
                 }
                 return Results.Ok(new { });
             });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid-avatar-url,
+            // i. e. the possibility to query a user's avatar URL.
+            app.MapGet("/_matrix/client/r0/profile/{userId}/avatar_url", (string userId, HttpContext context) =>
+            {
+                // TODO: Implement lookup for cases where user id is on a
+                // different homeserver.
+
+                var user = Database.Memory.Users.GetUser(userId);
+                if (user == null)
+                {
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_NOT_FOUND",
+                        error = "The user profile was not found."
+                    };
+                    return Results.NotFound(response);
+                }
+                if (string.IsNullOrWhiteSpace(user.avatar_url))
+                {
+                    return Results.Ok(new { });
+                }
+
+                var data = new
+                {
+                    avatar_url = user.avatar_url
+                };
+
+                // Return the display name.
+                return Results.Ok(data);
+            });
         }
     }
 }

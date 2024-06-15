@@ -48,5 +48,11 @@ namespace Mocktrix.Data
         /// the user's display name
         /// </summary>
         public string? display_name = default;
+
+
+        /// <summary>
+        /// the user's avatar URL as Matrix Content (MXC) URI
+        /// </summary>
+        public string? avatar_url = default;
     }
 }

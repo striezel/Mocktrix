@@ -30,6 +30,7 @@ namespace Mocktrix.Data.Tests
             Assert.Equal("affeaffeaffe0123456789", user.password_hash);
             Assert.Equal([65, 66, 67, 68, 69], user.salt);
             Assert.Null(user.display_name);
+            Assert.Null(user.avatar_url);
         }
     }
 }
