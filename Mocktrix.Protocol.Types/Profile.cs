@@ -32,4 +32,18 @@ namespace Mocktrix.Protocol.Types.Profile
         [JsonPropertyName("displayname")]
         public string? DisplayName { get; set; } = null;
     }
+
+
+    /// <summary>
+    /// Data sent by a client via PUT request to change the avatar URL of a
+    /// user account.
+    /// </summary>
+    public class AvatarUrlChangeData
+    {
+        /// <summary>
+        /// The new avatar URL of the user as Matrix Content (MXC) URI.
+        /// </summary>
+        [JsonPropertyName("avatar_url")]
+        public string? AvatarUrl { get; set; } = null;
+    }
 }

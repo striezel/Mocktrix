@@ -249,5 +249,143 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected);
             Assert.Equal(expected.avatar_url, content.avatar_url);
         }
+
+        [Fact]
+        public async Task TestChangeAvatarUrl_NoAuthorization()
+        {
+            var data = new { displayname = "Alice" };
+            var response = await client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/avatar_url", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestChangeAvatarUrl_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+
+            var data = new { displayname = "Alice" };
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/avatar_url", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestChangeAvatarUrl_WrongUser()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                initial_device_display_name = "My device"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { avatar_url = "mxc://matrix.example.org/SomeOtherMediaId" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@all_alice:matrix.example.org/avatar_url", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "Changing someone else's profile is not allowed."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestChangeAvatarUrl_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "avatar_change_user"
+                },
+                password = "some password"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@...",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { avatar_url = "mxc://matrix.example.org/LookItHasChangedHere" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@avatar_change_user:" + authenticated_client.BaseAddress.Host + "/avatar_url", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_change_user:" + client.BaseAddress?.Host + "/avatar_url");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                avatar_url = "mxc://matrix.example.org/LookItHasChangedHere"
+            };
+            var retrieval_content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.avatar_url, retrieval_content.avatar_url);
+        }
     }
 }

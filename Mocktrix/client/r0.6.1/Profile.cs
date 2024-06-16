@@ -160,6 +160,73 @@ namespace Mocktrix.client.r0_6_1
                 // Return the display name.
                 return Results.Ok(data);
             });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-profile-userid-avatar-url,
+            // i. e. the possibility to change the own avatar URL.
+            app.MapPut("/_matrix/client/r0/profile/{userId}/avatar_url", async (string userId, HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                // User id in URL and user id of token must match. Otherwise
+                // somebody is trying to change someone else's profile data.
+                if (token.user_id != userId)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "Changing someone else's profile is not allowed."
+                    });
+                }
+
+                AvatarUrlChangeData? data = null;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<AvatarUrlChangeData>();
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                if (data == null)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(data.AvatarUrl))
+                {
+                    data.AvatarUrl = null;
+                }
+
+                var user = Database.Memory.Users.GetUser(token.user_id);
+                if (user != null)
+                {
+                    user.avatar_url = data.AvatarUrl;
+                }
+                return Results.Ok(new { });
+            });
         }
     }
 }
