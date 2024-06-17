@@ -18,6 +18,8 @@
 
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Profile;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -226,6 +228,38 @@ namespace Mocktrix.client.r0_6_1
                     user.avatar_url = data.AvatarUrl;
                 }
                 return Results.Ok(new { });
+            });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid,
+            // i. e. the endpoint to get a user's profile information.
+            app.MapGet("/_matrix/client/r0/profile/{userId}", (string userId, HttpContext context) =>
+            {
+                // TODO: Implement lookup for cases where user id is on a
+                // different homeserver.
+
+                var user = Database.Memory.Users.GetUser(userId);
+                if (user == null)
+                {
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_NOT_FOUND",
+                        error = "The user profile was not found."
+                    };
+                    return Results.NotFound(response);
+                }
+
+                var data = new
+                {
+                    avatar_url = user.avatar_url,
+                    displayname = user.display_name
+                };
+                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                };
+
+                // Return the profile data.
+                return Results.Json(data, options);
             });
         }
     }

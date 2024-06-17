@@ -59,6 +59,11 @@ namespace Mocktrix
 
             var avatar_change_user = Database.Memory.Users.CreateUser("@avatar_change_user:" + base_address.Host, "some password");
             avatar_change_user.avatar_url = "mxc://matrix.org/SomeOpaqueIdentifier";
+
+            // User for profile testing.
+            var profile_user = Database.Memory.Users.CreateUser("@profile:" + base_address.Host, "don't use this password");
+            profile_user.avatar_url = "mxc://matrix.org/DifferentMediaId";
+            profile_user.display_name = "Profiler";
         }
     }
 }

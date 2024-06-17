@@ -387,5 +387,71 @@ namespace MocktrixTests
             var retrieval_content = Utilities.GetContent(response, expected);
             Assert.Equal(expected.avatar_url, retrieval_content.avatar_url);
         }
+
+        [Fact]
+        public async Task TestRetrieveProfile_NonExistentUser()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "The user profile was not found."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestRetrieveProfile_ExistingUserWithoutAnyProfileInformation()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@unnamed_user:" + client.BaseAddress?.Host);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+        }
+
+        [Fact]
+        public async Task TestRetrieveProfile_ExistingUserWithDisplayNameAndNoAvatar()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@named_user:" + client.BaseAddress?.Host);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{\"displayname\":\"Nomen Nominandum\"}", content);
+        }
+
+        [Fact]
+        public async Task TestRetrieveProfile_ExistingUserWithAvatarAndNoDisplayName()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_user:" + client.BaseAddress?.Host);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{\"avatar_url\":\"mxc://matrix.org/FooBar\"}", content);
+        }
+
+        [Fact]
+        public async Task TestRetrieveProfile_ExistingUserWithAvatarAndDisplayName()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@profile:" + client.BaseAddress?.Host);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                avatar_url = "mxc://matrix.org/DifferentMediaId",
+                displayname = "Profiler"
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.avatar_url, content.avatar_url);
+            Assert.Equal(expected.displayname, content.displayname);
+        }
     }
 }
