@@ -41,6 +41,37 @@ namespace Mocktrix.client.r0_6_1
                 return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
             };
 
+            var DoNotAllowThreePIDAuthRequired = (HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                var error = new ErrorResponse
+                {
+                    errcode = "M_THREEPID_DENIED",
+                    error = "Third-party identifier is not allowed here."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
+            };
+
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-password-email-requesttoken
             // by not allowing it.
             app.MapPost("/_matrix/client/r0/account/password/email/requestToken", DoNotAllowThreePID);
@@ -78,6 +109,22 @@ namespace Mocktrix.client.r0_6_1
                 // Third-party ids are not implemented, so the list is always empty.
                 return Results.Ok(new { threepid = new List<object>(0) { } });
             });
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-add
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/3pid/add", DoNotAllowThreePIDAuthRequired);
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-bind
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/3pid/bind", DoNotAllowThreePIDAuthRequired);
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-delete
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/3pid/delete", DoNotAllowThreePIDAuthRequired);
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-unbind
+            // by not allowing it.
+            app.MapPost("/_matrix/client/r0/account/3pid/unbind", DoNotAllowThreePIDAuthRequired);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-email-requesttoken
             // by not allowing it.
