@@ -38,6 +38,10 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE"/Mocktrix/
           dotnet run &
-          sleep 5
+          while ! netstat -tna | grep LISTEN | grep --silent 5289
+          do
+              echo Waiting for Kestrel server to start ...
+              sleep 5
+          done
           cd ../MocktrixTests/
           dotnet test
