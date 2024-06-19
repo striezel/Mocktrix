@@ -45,7 +45,7 @@ namespace Mocktrix.Protocol.Types.DeviceManagement
 
         /// <summary>
         /// The timestamp in milliseconds since the Unix epoch when this
-        /// devices was last active.
+        /// device was last active.
         /// </summary>
         [JsonPropertyName("last_seen_ts")]
         public long? LastSeenTimestamp { get; set; }

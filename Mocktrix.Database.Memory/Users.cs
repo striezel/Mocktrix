@@ -34,7 +34,7 @@ namespace Mocktrix.Database.Memory
         /// <summary>
         /// Creates and adds a new user.
         /// </summary>
-        /// <param name="id">user id, e. g. "@alice:example.com"</param>
+        /// <param name="id">user id, e.g. "@alice:example.com"</param>
         /// <param name="password">the user's password</param>
         /// <returns>Returns the created user.</returns>
         public static User CreateUser(string id, string password)

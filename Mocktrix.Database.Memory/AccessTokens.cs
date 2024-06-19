@@ -36,7 +36,7 @@ namespace Mocktrix.Database.Memory
         /// If a token for that device already exists, then a new token is
         /// generated and the old token is invalidated.
         /// </summary>
-        /// <param name="user_id">user id, e. g. "@alice:example.com"</param>
+        /// <param name="user_id">user id, e.g. "@alice:example.com"</param>
         /// <param name="dev_id">the device id</param>
         /// <returns>Returns the created access token.</returns>
         public static AccessToken CreateToken(string user_id, string dev_id)
@@ -81,7 +81,7 @@ namespace Mocktrix.Database.Memory
 
 
         /// <summary>
-        /// Gets all existing tokens for an user id.
+        /// Gets all existing tokens for a user id.
         /// </summary>
         /// <param name="user_id">id of the user</param>
         /// <returns>Returns a list of all matching tokens.

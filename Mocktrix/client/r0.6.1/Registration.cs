@@ -150,7 +150,7 @@ namespace Mocktrix.client.r0_6_1
             app.MapPost("/_matrix/client/r0/register/msisdn/requestToken", NotSupported);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-register-available,
-            // i. e. the endpoint to check whether a username is still available
+            // i.e. the endpoint to check whether a username is still available
             // on the server. It also checks the username for validity on this
             // server.
             app.MapGet("/_matrix/client/r0/register/available", (HttpContext context) =>
@@ -197,7 +197,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-register,
-            // i. e. the possibility to register an account on the homeserver.
+            // i.e. the possibility to register an account on the homeserver.
             app.MapPost("/_matrix/client/r0/register", async (HttpContext context) =>
             {
                 string kind;

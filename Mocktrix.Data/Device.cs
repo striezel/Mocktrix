@@ -25,7 +25,7 @@ namespace Mocktrix.Data
     /// Holds information about a device.
     /// </summary>
     /// <param name="dev_id">device id</param>
-    /// <param name="uid">id of the user, including homeserver domain, e. g. "@foo:matrix.example.org"</param>
+    /// <param name="uid">id of the user, including homeserver domain, e.g. "@foo:matrix.example.org"</param>
     /// <param name="name">display name of the device, may be null</param>
     public class Device(string dev_id, string uid, string? name = null)
     {
@@ -36,7 +36,7 @@ namespace Mocktrix.Data
 
 
         /// <summary>
-        /// id of the user, including homeserver domain, e. g. "@foo:matrix.example.org"
+        /// id of the user, including homeserver domain, e.g. "@foo:matrix.example.org"
         /// </summary>
         public string user_id = uid;
 

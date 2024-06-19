@@ -219,7 +219,7 @@ namespace Mocktrix.Database.Memory.Tests
             Assert.NotNull(Devices.GetDevice(dev_id, user_id));
             // Remove device - shall succeed.
             Assert.True(Devices.Remove(dev_id, second_device.user_id));
-            // Removed device shall not longer be found.
+            // Removed device shall no longer be found.
             Assert.Null(Devices.GetDevice(dev_id, second_device.user_id));
             // But the first device must still be there.
             Assert.NotNull(Devices.GetDevice(first_device.device_id, first_device.user_id));
@@ -239,7 +239,7 @@ namespace Mocktrix.Database.Memory.Tests
             var alice_device = Devices.CreateDevice(dev_id, alice_id, "Alices's non-permanent device");
             // Remove device - shall succeed.
             Assert.True(Devices.Remove(dev_id, alice_id));
-            // Removed device shall not longer be found.
+            // Removed device shall no longer be found.
             Assert.Null(Devices.GetDevice(dev_id, alice_device.user_id));
             // But the first device must still be there.
             Assert.NotNull(Devices.GetDevice(bob_device.device_id, bob_device.user_id));

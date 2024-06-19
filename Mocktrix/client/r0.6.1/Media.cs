@@ -33,7 +33,7 @@ namespace Mocktrix.client.r0_6_1
         public static void AddEndpoints(WebApplication app)
         {
             // Implements // https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-media-r0-config,
-            // i. e. the endpoint to query media-related configuration settings.
+            // i.e. the endpoint to query media-related configuration settings.
             app.MapGet("/_matrix/media/r0/config", (HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);

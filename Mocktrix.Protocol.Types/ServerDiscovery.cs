@@ -26,7 +26,7 @@ namespace Mocktrix.Protocol.Types
     public struct HomeserverInformation
     {
         /// <summary>
-        /// The base URL for the homeserver for client-server connections, e. g.
+        /// The base URL for the homeserver for client-server connections, e.g.
         /// "https://matrix.example.org".
         /// </summary>
         [JsonPropertyName("base_url")]

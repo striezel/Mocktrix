@@ -25,7 +25,7 @@ namespace Mocktrix.Protocol.Types
     {
 #pragma warning disable IDE1006 // naming style
         /// <summary>
-        /// Unique string used in handling the error, e. g. "M_FORBIDDEN".
+        /// Unique string used in handling the error, e.g. "M_FORBIDDEN".
         /// </summary>
 
         public required string errcode { get; set; }

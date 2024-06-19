@@ -81,7 +81,7 @@ namespace Mocktrix.client.r0_6_1
             app.MapPost("/_matrix/client/r0/account/password/msisdn/requestToken", DoNotAllowThreePID);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-3pid,
-            // i. e. gets list of associated third-party ids for the user id
+            // i.e. gets list of associated third-party ids for the user id
             // associated with an access token.
             app.MapGet("/_matrix/client/r0/account/3pid", (HttpContext context) =>
             {
@@ -135,7 +135,7 @@ namespace Mocktrix.client.r0_6_1
             app.MapPost("/_matrix/client/r0/account/3pid/msisdn/requestToken", DoNotAllowThreePID);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami,
-            // i. e. gets the user id associated with an access token.
+            // i.e. gets the user id associated with an access token.
             app.MapGet("/_matrix/client/r0/account/whoami", (HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);

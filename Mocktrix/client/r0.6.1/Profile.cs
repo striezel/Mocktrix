@@ -35,7 +35,7 @@ namespace Mocktrix.client.r0_6_1
         public static void AddEndpoints(WebApplication app)
         {
             // Implements https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid-displayname,
-            // i. e. the endpoint to query a user's display name.
+            // i.e. the endpoint to query a user's display name.
             app.MapGet("/_matrix/client/r0/profile/{userId}/displayname", (string userId, HttpContext context) =>
             {
                 // TODO: Implement lookup for cases where user id is on a
@@ -66,7 +66,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-profile-userid-displayname,
-            // i. e. the possibility to change the own display name.
+            // i.e. the possibility to change the own display name.
             app.MapPut("/_matrix/client/r0/profile/{userId}/displayname", async (string userId, HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
@@ -90,7 +90,7 @@ namespace Mocktrix.client.r0_6_1
                     return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
-                // User id in URL and user id of token must match. Otherwise
+                // User id in URL and user id of token must match. Otherwise,
                 // somebody is trying to change someone else's profile data.
                 if (token.user_id != userId)
                 {
@@ -133,7 +133,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid-avatar-url,
-            // i. e. the possibility to query a user's avatar URL.
+            // i.e. the possibility to query a user's avatar URL.
             app.MapGet("/_matrix/client/r0/profile/{userId}/avatar_url", (string userId, HttpContext context) =>
             {
                 // TODO: Implement lookup for cases where user id is on a
@@ -164,7 +164,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-profile-userid-avatar-url,
-            // i. e. the possibility to change the own avatar URL.
+            // i.e. the possibility to change the own avatar URL.
             app.MapPut("/_matrix/client/r0/profile/{userId}/avatar_url", async (string userId, HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
@@ -188,7 +188,7 @@ namespace Mocktrix.client.r0_6_1
                     return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
-                // User id in URL and user id of token must match. Otherwise
+                // User id in URL and user id of token must match. Otherwise,
                 // somebody is trying to change someone else's profile data.
                 if (token.user_id != userId)
                 {
@@ -231,7 +231,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid,
-            // i. e. the endpoint to get a user's profile information.
+            // i.e. the endpoint to get a user's profile information.
             app.MapGet("/_matrix/client/r0/profile/{userId}", (string userId, HttpContext context) =>
             {
                 // TODO: Implement lookup for cases where user id is on a

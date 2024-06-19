@@ -24,13 +24,13 @@ namespace Mocktrix.Data
     /// <summary>
     /// Holds information about an access token.
     /// </summary>
-    /// <param name="uid">id of the user, including homeserver domain, e. g. "@foo:matrix.example.org"</param>
+    /// <param name="uid">id of the user, including homeserver domain, e.g. "@foo:matrix.example.org"</param>
     /// <param name="dev_id">device id</param>
     /// <param name="tok">the actual token</param>
     public class AccessToken(string uid, string dev_id, string tok)
     {
         /// <summary>
-        /// id of the user, including homeserver domain, e. g. "@foo:matrix.example.org"
+        /// id of the user, including homeserver domain, e.g. "@foo:matrix.example.org"
         /// </summary>
         public string user_id = uid;
 

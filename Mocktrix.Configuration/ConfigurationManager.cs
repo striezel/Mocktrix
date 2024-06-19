@@ -43,15 +43,9 @@ namespace Mocktrix.Configuration
         /// </summary>
         public static Configuration Current
         {
-            get
-            {
-                return cur;
-            }
+            get => cur;
 
-            set
-            {
-                cur = value;
-            }
+            set => cur = value;
         }
     }
 }

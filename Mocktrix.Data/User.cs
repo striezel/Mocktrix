@@ -21,13 +21,13 @@ namespace Mocktrix.Data
     /// <summary>
     /// Holds user data.
     /// </summary>
-    /// <param name="id">user id, e. g. "@alice:matrix.domain.tld"</param>
+    /// <param name="id">user id, e.g. "@alice:matrix.domain.tld"</param>
     /// <param name="hashed_pass">hashed password</param>
     /// <param name="salty">the salt for password hashing</param>
     public class User(string id, string hashed_pass, byte[] salty)
     {
         /// <summary>
-        /// id of the user, including homeserver domain, e. g. "@foo:matrix.example.org"
+        /// id of the user, including homeserver domain, e.g. "@foo:matrix.example.org"
         /// </summary>
         public string user_id = id;
 

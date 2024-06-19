@@ -35,7 +35,7 @@ namespace Mocktrix.Database.Memory
         /// Creates and adds a new device for a specific user.
         /// </summary>
         /// <param name="dev_id">the device id</param>
-        /// <param name="user_id">user id, e. g. "@alice:example.com"</param>
+        /// <param name="user_id">user id, e.g. "@alice:example.com"</param>
         /// <param name="display_name">display name of the device</param>
         /// <returns>Returns the created device.</returns>
         public static Device CreateDevice(string dev_id, string user_id, string? display_name = null)

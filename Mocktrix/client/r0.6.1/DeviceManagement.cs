@@ -45,7 +45,7 @@ namespace Mocktrix.client.r0_6_1
         public static void AddEndpoints(WebApplication app)
         {
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices,
-            // i. e. the endpoint to list all devices of the user.
+            // i.e. the endpoint to list all devices of the user.
             app.MapGet("/_matrix/client/r0/devices", (HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
@@ -87,7 +87,7 @@ namespace Mocktrix.client.r0_6_1
 
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
-            // i. e. the endpoint to get information about a specific device.
+            // i.e. the endpoint to get information about a specific device.
             app.MapGet("/_matrix/client/r0/devices/{deviceId}", (string deviceId, HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
@@ -132,7 +132,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-devices-deviceid,
-            // i. e. the possibility to chance the display name of a device.
+            // i.e. the possibility to chance the display name of a device.
             app.MapPut("/_matrix/client/r0/devices/{deviceId}", async (string deviceId, HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
@@ -200,7 +200,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-devices-deviceid,
-            // i. e. the endpoint to remove a specific device and the
+            // i.e. the endpoint to remove a specific device and the
             // corresponding access token.
             app.MapDelete("/_matrix/client/r0/devices/{deviceId}", (string deviceId, HttpContext context) =>
             {
@@ -272,7 +272,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-delete-devices,
-            // i. e. the endpoint to delete a list of specified devices and
+            // i.e. the endpoint to delete a list of specified devices and
             // revoke the associated access tokens.
             app.MapPost("/_matrix/client/r0/delete_devices", async (HttpContext context) =>
             {

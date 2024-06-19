@@ -100,7 +100,7 @@ namespace Mocktrix.client.r0_6_1
         public static void AddEndpoints(WebApplication app)
         {
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-login,
-            // i. e. the endpoint to query the server's supported authentication types.
+            // i.e. the endpoint to query the server's supported authentication types.
             app.MapGet("/_matrix/client/r0/login", (HttpContext httpContext) =>
             {
                 var flows = new
@@ -114,7 +114,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-login,
-            // i. e. the endpoint to perform the actual login of a user.
+            // i.e. the endpoint to perform the actual login of a user.
             app.MapPost("/_matrix/client/r0/login", async (HttpContext context) =>
             {
                 const int maxReadSize = 10000;
@@ -246,7 +246,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-logout,
-            // i. e. the endpoint to log out a single access token of a user and
+            // i.e. the endpoint to log out a single access token of a user and
             // delete the corresponding device.
             app.MapPost("/_matrix/client/r0/logout", (HttpContext context) =>
             {
@@ -280,7 +280,7 @@ namespace Mocktrix.client.r0_6_1
             });
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-logout-all,
-            // i. e. the endpoint to log out all access tokens of a user and
+            // i.e. the endpoint to log out all access tokens of a user and
             // delete the corresponding devices.
             app.MapPost("/_matrix/client/r0/logout/all", (HttpContext context) =>
             {
