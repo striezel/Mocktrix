@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix", "Mocktrix.csproj", "{EA72A05F-8EC0-40B0-9E46-F85146276318}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MocktrixTests", "..\MocktrixTests\MocktrixTests.csproj", "{6DE0D9DC-FEB8-4E2F-AAB8-BFAFC8562FE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Tests", "..\Mocktrix.Tests\Mocktrix.Tests.csproj", "{6DE0D9DC-FEB8-4E2F-AAB8-BFAFC8562FE9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Data", "..\Mocktrix.Data\Mocktrix.Data.csproj", "{174683D4-76C6-4357-9B07-F23B5A82AFEC}"
 EndProject

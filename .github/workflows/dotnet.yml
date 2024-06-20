@@ -43,5 +43,5 @@ jobs:
               echo Waiting for Kestrel server to start ...
               sleep 5
           done
-          cd ../MocktrixTests/
+          cd ../Mocktrix.Tests/
           dotnet test
