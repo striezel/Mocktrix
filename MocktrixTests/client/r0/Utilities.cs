@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace MocktrixTests
@@ -47,6 +48,38 @@ namespace MocktrixTests
         public static T GetContent<T>(HttpResponseMessage response, T _)
         {
             return JsonSerializer.Deserialize<T?>(response.Content.ReadAsStream());
+        }
+
+
+        /// <summary>
+        /// Performs a login with the given credentials.
+        /// </summary>
+        /// <param name="client">the HTTPClient instance with properly set base address</param>
+        /// <param name="userId">Matrix user id of the user to log in</param>
+        /// <param name="password">the user's password</param>
+        /// <returns>Returns the access token retrieved from the server.</returns>
+        public static async Task<string> PerformLogin(HttpClient client, string userId = "@alice:matrix.example.org", string password = "secret password")
+        {
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = userId
+                },
+                password = password,
+                initial_device_display_name = "My device"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = GetContent(login_response, login_data);
+            return login_content.access_token;
         }
     }
 }

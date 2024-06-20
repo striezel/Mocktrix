@@ -115,26 +115,7 @@ namespace MocktrixTests
         {
             // We need to be logged in and have an access token before we can
             // use the endpoint. So let's do the login first.
-            var body = new
-            {
-                type = "m.login.password",
-                identifier = new
-                {
-                    type = "m.id.user",
-                    user = "@alice:matrix.example.org"
-                },
-                password = "secret password",
-                initial_device_display_name = "My device"
-            };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
-            var login_data = new
-            {
-                user_id = "@alice:matrix.example.org",
-                access_token = "random ...",
-                device_id = "also random ..."
-            };
-            var login_content = Utilities.GetContent(login_response, login_data);
-            var access_token = login_content.access_token;
+            var access_token = await Utilities.PerformLogin(client);
 
             // Use access token in next request.
             HttpClient authenticated_client = new()
@@ -162,25 +143,7 @@ namespace MocktrixTests
         {
             // We need to be logged in and have an access token before we can
             // use the endpoint. So let's do the login first.
-            var body = new
-            {
-                type = "m.login.password",
-                identifier = new
-                {
-                    type = "m.id.user",
-                    user = "name_change_user"
-                },
-                password = "some password"
-            };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
-            var login_data = new
-            {
-                user_id = "@...",
-                access_token = "random ...",
-                device_id = "also random ..."
-            };
-            var login_content = Utilities.GetContent(login_response, login_data);
-            var access_token = login_content.access_token;
+            var access_token = await Utilities.PerformLogin(client, "name_change_user", "some password");
 
             // Use access token in next request.
             HttpClient authenticated_client = new()
@@ -295,26 +258,7 @@ namespace MocktrixTests
         {
             // We need to be logged in and have an access token before we can
             // use the endpoint. So let's do the login first.
-            var body = new
-            {
-                type = "m.login.password",
-                identifier = new
-                {
-                    type = "m.id.user",
-                    user = "@alice:matrix.example.org"
-                },
-                password = "secret password",
-                initial_device_display_name = "My device"
-            };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
-            var login_data = new
-            {
-                user_id = "@alice:matrix.example.org",
-                access_token = "random ...",
-                device_id = "also random ..."
-            };
-            var login_content = Utilities.GetContent(login_response, login_data);
-            var access_token = login_content.access_token;
+            var access_token = await Utilities.PerformLogin(client);
 
             // Use access token in next request.
             HttpClient authenticated_client = new()
@@ -342,25 +286,7 @@ namespace MocktrixTests
         {
             // We need to be logged in and have an access token before we can
             // use the endpoint. So let's do the login first.
-            var body = new
-            {
-                type = "m.login.password",
-                identifier = new
-                {
-                    type = "m.id.user",
-                    user = "avatar_change_user"
-                },
-                password = "some password"
-            };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
-            var login_data = new
-            {
-                user_id = "@...",
-                access_token = "random ...",
-                device_id = "also random ..."
-            };
-            var login_content = Utilities.GetContent(login_response, login_data);
-            var access_token = login_content.access_token;
+            var access_token = await Utilities.PerformLogin(client, "avatar_change_user", "some password");
 
             // Use access token in next request.
             HttpClient authenticated_client = new()
