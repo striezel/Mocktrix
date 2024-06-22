@@ -21,12 +21,50 @@ namespace Mocktrix
     public class Program
     {
         /// <summary>
+        /// Prints the help text to the standard output.
+        /// </summary>
+        private static void ShowHelp()
+        {
+            var asm = System.Reflection.Assembly.GetExecutingAssembly();
+            var name = asm.GetName().Name;
+            Console.WriteLine(name + " [OPTIONS]");
+            Console.WriteLine();
+            Console.WriteLine("Options:");
+            Console.WriteLine("  -? | --help     - Shows this help message and quits.");
+            Console.WriteLine("  -v | --version  - Shows the version of the program and quits.");
+            Console.WriteLine("  --conf file.xml - Loads the configuration from the given XML file.");
+        }
+
+
+        /// <summary>
+        /// Prints the version information to the standard output.
+        /// </summary>
+        private static void ShowVersion()
+        {
+            var asm = System.Reflection.Assembly.GetExecutingAssembly();
+            var name = asm.GetName().Name;
+            var ver = asm.GetName().Version;
+            Console.WriteLine(name + ", version " + ver?.ToString(3));
+            Console.WriteLine();
+            Console.WriteLine("Copyright (C) 2024  Dirk Stolle");
+            Console.WriteLine("License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>");
+            Console.WriteLine("This is free software: you are free to change and redistribute it under the");
+            Console.WriteLine("terms of the GNU General Public License version 3 or any later version.");
+            Console.WriteLine("There is NO WARRANTY, to the extent permitted by law.");
+        }
+
+
+        /// <summary>
         /// Parses and handles command-line arguments of the program.
         /// </summary>
         /// <param name="args">the array of arguments</param>
-        /// <returns>Returns zero, if parsing was successful.
-        /// Returns a non-zero value, if an error occurred.</returns>
-        public static int ParseArguments(string[] args)
+        /// <returns>Returns a Tuple where the first element is an exit code and
+        /// the second element is a boolean value indicating whether to exit the
+        /// program after parsing.
+        ///
+        /// The return code element is zero, if parsing was successful.
+        /// The return code element is non-zero value, if an error occurred.</returns>
+        public static Tuple<int, bool> ParseArguments(string[] args)
         {
             for (int i = 0; i < args.Length; i++)
             {
@@ -36,33 +74,43 @@ namespace Mocktrix
                     {
                         Console.Error.WriteLine("Error: Parameter " + args[i]
                             + " must be followed by a file path for the configuration file!");
-                        return 1;
+                        return new Tuple<int, bool>(1, true);
                     }
                     if (!Configuration.ConfigurationManager.Current.LoadFromFile(args[i+1]))
                     {
                         Console.Error.WriteLine("Failed to load configuration file!");
-                        return 1;
+                        return new Tuple<int, bool>(1, true);
                     }
                     Console.WriteLine("Information: Configuration was loaded from file "
                         + args[i + 1] + ".");
                     // Skip next argument, that is the file name.
                     ++i;
                 }
+                else if ((args[i] == "--help") || (args[i] == "/?") || (args[i] == "-?"))
+                {
+                    ShowHelp();
+                    return new Tuple<int, bool>(0, true);
+                }
+                else if ((args[i] == "--version") || (args[i] == "-v"))
+                {
+                    ShowVersion();
+                    return new Tuple<int, bool>(0, true);
+                }
                 else
                 {
                     Console.Error.WriteLine("Error: " + args[i]
                         + " is not a valid command line option!");
-                    return 1;
+                    return new Tuple<int, bool>(1, true);
                 }
             }
 
-            return 0;
+            return new Tuple<int, bool>(0, false);
         }
 
         public static int Main(string[] args)
         {
-            int rc = ParseArguments(args);
-            if (rc != 0)
+            (int rc, bool exit) = ParseArguments(args);
+            if (rc != 0 || exit)
             {
                 return rc;
             }
