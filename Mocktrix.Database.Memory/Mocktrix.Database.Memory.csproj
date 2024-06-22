@@ -7,6 +7,8 @@
     <Authors>Dirk Stolle</Authors>
     <Copyright>Copyright (C) 2024  Dirk Stolle</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <Description>Contains an in-memory database to hold the data relevant for the Mocktrix server.
+The database contents are not persisted and vanish when the server process exits.</Description>
   </PropertyGroup>
 
   <ItemGroup>
