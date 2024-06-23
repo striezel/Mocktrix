@@ -29,6 +29,221 @@ namespace MocktrixTests
         };
 
         [Fact]
+        public async Task TestPasswordChange_NoAuthorization()
+        {
+            var data = new
+            {
+                new_password = "some other password here",
+                logout_devices = false,
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "foo"
+                }
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestPasswordChange_InvalidAccessToken()
+        {
+            var data = new
+            {
+                new_password = "some other password here",
+                logout_devices = false,
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "foo"
+                }
+            };
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestPasswordChange_InteractiveAuthRequired()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            var data = new
+            {
+                new_password = "some other password here",
+                logout_devices = false
+            };
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                session = "some string",
+                flows = new[]
+                        {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                @params = new { }
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.NotEmpty(content.session);
+            Assert.Single(content.flows);
+            Assert.Single(content.flows[0].stages);
+            Assert.Equal("m.login.password", content.flows[0].stages[0]);
+            var raw_content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("\"params\":{}", raw_content);
+            Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
+        }
+
+        [Fact]
+        public async Task TestPasswordChange_WeakPassword()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            var data = new
+            {
+                new_password = "weak",
+                logout_devices = false,
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "secret password"
+                }
+            };
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_WEAK_PASSWORD",
+                error = "New password was not specified, or the new password is too weak."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestPasswordChange_WrongOldPassword()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            var data = new
+            {
+                new_password = "not so very strong password",
+                logout_devices = false,
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "this is the wrong password"
+                }
+            };
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "Invalid password."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestPasswordChange_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client, "password_change", "the old password");
+
+            var data = new
+            {
+                new_password = "fancy new password",
+                logout_devices = false,
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "the old password"
+                }
+            };
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            // Login with new password should work from now on.
+            var new_access_token = await Utilities.PerformLogin(client, "password_change", "fancy new password");
+            Assert.NotEmpty(new_access_token);
+        }
+
+        [Fact]
         public async Task TestMailAccountPasswordToken()
         {
             var postData = new

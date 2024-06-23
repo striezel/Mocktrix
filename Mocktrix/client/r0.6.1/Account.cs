@@ -17,6 +17,10 @@
 */
 
 using Mocktrix.Protocol.Types;
+using Mocktrix.Protocol.Types.Account;
+using System.Security.Cryptography;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -31,6 +35,138 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-password,
+            // i.e. the possibility to change the password.
+            app.MapPost("/_matrix/client/r0/account/password", async (HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
+                {
+                    AllowTrailingCommas = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                };
+                PasswordChangeData? data;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<PasswordChangeData>(options);
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                if (data == null)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+                if (data.Auth == null || data.Auth.Type != "m.login.password")
+                {
+                    // Data for available flows looks like:
+                    // {
+                    //  "session": "random server-generated session ID here",
+                    //  "flows": [{
+                    //    "stages": ["m.login.password"]
+                    //  }],
+                    //  "params": {}
+                    // }
+                    var response = new
+                    {
+                        session = RandomNumberGenerator.GetString("abcdefghijklmnopqrstuvwxyz", 16),
+                        flows = new[]
+                        {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                        @params = new { }
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                string new_password = data.NewPassword ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(new_password) || new_password.Length < 12)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_WEAK_PASSWORD",
+                        error = "New password was not specified, or the new password is too weak."
+                    });
+                }
+
+                // Find user and check old password.
+                var user = Database.Memory.Users.GetUser(token.user_id);
+                if (user == null)
+                {
+                    // Should never happen. We either have a bug or memory corruption,
+                    // if this branch is ever taken.
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN",
+                        error = "User not found."
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
+                }
+                // Verify password.
+                if (string.IsNullOrWhiteSpace(data.Auth.Password) ||
+                    utilities.Hashing.HashPassword(data.Auth.Password, user.salt) != user.password_hash)
+                {
+                    return Results.Json(new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "Invalid password."
+                    },
+                    statusCode: StatusCodes.Status403Forbidden);
+                }
+
+                // Password is correct and new password is not weak, so new password can be set.
+                user.password_hash = utilities.Hashing.CreateHashedSaltedPassword(new_password, out user.salt);
+
+                // Log out other devices?
+                if (data.LogoutDevices.GetValueOrDefault(true))
+                {
+                    var all_tokens_of_user = Database.Memory.AccessTokens.FindByUser(token.user_id);
+                    foreach (var revokable_token in all_tokens_of_user)
+                    {
+                        if (revokable_token.token != token.token)
+                        {
+                            // Revoke access token.
+                            _ = Database.Memory.AccessTokens.Revoke(revokable_token.token);
+                            // Delete the associated device.
+                            _ = Database.Memory.Devices.Remove(revokable_token.device_id, revokable_token.user_id);
+                        }
+                    }
+                }
+
+                // Return empty JSON object to indicate success.
+                return Results.Ok(new { });
+            });
+
+
             var DoNotAllowThreePID = (HttpContext context) =>
             {
                 var error = new ErrorResponse
