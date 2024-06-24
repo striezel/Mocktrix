@@ -73,4 +73,23 @@ namespace Mocktrix.Protocol.Types.Account
         [JsonPropertyName("auth")]
         public AuthenticationData? Auth { get; set; } = null;
     }
+
+    /// <summary>
+    /// Data sent by a client via POST request to deactivate an account.
+    /// </summary>
+    public class AccountDeactivationData
+    {
+        /// <summary>
+        /// Information for the user-interactive authentication.
+        /// </summary>
+        [JsonPropertyName("auth")]
+        public AuthenticationData? Auth { get; set; } = null;
+
+
+        /// <summary>
+        /// The identity server to unbind all of the user 3PID's from.
+        /// </summary>
+        [JsonPropertyName("id_server")]
+        public string IdServer { get; set; } = string.Empty;
+    }
 }

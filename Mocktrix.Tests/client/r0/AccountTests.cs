@@ -299,6 +299,198 @@ namespace MocktrixTests
         }
 
         [Fact]
+        public async Task TestAccountDeactivation_NoAuthorization()
+        {
+            var data = new
+            {
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "foo"
+                },
+                id_server = "id.example.org"
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestAccountDeactivation_InvalidAccessToken()
+        {
+            var data = new
+            {
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "foo"
+                },
+                id_server = "id.example.org"
+            };
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestAccountDeactivation_InteractiveAuthRequired()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            var data = new
+            {
+                id_server = "id.example.org"
+            };
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                session = "some string",
+                flows = new[]
+                        {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                @params = new { }
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.NotEmpty(content.session);
+            Assert.Single(content.flows);
+            Assert.Single(content.flows[0].stages);
+            Assert.Equal("m.login.password", content.flows[0].stages[0]);
+            var raw_content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("\"params\":{}", raw_content);
+            Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
+        }
+
+        [Fact]
+        public async Task TestAccountDeactivation_WrongPassword()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            var data = new
+            {
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "this is the wrong password"
+                },
+                id_server = "id.example.org"
+            };
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "Invalid password."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestAccountDeactivation_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client, "deactivatable", "silly password");
+
+            var data = new
+            {
+                auth = new
+                {
+                    type = "m.login.password",
+                    session = "dummy value",
+                    password = "silly password"
+                },
+                id_server = "id.example.org"
+            };
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{\"id_server_unbind_result\":\"success\"}", content);
+
+            // Login should not work anymore from now on.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "deactivatable"
+                },
+                password = "silly password",
+                initial_device_display_name = "My new device"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            Assert.Equal(HttpStatusCode.Forbidden, login_response.StatusCode);
+            var expected_error = new
+            {
+                errcode = "M_USER_DEACTIVATED",
+                error = "User has been deactivated."
+            };
+            var login_content = Utilities.GetContent(login_response, expected_error);
+            Assert.Equal(expected_error.errcode, login_content.errcode);
+            Assert.Equal(expected_error.error, login_content.error);
+        }
+
+        [Fact]
         public async Task TestAccountThreePid_NoAuthorization()
         {
             var response = await client.GetAsync("/_matrix/client/r0/account/3pid");

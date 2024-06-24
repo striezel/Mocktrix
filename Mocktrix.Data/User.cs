@@ -54,5 +54,11 @@ namespace Mocktrix.Data
         /// the user's avatar URL as Matrix Content (MXC) URI
         /// </summary>
         public string? avatar_url = default;
+
+
+        /// <summary>
+        /// Whether the user account is inactive, because it has been dectivated.
+        /// </summary>
+        public bool inactive = false;
     }
 }

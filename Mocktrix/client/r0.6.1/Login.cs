@@ -200,6 +200,17 @@ namespace Mocktrix.client.r0_6_1
                     });
                 }
 
+                // Prevent login with deactivated account.
+                if (user.inactive)
+                {
+                    return Results.Json(new ErrorResponse
+                    {
+                        errcode = "M_USER_DEACTIVATED",
+                        error = "User has been deactivated."
+                    },
+                    statusCode: StatusCodes.Status403Forbidden);
+                }
+
                 // Verify login data.
                 if (string.IsNullOrWhiteSpace(data.Password) ||
                     utilities.Hashing.HashPassword(data.Password, user.salt) != user.password_hash)

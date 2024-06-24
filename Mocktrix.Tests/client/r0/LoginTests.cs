@@ -207,6 +207,36 @@ namespace MocktrixTests
         }
 
         [Fact]
+        public async Task TestLogin_DeactivatedUser()
+        {
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "inactive"
+                },
+                password = "some password"
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_error = new
+            {
+                errcode = "M_USER_DEACTIVATED",
+                error = "User has been deactivated."
+            };
+
+            var content = Utilities.GetContent(response, expected_error);
+            Assert.NotNull(content);
+            Assert.Equal(expected_error.errcode, content.errcode);
+            Assert.Equal(expected_error.error, content.error);
+        }
+
+        [Fact]
         public async Task TestLogin_WrongPassword()
         {
             var body = new

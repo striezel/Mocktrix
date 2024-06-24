@@ -31,6 +31,7 @@ namespace Mocktrix.Data.Tests
             Assert.Equal([65, 66, 67, 68, 69], user.salt);
             Assert.Null(user.display_name);
             Assert.Null(user.avatar_url);
+            Assert.False(user.inactive);
         }
     }
 }

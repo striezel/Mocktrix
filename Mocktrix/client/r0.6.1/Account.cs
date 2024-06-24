@@ -216,6 +216,122 @@ namespace Mocktrix.client.r0_6_1
             // by not allowing it.
             app.MapPost("/_matrix/client/r0/account/password/msisdn/requestToken", DoNotAllowThreePID);
 
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-deactivate,
+            // i.e. the possibility to deactivate an account.
+            app.MapPost("/_matrix/client/r0/account/deactivate", async (HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
+                {
+                    AllowTrailingCommas = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                };
+                AccountDeactivationData? data;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<AccountDeactivationData>(options);
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                if (data == null)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+                if (data.Auth == null || data.Auth.Type != "m.login.password")
+                {
+                    // Data for available flows looks like:
+                    // {
+                    //  "session": "random server-generated session ID here",
+                    //  "flows": [{
+                    //    "stages": ["m.login.password"]
+                    //  }],
+                    //  "params": {}
+                    // }
+                    var response = new
+                    {
+                        session = RandomNumberGenerator.GetString("abcdefghijklmnopqrstuvwxyz", 16),
+                        flows = new[]
+                        {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                        @params = new { }
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                // Find user and check password.
+                var user = Database.Memory.Users.GetUser(token.user_id);
+                if (user == null)
+                {
+                    // Should never happen. We either have a bug or memory corruption,
+                    // if this branch is ever taken.
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN",
+                        error = "User not found."
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
+                }
+                // Verify password.
+                if (string.IsNullOrWhiteSpace(data.Auth.Password) ||
+                    utilities.Hashing.HashPassword(data.Auth.Password, user.salt) != user.password_hash)
+                {
+                    return Results.Json(new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "Invalid password."
+                    },
+                    statusCode: StatusCodes.Status403Forbidden);
+                }
+
+                // Password is correct, so the account can be deactivated.
+                user.inactive = true;
+
+                // Log out all devices.
+                var all_tokens_of_user = Database.Memory.AccessTokens.FindByUser(token.user_id);
+                foreach (var revokable_token in all_tokens_of_user)
+                {
+
+                    // Revoke access token.
+                    _ = Database.Memory.AccessTokens.Revoke(revokable_token.token);
+                    // Delete the associated device.
+                    _ = Database.Memory.Devices.Remove(revokable_token.device_id, revokable_token.user_id);
+                }
+
+                // Return success.
+                return Results.Ok(new { id_server_unbind_result = "success" });
+            });
+
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-3pid,
             // i.e. gets list of associated third-party ids for the user id
             // associated with an access token.

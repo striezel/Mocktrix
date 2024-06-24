@@ -67,6 +67,12 @@ namespace Mocktrix
 
             // User for password change tests.
             _ = Database.Memory.Users.CreateUser("@password_change:" + base_address.Host, "the old password");
+
+            // Users for account deactivation tests.
+            var inactive_user = Database.Memory.Users.CreateUser("@inactive:" + base_address.Host, "some password");
+            inactive_user.inactive = true;
+
+            _ = Database.Memory.Users.CreateUser("@deactivatable:" + base_address.Host, "silly password");
         }
     }
 }
