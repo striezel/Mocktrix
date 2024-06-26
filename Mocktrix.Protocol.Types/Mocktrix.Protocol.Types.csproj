@@ -8,6 +8,7 @@
     <Authors>Dirk Stolle</Authors>
     <Description>Contains types to represent data from the Matrix protocol.</Description>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <Version>0.1.0-pre</Version>
   </PropertyGroup>
 
 </Project>

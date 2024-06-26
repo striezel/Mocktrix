@@ -9,6 +9,7 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Description>Contains an in-memory database to hold the data relevant for the Mocktrix server.
 The database contents are not persisted and vanish when the server process exits.</Description>
+    <Version>0.1.0-pre</Version>
   </PropertyGroup>
 
   <ItemGroup>
