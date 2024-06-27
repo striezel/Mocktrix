@@ -17,7 +17,6 @@
 */
 
 using System.Net;
-using System.Net.Http.Json;
 
 namespace MocktrixTests
 {
@@ -200,6 +199,95 @@ namespace MocktrixTests
             Assert.StartsWith("mxc://", content.content_uri);
             Assert.Contains(Utilities.BaseAddress.Host, content.content_uri);
             Assert.Matches("[A-Za-z]{24}$", content.content_uri);
+        }
+
+        [Fact]
+        public async Task TestDownload_InvalidParameter()
+        {
+            string server_name = Utilities.BaseAddress.Host;
+            var response = await client.GetAsync("/_matrix/media/r0/download/"+server_name+"/foo?allow_remote=blah");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_INVALID_PARAM",
+                error = "Query parameter 'allow_remote' must be either 'true' or 'false'."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownload_RemoteWhenRemoteIsNotAllowed()
+        {
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo?allow_remote=false");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "Content was not found, because fetching from remote was not allowed."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownload_RemoteWhenRemoteIsActuallyAllowed()
+        {
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo?allow_remote=true");
+
+            Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_TOO_LARGE",
+                error = "Content fetching from other servers is not implemented."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownload_NonExistentContent()
+        {
+            string server_name = Utilities.BaseAddress.Host;
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/fooNotHere");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "Content was not found on the server."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownload_ExistingContent()
+        {
+            string server_name = Utilities.BaseAddress.Host;
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/testDownload");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("text/plain", response.Content.Headers.ContentType?.MediaType);
+            Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
+                response.Headers.GetValues("Content-Security-Policy").First());
+
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("Hello, test code. :)", content);
         }
     }
 }

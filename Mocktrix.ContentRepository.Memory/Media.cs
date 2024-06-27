@@ -17,6 +17,9 @@
 */
 
 using Mocktrix.Data;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Mocktrix")]
 
 namespace Mocktrix.ContentRepository.Memory
 {
@@ -62,6 +65,29 @@ namespace Mocktrix.ContentRepository.Memory
         public static string Create(ReadOnlySpan<byte> bytes, string? content_type, string? file_name)
         {
             return Create(bytes.ToArray(), content_type, file_name);
+        }
+
+
+        /// <summary>
+        /// Adds new uploaded content with a pre-defined id to the repository.
+        /// </summary>
+        /// <param name="id">the media id of the content</param>
+        /// <param name="bytes">the actual file content</param>
+        /// <param name="content_type">the Content-Type of the uploaded file, if any</param>
+        /// <param name="file_name">file name of the uploaded file</param>
+        /// <returns>Returns the media id of the created content.</returns>
+        /// <remarks>This method is internal and is only used for test purposes.
+        /// Regular content files are added with an auto-generated media id.</remarks>
+        internal static string Create(string id, byte[] bytes, string? content_type, string? file_name)
+        {
+            if (string.IsNullOrWhiteSpace(id) || contents.FindIndex(x => x.Id == id) != -1)
+            {
+                return Create(bytes, content_type, file_name);
+            }
+
+            Content content = new(id, content_type, Content.SanitizeFileName(file_name), bytes);
+            contents.Add(content);
+            return id;
         }
 
 

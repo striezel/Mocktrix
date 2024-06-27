@@ -91,6 +91,62 @@ namespace Mocktrix.client.r0_6_1
                 return Results.Ok(data);
             });
 
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-media-r0-download-servername-mediaid,
+            // i.e. the endpoint to download a file from the media repository.
+            app.MapGet("/_matrix/media/r0/download/{serverName}/{mediaId}", (string serverName, string mediaId, HttpContext context) =>
+            {
+                var remote_string = context.Request.Query["allow_remote"].FirstOrDefault("true")?.ToLowerInvariant();
+                if (remote_string != "true" && remote_string != "false")
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_INVALID_PARAM",
+                        error = "Query parameter 'allow_remote' must be either 'true' or 'false'."
+                    };
+                    return Results.BadRequest(error);
+                }
+                bool allow_remote = remote_string == "true";
+
+                var own_server_address = new Uri(app.Urls.FirstOrDefault("http://localhost/"));
+                if (serverName != own_server_address.Host)
+                {
+                    if (!allow_remote)
+                    {
+                        var error = new ErrorResponse
+                        {
+                            errcode = "M_NOT_FOUND",
+                            error = "Content was not found, because fetching from remote was not allowed."
+                        };
+                        return Results.NotFound(error);
+                    }
+                    else
+                    {
+                        // Fetching from other servers is currently not implemented.
+                        var error = new ErrorResponse
+                        {
+                            errcode = "M_TOO_LARGE",
+                            error = "Content fetching from other servers is not implemented."
+                        };
+                        return Results.Json(error, statusCode: StatusCodes.Status502BadGateway);
+                    }
+                }
+
+                var content = ContentRepository.Memory.Media.GetContent(mediaId);
+                if (content == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_NOT_FOUND",
+                        error = "Content was not found on the server."
+                    };
+                    return Results.NotFound(error);
+                }
+                // Set content security policy recommended by the specification.
+                context.Response.Headers.ContentSecurityPolicy = "sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';";
+
+                return Results.File(content.Bytes, contentType: content.ContentType, fileDownloadName: content.FileName);
+            });
+
             // Implements https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-media-r0-config,
             // i.e. the endpoint to query media-related configuration settings.
             app.MapGet("/_matrix/media/r0/config", (HttpContext context) =>

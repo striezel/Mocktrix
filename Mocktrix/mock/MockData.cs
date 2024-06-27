@@ -73,6 +73,9 @@ namespace Mocktrix
             inactive_user.inactive = true;
 
             _ = Database.Memory.Users.CreateUser("@deactivatable:" + base_address.Host, "silly password");
+
+            // Add content for use in repository tests.
+            _ = ContentRepository.Memory.Media.Create("testDownload", "Hello, test code. :)"u8.ToArray(), "text/plain", "hello.txt");
         }
     }
 }
