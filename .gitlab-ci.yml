@@ -5,7 +5,7 @@ image: mcr.microsoft.com/dotnet/sdk:8.0
 build:
   stage: build
   before_script:
-    - apt-get update && apt-get install -y grep net-tools
+    - apt-get update && apt-get install -y bzip2 grep net-tools tar
   script:
     # Restore any NuGet packages.
     - dotnet restore ./Mocktrix/Mocktrix.sln
@@ -31,3 +31,9 @@ build:
     # -- start running server tests
     - cd ../Mocktrix.Tests/
     - dotnet test
+    # create build artifacts
+    - cd ../
+    - ./ci/artifacts.sh
+  artifacts:
+    paths:
+      - artifacts/**/*.tar.bz2
