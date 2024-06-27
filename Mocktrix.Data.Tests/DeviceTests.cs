@@ -18,6 +18,9 @@
 
 namespace Mocktrix.Data.Tests
 {
+    /// <summary>
+    /// Contains tests for the Device class.
+    /// </summary>
     public class DeviceTests
     {
         [Fact]
@@ -59,7 +62,6 @@ namespace Mocktrix.Data.Tests
             // the same id twice, because it's random and that could give us the
             // same sequence twice, although it is very unlikely.
             Assert.NotEqual(id_one, id_two);
-            
         }
     }
 }

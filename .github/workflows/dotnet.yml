@@ -34,6 +34,10 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE"/Mocktrix.Database.Memory.Tests/
           dotnet test
+      - name: Run tests for Mocktrix.ContentRepository.Memory
+        run: |
+          cd "$GITHUB_WORKSPACE"/Mocktrix.ContentRepository.Memory.Tests/
+          dotnet test
       - name: Run tests for Mocktrix server
         run: |
           cd "$GITHUB_WORKSPACE"/Mocktrix/

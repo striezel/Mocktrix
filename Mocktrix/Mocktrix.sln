@@ -17,9 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Database.Memory.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Protocol.Types", "..\Mocktrix.Protocol.Types\Mocktrix.Protocol.Types.csproj", "{8B06FD60-A82B-4D72-AD9C-1F029233D7EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Configuration", "..\Mocktrix.Configuration\Mocktrix.Configuration.csproj", "{17BC6ECD-BC4C-482E-A6EA-2CA8030DE83E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Configuration", "..\Mocktrix.Configuration\Mocktrix.Configuration.csproj", "{17BC6ECD-BC4C-482E-A6EA-2CA8030DE83E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Configuration.Tests", "..\Mocktrix.Configuration.Tests\Mocktrix.Configuration.Tests.csproj", "{57E20927-6327-4F2B-A590-7FCACE2334E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Configuration.Tests", "..\Mocktrix.Configuration.Tests\Mocktrix.Configuration.Tests.csproj", "{57E20927-6327-4F2B-A590-7FCACE2334E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.ContentRepository.Memory", "..\Mocktrix.ContentRepository.Memory\Mocktrix.ContentRepository.Memory.csproj", "{388FF77F-CF86-4ED2-96D8-C522C744FE9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.ContentRepository.Memory.Tests", "..\Mocktrix.ContentRepository.Memory.Tests\Mocktrix.ContentRepository.Memory.Tests.csproj", "{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +67,14 @@ Global
 		{57E20927-6327-4F2B-A590-7FCACE2334E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57E20927-6327-4F2B-A590-7FCACE2334E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57E20927-6327-4F2B-A590-7FCACE2334E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{388FF77F-CF86-4ED2-96D8-C522C744FE9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{388FF77F-CF86-4ED2-96D8-C522C744FE9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{388FF77F-CF86-4ED2-96D8-C522C744FE9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{388FF77F-CF86-4ED2-96D8-C522C744FE9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
