@@ -199,13 +199,115 @@ namespace MocktrixTests
             Assert.StartsWith("mxc://", content.content_uri);
             Assert.Contains(Utilities.BaseAddress.Host, content.content_uri);
             Assert.Matches("[A-Za-z]{24}$", content.content_uri);
+
+            // Download should also succeed.
+            string server_name = Utilities.BaseAddress.Host;
+            string media_id = content.content_uri[(content.content_uri.LastIndexOf('/') + 1)..];
+            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id);
+
+            Assert.Equal(HttpStatusCode.OK, download_response.StatusCode);
+            Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
+                download_response.Headers.GetValues("Content-Security-Policy").First());
+
+            string dl_content = await download_response.Content.ReadAsStringAsync();
+            Assert.Equal("Hello there.", dl_content);
+        }
+
+        [Fact]
+        public async Task TestUpload_SuccessWithContentType()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient uploading_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            uploading_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            byte[] file_data = "Hello there?"u8.ToArray();
+            var uploaded_content = new ByteArrayContent(file_data);
+            uploaded_content.Headers.Add("Content-Type", "text/plain");
+            var response = await uploading_client.PostAsync("/_matrix/media/r0/upload", uploaded_content);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_response = new
+            {
+                content_uri = "mxc://..."
+            };
+            var content = Utilities.GetContent(response, expected_response);
+
+            Assert.NotNull(content.content_uri);
+            Assert.StartsWith("mxc://", content.content_uri);
+            Assert.Contains(Utilities.BaseAddress.Host, content.content_uri);
+            Assert.Matches("[A-Za-z]{24}$", content.content_uri);
+
+            // Download should also succeed.
+            string server_name = Utilities.BaseAddress.Host;
+            string media_id = content.content_uri[(content.content_uri.LastIndexOf('/') + 1)..];
+            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id);
+
+            Assert.Equal(HttpStatusCode.OK, download_response.StatusCode);
+            Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
+                download_response.Headers.GetValues("Content-Security-Policy").First());
+            Assert.Equal("text/plain", download_response.Content.Headers.ContentType?.MediaType);
+
+            string dl_content = await download_response.Content.ReadAsStringAsync();
+            Assert.Equal("Hello there?", dl_content);
+        }
+
+        [Fact]
+        public async Task TestUpload_SuccessWithFileName()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            byte[] file_data = "Hello there!"u8.ToArray();
+            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload?filename=the_hello.txt", new ByteArrayContent(file_data));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_response = new
+            {
+                content_uri = "mxc://..."
+            };
+            var content = Utilities.GetContent(response, expected_response);
+
+            Assert.NotNull(content.content_uri);
+            Assert.StartsWith("mxc://", content.content_uri);
+            Assert.Contains(Utilities.BaseAddress.Host, content.content_uri);
+            Assert.Matches("[A-Za-z]{24}$", content.content_uri);
+
+            // Download should also succeed.
+            string server_name = Utilities.BaseAddress.Host;
+            string media_id = content.content_uri[(content.content_uri.LastIndexOf('/') + 1)..];
+            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id);
+
+            Assert.Equal(HttpStatusCode.OK, download_response.StatusCode);
+            Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
+                download_response.Headers.GetValues("Content-Security-Policy").First());
+            Assert.Equal("the_hello.txt", download_response.Content.Headers.ContentDisposition?.FileName);
+
+            string dl_content = await download_response.Content.ReadAsStringAsync();
+            Assert.Equal("Hello there!", dl_content);
         }
 
         [Fact]
         public async Task TestDownload_InvalidParameter()
         {
             string server_name = Utilities.BaseAddress.Host;
-            var response = await client.GetAsync("/_matrix/media/r0/download/"+server_name+"/foo?allow_remote=blah");
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/foo?allow_remote=blah");
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
