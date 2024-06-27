@@ -32,7 +32,66 @@ namespace Mocktrix.client.r0_6_1
         /// <param name="app">the app to which the endpoints shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            // Implements // https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-media-r0-config,
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-media-r0-upload,
+            // i.e. the endpoint to upload a new file.
+            app.MapPost("/_matrix/media/r0/upload", async (HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                var limit = Convert.ToInt64(Configuration.ConfigurationManager.Current.UploadLimit);
+                byte[] buffer = new byte[limit + 1];
+                long bytesRead = 0;
+                int currentlyRead = 1;
+                while ((bytesRead < limit + 1) && (currentlyRead > 0))
+                {
+                    currentlyRead = await context.Request.Body.ReadAsync(buffer, Convert.ToInt32(bytesRead), Convert.ToInt32(limit + 1 - bytesRead));
+                    bytesRead += currentlyRead;
+                }
+
+                if (bytesRead > limit)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_TOO_LARGE",
+                        error = "Uploaded file exceeds the allowed size limit."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status413PayloadTooLarge);
+                }
+                  
+                string? contentType = context.Request.ContentType;
+                string? fileName = context.Request.Query["filename"].FirstOrDefault("");
+
+                string id = ContentRepository.Memory.Media.Create(new ReadOnlySpan<byte>(buffer, 0, Convert.ToInt32(bytesRead)), contentType, fileName);
+
+                var server_address = new Uri(app.Urls.FirstOrDefault("http://localhost/"));
+                var data = new 
+                {
+                    content_uri = "mxc://" + server_address.Host + "/" + id
+                };
+
+                return Results.Ok(data);
+            });
+
+            // Implements https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-media-r0-config,
             // i.e. the endpoint to query media-related configuration settings.
             app.MapGet("/_matrix/media/r0/config", (HttpContext context) =>
             {

@@ -53,6 +53,19 @@ namespace Mocktrix.ContentRepository.Memory
 
 
         /// <summary>
+        /// Adds new uploaded content to the repository.
+        /// </summary>
+        /// <param name="bytes">the actual file content</param>
+        /// <param name="content_type">the Content-Type of the uploaded file, if any</param>
+        /// <param name="file_name">file name of the uploaded file</param>
+        /// <returns>Returns the media id of the created content.</returns>
+        public static string Create(ReadOnlySpan<byte> bytes, string? content_type, string? file_name)
+        {
+            return Create(bytes.ToArray(), content_type, file_name);
+        }
+
+
+        /// <summary>
         /// Gets an existing content.
         /// </summary>
         /// <param name="media_id">id of the content</param>

@@ -94,5 +94,112 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.Equal(expected_response.UploadSize, content.UploadSize);
         }
+
+        [Fact]
+        public async Task TestUpload_NoAuthorization()
+        {
+            byte[] file_data = "Hello there."u8.ToArray();
+            var response = await client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestUpload_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+
+            byte[] file_data = "Hello there."u8.ToArray();
+            var response = await unauthenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestUpload_FileTooLarge()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            long size = 20 * 1024 * 1024;
+            byte[] file_data = new byte[size];
+            Array.Fill(file_data, Convert.ToByte('A'));
+            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+            Assert.Equal(HttpStatusCode.RequestEntityTooLarge, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_response = new
+            {
+                errcode = "M_TOO_LARGE",
+                error = "Uploaded file exceeds the allowed size limit."
+            };
+            var content = Utilities.GetContent(response, expected_response);
+
+            Assert.Equal(expected_response.errcode, content.errcode);
+            Assert.Equal(expected_response.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestUpload_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            byte[] file_data = "Hello there."u8.ToArray();
+            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected_response = new
+            {
+                content_uri = "mxc://..."
+            };
+            var content = Utilities.GetContent(response, expected_response);
+
+            Assert.NotNull(content.content_uri);
+            Assert.StartsWith("mxc://", content.content_uri);
+            Assert.Contains(Utilities.BaseAddress.Host, content.content_uri);
+            Assert.Matches("[A-Za-z]{24}$", content.content_uri);
+        }
     }
 }
