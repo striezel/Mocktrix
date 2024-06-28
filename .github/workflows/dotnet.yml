@@ -53,9 +53,15 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE"
           ./ci/artifacts.sh
-      - name: Upload artifacts
+      - name: Upload framework-dependent artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Mocktrix-Artifacts
+          name: Mocktrix-Artifacts-framework-dependent
           if-no-files-found: error
-          path: artifacts/publish/Mocktrix*.tar.bz2
+          path: artifacts/publish/Mocktrix*framework-dependent.tar.bz2
+      - name: Upload self-contained artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mocktrix-Artifacts-self-contained
+          if-no-files-found: error
+          path: artifacts/publish/Mocktrix*self-contained.tar.bz2

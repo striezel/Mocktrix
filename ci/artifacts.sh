@@ -14,7 +14,7 @@ RIDS="linux-arm linux-arm64 linux-x64 linux-musl-x64 osx-x64 osx-arm64 win-x64 w
 for RID in $RIDS
 do
     # framework-dependent build
-    DEST_NAME=Mocktrix-$RID
+    DEST_NAME=Mocktrix-$RID-framework-dependent
     DESTINATION=$WORKSPACE/artifacts/publish/${DEST_NAME}
     dotnet publish ./Mocktrix/Mocktrix.csproj -c Release -r "$RID" -o "$DESTINATION"
     rm "$DESTINATION"/*.pdb
