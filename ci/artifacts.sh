@@ -22,7 +22,7 @@ do
     cp readme.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
-    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME"
+    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name
     cd "$WORKSPACE" || exit 1
 
     # self-contained build
@@ -34,6 +34,6 @@ do
     cp readme.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
-    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME"
+    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name
     cd "$WORKSPACE" || exit 1
 done
