@@ -21,6 +21,7 @@ do
     cp LICENSE "$DESTINATION"/
     cp readme.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
+    cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
     tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name
     cd "$WORKSPACE" || exit 1
@@ -33,6 +34,7 @@ do
     cp LICENSE "$DESTINATION"/
     cp readme.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
+    cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
     tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name
     cd "$WORKSPACE" || exit 1
