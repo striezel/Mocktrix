@@ -14,6 +14,10 @@
     <Deterministic>True</Deterministic>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != '' Or '$(GITLAB_CI)' != ''">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Mocktrix.Configuration\Mocktrix.Configuration.csproj" />
     <ProjectReference Include="..\Mocktrix.ContentRepository.Memory\Mocktrix.ContentRepository.Memory.csproj" />

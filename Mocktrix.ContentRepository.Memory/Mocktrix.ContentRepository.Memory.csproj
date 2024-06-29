@@ -13,6 +13,10 @@ The repository contents are not persisted and vanish when the server process exi
     <Deterministic>True</Deterministic>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != '' Or '$(GITLAB_CI)' != ''">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Mocktrix.Data\Mocktrix.Data.csproj" />
   </ItemGroup>
