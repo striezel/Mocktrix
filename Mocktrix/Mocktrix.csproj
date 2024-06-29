@@ -11,6 +11,7 @@
     <Authors>Dirk Stolle</Authors>
     <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
     <Version>0.1.0-pre</Version>
+    <Deterministic>True</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>

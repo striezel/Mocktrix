@@ -10,6 +10,7 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Description>Contains an in-memory media repository to hold the media content uploaded to the Mocktrix server.
 The repository contents are not persisted and vanish when the server process exits.</Description>
+    <Deterministic>True</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
