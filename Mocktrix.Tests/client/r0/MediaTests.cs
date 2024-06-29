@@ -387,6 +387,97 @@ namespace MocktrixTests
             Assert.Equal("text/plain", response.Content.Headers.ContentType?.MediaType);
             Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
                 response.Headers.GetValues("Content-Security-Policy").First());
+            Assert.Equal("hello.txt", response.Content.Headers.ContentDisposition?.FileName);
+
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("Hello, test code. :)", content);
+        }
+
+        [Fact]
+        public async Task TestDownloadWithFileName_InvalidParameter()
+        {
+            string server_name = Utilities.BaseAddress.Host;
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/foo/file.txt?allow_remote=blah");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_INVALID_PARAM",
+                error = "Query parameter 'allow_remote' must be either 'true' or 'false'."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownloadWithFileName_RemoteWhenRemoteIsNotAllowed()
+        {
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo/file.dat?allow_remote=false");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "Content was not found, because fetching from remote was not allowed."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownloadWithFileName_RemoteWhenRemoteIsActuallyAllowed()
+        {
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo/foo.txt?allow_remote=true");
+
+            Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_TOO_LARGE",
+                error = "Content fetching from other servers is not implemented."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownloadWithFileName_NonExistentContent()
+        {
+            string server_name = Utilities.BaseAddress.Host;
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/fooNotHere/file.txt");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "Content was not found on the server."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDownloadWithFileName_ExistingContent()
+        {
+            string server_name = Utilities.BaseAddress.Host;
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/testDownload/my_file.txt");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("text/plain", response.Content.Headers.ContentType?.MediaType);
+            Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
+                response.Headers.GetValues("Content-Security-Policy").First());
+            Assert.Equal("my_file.txt", response.Content.Headers.ContentDisposition?.FileName);
 
             string content = await response.Content.ReadAsStringAsync();
             Assert.Equal("Hello, test code. :)", content);
