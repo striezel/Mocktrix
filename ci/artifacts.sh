@@ -33,7 +33,7 @@ do
     # self-contained build
     DEST_NAME=Mocktrix-$VERSION-$RID-self-contained
     DESTINATION=$WORKSPACE/artifacts/publish/${DEST_NAME}
-    dotnet publish ./Mocktrix/Mocktrix.csproj -c Release -r "$RID" -o "$DESTINATION" --self-contained true
+    dotnet publish ./Mocktrix/Mocktrix.csproj -c Release -r "$RID" -o "$DESTINATION" --self-contained true -p:PublishSingleFile=true
     rm "$DESTINATION"/*.pdb
     cp LICENSE "$DESTINATION"/
     cp readme.md "$DESTINATION"/
