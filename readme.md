@@ -1,6 +1,6 @@
 # Mocktrix
 
-Mocktrix _(working title, final name may change)_ will be an application to mock
+Mocktrix _(working title, final name may change)_ is a partial implementation of
 a Matrix homeserver.
 
 ## Prerequisites
