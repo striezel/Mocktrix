@@ -9,12 +9,14 @@
 set -e
 
 WORKSPACE=$(pwd)
+VERSION=$(git describe --always)
+VERSION=${VERSION:-unknown_version}
 mkdir -p artifacts/publish
 RIDS="linux-arm linux-arm64 linux-x64 linux-musl-x64 osx-x64 osx-arm64 win-x64 win-x86"
 for RID in $RIDS
 do
     # framework-dependent build
-    DEST_NAME=Mocktrix-$RID-framework-dependent
+    DEST_NAME=Mocktrix-$VERSION-$RID-framework-dependent
     DESTINATION=$WORKSPACE/artifacts/publish/${DEST_NAME}
     dotnet publish ./Mocktrix/Mocktrix.csproj -c Release -r "$RID" -o "$DESTINATION"
     rm "$DESTINATION"/*.pdb
@@ -27,7 +29,7 @@ do
     cd "$WORKSPACE" || exit 1
 
     # self-contained build
-    DEST_NAME=Mocktrix-$RID-self-contained
+    DEST_NAME=Mocktrix-$VERSION-$RID-self-contained
     DESTINATION=$WORKSPACE/artifacts/publish/${DEST_NAME}
     dotnet publish ./Mocktrix/Mocktrix.csproj -c Release -r "$RID" -o "$DESTINATION" --self-contained true
     rm "$DESTINATION"/*.pdb

@@ -8,6 +8,8 @@ jobs:
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Install Debian packages
         run: |
           sudo apt-get update
