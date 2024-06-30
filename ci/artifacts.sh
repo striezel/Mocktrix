@@ -11,6 +11,8 @@ set -e
 WORKSPACE=$(pwd)
 VERSION=$(git describe --always)
 VERSION=${VERSION:-unknown_version}
+ARCHIVE_MTIME=$(git log -1 --format="%cI")
+ARCHIVE_MTIME=${ARCHIVE_MTIME:-1970-01-01 00:00:00 +0000}
 mkdir -p artifacts/publish
 RIDS="linux-arm linux-arm64 linux-x64 linux-musl-x64 osx-x64 osx-arm64 win-x64 win-x86"
 for RID in $RIDS
@@ -25,7 +27,7 @@ do
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
-    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name
+    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name --mtime="$ARCHIVE_MTIME"
     cd "$WORKSPACE" || exit 1
 
     # self-contained build
@@ -38,6 +40,6 @@ do
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
-    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name
+    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name --mtime="$ARCHIVE_MTIME"
     cd "$WORKSPACE" || exit 1
 done
