@@ -27,7 +27,7 @@ do
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
-    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name --mtime="$ARCHIVE_MTIME"
+    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name --mtime="$ARCHIVE_MTIME" --owner=0 --group=0 --numeric-owner
     cd "$WORKSPACE" || exit 1
 
     # self-contained build
@@ -40,6 +40,6 @@ do
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
-    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name --mtime="$ARCHIVE_MTIME"
+    tar cjf "${DEST_NAME}.tar.bz2" "$DEST_NAME" --sort=name --mtime="$ARCHIVE_MTIME" --owner=0 --group=0 --numeric-owner
     cd "$WORKSPACE" || exit 1
 done
