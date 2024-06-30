@@ -7,6 +7,8 @@ build:
   before_script:
     - apt-get update && apt-get install -y bzip2 git grep net-tools tar
   script:
+    # Show information about installed .NET version.
+    - dotnet --info
     # Restore any NuGet packages.
     - dotnet restore ./Mocktrix/Mocktrix.sln
     # Build projects.
