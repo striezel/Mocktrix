@@ -5,7 +5,8 @@ image: mcr.microsoft.com/dotnet/sdk:8.0
 build:
   stage: build
   before_script:
-    - apt-get update && apt-get install -y bzip2 git grep net-tools tar
+    - apt-get update && apt-get upgrade -y
+    - apt-get install -y bzip2 git grep net-tools tar
   script:
     # Show information about installed .NET version.
     - dotnet --info
