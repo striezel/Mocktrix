@@ -29,7 +29,8 @@ namespace Mocktrix.Configuration
         /// <summary>
         /// Creates a configuration with default settings.
         /// </summary>
-        public Configuration() {
+        public Configuration()
+        {
             EnableRegistration = true;
             UploadLimit = 1024 * 1024 * 10; // 10 MB
         }

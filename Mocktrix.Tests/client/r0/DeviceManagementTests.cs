@@ -122,7 +122,7 @@ namespace MocktrixTests
                     }
                 }
             };
-            
+
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content.devices);
             // Find device created as part of login.
@@ -676,7 +676,8 @@ namespace MocktrixTests
         [Fact]
         public async Task TestMultipleDeviceDelete_NoAuthorization()
         {
-            var data = new {
+            var data = new
+            {
                 devices = new List<string>() { "foo", "bar" }
             };
             var response = await client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));

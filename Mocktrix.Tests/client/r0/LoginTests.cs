@@ -59,7 +59,8 @@ namespace MocktrixTests
             var body = new
             {
                 type = "m.login.token",
-                identifier = new {
+                identifier = new
+                {
                     type = "m.id.user",
                     user = "@alice:matrix.example.org"
                 },

@@ -33,7 +33,7 @@ namespace MocktrixTests
         public async Task TestMailRegisterToken()
         {
             var postData = new
-            { 
+            {
                 client_secret = "not so secret",
                 email = "alice@example.org",
                 send_attempt = 1,

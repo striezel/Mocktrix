@@ -19,8 +19,8 @@
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Account;
 using System.Security.Cryptography;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Mocktrix.client.r0_6_1
 {

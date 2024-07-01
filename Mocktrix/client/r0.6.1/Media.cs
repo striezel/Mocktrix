@@ -139,14 +139,14 @@ namespace Mocktrix.client.r0_6_1
                     };
                     return Results.Json(error, statusCode: StatusCodes.Status413PayloadTooLarge);
                 }
-                  
+
                 string? contentType = context.Request.ContentType;
                 string? fileName = context.Request.Query["filename"].FirstOrDefault("");
 
                 string id = ContentRepository.Memory.Media.Create(new ReadOnlySpan<byte>(buffer, 0, Convert.ToInt32(bytesRead)), contentType, fileName);
 
                 var server_address = new Uri(app.Urls.FirstOrDefault("http://localhost/"));
-                var data = new 
+                var data = new
                 {
                     content_uri = "mxc://" + server_address.Host + "/" + id
                 };

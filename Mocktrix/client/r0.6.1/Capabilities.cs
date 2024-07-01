@@ -60,7 +60,7 @@ namespace Mocktrix.client.r0_6_1
 
                 // Token was found, so get capabilities.
                 var result = new
-                { 
+                {
                     capabilities = new ServerCapabilities
                     {
                         ChangePassword = new ChangePasswordCapability { Enabled = true },

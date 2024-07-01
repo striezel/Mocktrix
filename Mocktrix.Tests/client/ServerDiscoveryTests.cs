@@ -40,12 +40,12 @@ namespace MocktrixTests
             {
                 Homeserver = new HomeserverInformation()
                 {
-                   BaseUrl = "http://localhost:5289"
+                    BaseUrl = "http://localhost:5289"
                 }
             };
 
             var content = Utilities.GetContent(response, expected);
-            
+
             Assert.Equal(expected.Homeserver.BaseUrl, content.Homeserver.BaseUrl);
         }
     }

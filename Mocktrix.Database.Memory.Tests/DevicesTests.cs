@@ -67,7 +67,7 @@ namespace Mocktrix.Database.Memory.Tests
             const string dev_id = "TheIdIsReallyHere";
             const string user_id = "@bob:matrix.example.com";
             const string name = "Bob's shiny device";
-            
+
             // Create a device.
             var shiny_device = Devices.CreateDevice(dev_id, user_id, name);
             // Query the created device.

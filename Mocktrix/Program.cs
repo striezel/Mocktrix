@@ -76,7 +76,7 @@ namespace Mocktrix
                             + " must be followed by a file path for the configuration file!");
                         return new Tuple<int, bool>(1, true);
                     }
-                    if (!Configuration.ConfigurationManager.Current.LoadFromFile(args[i+1]))
+                    if (!Configuration.ConfigurationManager.Current.LoadFromFile(args[i + 1]))
                     {
                         Console.Error.WriteLine("Failed to load configuration file!");
                         return new Tuple<int, bool>(1, true);
@@ -130,7 +130,7 @@ namespace Mocktrix
             MockData.Add();
 
             app.Run();
-            
+
             return 0;
         }
     }

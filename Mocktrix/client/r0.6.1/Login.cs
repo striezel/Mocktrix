@@ -172,7 +172,7 @@ namespace Mocktrix.client.r0_6_1
                 string? user_id = data.Identifier?.User ?? data.User;
                 if (string.IsNullOrWhiteSpace(user_id)
                     || string.IsNullOrWhiteSpace(data.Password)
-                    || ((data.Identifier!= null) && (data.Identifier.Type != "m.id.user")))
+                    || ((data.Identifier != null) && (data.Identifier.Type != "m.id.user")))
                 {
                     return Results.BadRequest(new ErrorResponse
                     {
@@ -240,7 +240,8 @@ namespace Mocktrix.client.r0_6_1
                 // Generate access token.
                 var token = Database.Memory.AccessTokens.CreateToken(user_id, device.device_id);
 
-                var response = new {
+                var response = new
+                {
                     user_id = user_id,
                     access_token = token.token,
                     device_id = device.device_id,

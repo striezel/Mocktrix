@@ -18,8 +18,8 @@
 
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Profile;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -56,7 +56,7 @@ namespace Mocktrix.client.r0_6_1
                     return Results.Ok(new { });
                 }
 
-                var data = new 
+                var data = new
                 {
                     displayname = user.display_name
                 };

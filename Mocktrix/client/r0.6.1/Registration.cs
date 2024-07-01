@@ -77,7 +77,7 @@ namespace Mocktrix.client.r0_6_1
         private static bool IsValidUserName(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
-            { 
+            {
                 return false;
             }
             var valid_char = (char c) =>
