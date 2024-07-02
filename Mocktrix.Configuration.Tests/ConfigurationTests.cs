@@ -141,6 +141,18 @@ namespace Mocktrix.Configuration.Tests
         }
 
         /// <summary>
+        /// Checks whether a configuration with an enormous upload limit is
+        /// rejected.
+        /// </summary>
+        [Fact]
+        public void LoadFromFile_EnormousUploadLimit()
+        {
+            var path = Path.Combine(GetTestAssemblyDirectory(), "TestFiles", "limit_too_large.xml");
+            var conf = new Configuration();
+            Assert.False(conf.LoadFromFile(path));
+        }
+
+        /// <summary>
         /// Checks whether a configuration can be saved to a file and loaded
         /// from that file again.
         /// </summary>

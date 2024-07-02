@@ -77,6 +77,18 @@ namespace Mocktrix.Configuration
 
 
         /// <summary>
+        /// Checks whether the configuration values are "sane",
+        /// for some definition of "sane".
+        /// </summary>
+        /// <returns>Returns whether configuration values are sane.</returns>
+        private bool SaneValues()
+        {
+            // Upload limit should be below 2 GB.
+            return UploadLimit < int.MaxValue;
+        }
+
+
+        /// <summary>
         /// Loads the configuration's data from the given file.
         /// </summary>
         /// <param name="path">file from which the data shall be read</param>
@@ -89,7 +101,7 @@ namespace Mocktrix.Configuration
                 var stream = new FileStream(path, FileMode.Open);
                 Configuration? data = (Configuration?)serializer.Deserialize(stream);
                 stream.Close();
-                if (data == null)
+                if (data == null || !data.SaneValues())
                     return false;
                 EnableRegistration = data.EnableRegistration;
                 UploadLimit = data.UploadLimit;
