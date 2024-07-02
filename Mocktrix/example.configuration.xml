@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- This is an example configuration file for Mocktrix.
+     It can be loaded via the -c parameter, i.e. by using
+
+     Mocktrix -c /path/to/example.configuration.xml
+-->
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- EnableRegistration determines whether the server allows the registration
+       of new accounts. Possible values are "true" and "false".
+       Default value is "true". -->
   <EnableRegistration>true</EnableRegistration>
+  <!-- UploadLimit sets the size limit in bytes for files uploaded to the
+       server's content / media repository. Possible values are integers between
+       zero and 2147483646. Larger values are rejected.
+       Default value is 10485760, that is 10 MB. -->
   <UploadLimit>10485760</UploadLimit>
 </Configuration>

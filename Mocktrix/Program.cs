@@ -33,6 +33,7 @@ namespace Mocktrix
             Console.WriteLine("  -? | --help     - Shows this help message and quits.");
             Console.WriteLine("  -v | --version  - Shows the version of the program and quits.");
             Console.WriteLine("  --conf file.xml - Loads the configuration from the given XML file.");
+            Console.WriteLine("  -c file.xml     - Short version of --conf file.xml.");
         }
 
 
@@ -68,7 +69,7 @@ namespace Mocktrix
         {
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i] == "--conf")
+                if (args[i] == "--conf" || (args[i] == "-c"))
                 {
                     if (i + 1 >= args.Length)
                     {

@@ -18,6 +18,7 @@ Options:
   -? | --help     - Shows this help message and quits.
   -v | --version  - Shows the version of the program and quits.
   --conf file.xml - Loads the configuration from the given XML file.
+  -c file.xml     - Short version of --conf file.xml.
 ```
 
 ## Known limitations
