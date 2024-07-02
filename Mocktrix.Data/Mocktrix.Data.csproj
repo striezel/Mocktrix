@@ -8,7 +8,7 @@
     <Description>Contains basic data types for Mocktrix server.</Description>
     <Authors>Dirk Stolle</Authors>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Version>0.1.0-pre</Version>
+    <Version>0.1.0</Version>
     <Deterministic>True</Deterministic>
   </PropertyGroup>
 
