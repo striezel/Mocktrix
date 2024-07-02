@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Reflection;
+
 namespace Mocktrix.Configuration.Tests
 {
     /// <summary>
@@ -26,6 +28,20 @@ namespace Mocktrix.Configuration.Tests
         private static string GetTempFileName()
         {
             return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        }
+
+        /// <summary>
+        /// Returns the directory for the code base of the test assembly.
+        /// </summary>
+        /// <returns>Returns the path to the Mocktrix.Configuration.Tests directory.</returns>
+        private static string GetTestAssemblyDirectory()
+        {
+            var location = Assembly.GetExecutingAssembly().Location;
+            // Location includes the DLL file name, so let's get rid of that.
+            string directory = Path.GetDirectoryName(location) ?? "";
+            // Assembly is usually inside "bin\\Debug\\net8.0" directory, so we
+            // have to get three levels higher in the file system hierarchy.
+            return Path.GetFullPath(Path.Combine(directory, "..", "..", ".."));
         }
 
         /// <summary>
@@ -100,6 +116,28 @@ namespace Mocktrix.Configuration.Tests
                 if (File.Exists(path))
                     File.Delete(path);
             }
+        }
+
+        /// <summary>
+        /// Checks whether the example configuration file can be loaded.
+        /// </summary>
+        [Fact]
+        public void LoadFromFile_ExampleConfig()
+        {
+            var path = Path.Combine(GetTestAssemblyDirectory(), "..", "Mocktrix", "example.configuration.xml");
+            var conf = new Configuration();
+            try
+            {
+                var success = conf.LoadFromFile(path);
+                Assert.True(success);
+            }
+            catch
+            {
+                Assert.Fail("Attempting to load example configuration threw an exception!");
+            }
+            var def = ConfigurationManager.Default;
+            Assert.Equal(def.EnableRegistration, conf.EnableRegistration);
+            Assert.Equal(def.UploadLimit, conf.UploadLimit);
         }
 
         /// <summary>
