@@ -119,6 +119,17 @@ namespace Mocktrix.Configuration.Tests
         }
 
         /// <summary>
+        /// Checks whether a configuration with comments can be loaded.
+        /// </summary>
+        [Fact]
+        public void LoadFromFile_Comments()
+        {
+            var path = Path.Combine(GetTestAssemblyDirectory(), "TestFiles", "comments.xml");
+            var conf = new Configuration();
+            Assert.True(conf.LoadFromFile(path));
+        }
+
+        /// <summary>
         /// Checks whether the example configuration file can be loaded.
         /// </summary>
         [Fact]
