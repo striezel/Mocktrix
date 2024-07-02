@@ -24,6 +24,7 @@ do
     rm "$DESTINATION"/*.pdb
     cp LICENSE "$DESTINATION"/
     cp readme.md "$DESTINATION"/
+    cp status-client-server-api-r0.6.1.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1
@@ -37,6 +38,7 @@ do
     rm "$DESTINATION"/*.pdb
     cp LICENSE "$DESTINATION"/
     cp readme.md "$DESTINATION"/
+    cp status-client-server-api-r0.6.1.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
     cd "$WORKSPACE/artifacts/publish" || exit 1

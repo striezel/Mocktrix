@@ -3,6 +3,9 @@
 Mocktrix _(working title, final name may change)_ is a partial implementation of
 a Matrix homeserver.
 
+A list of implemented features can be seen
+[here](status-client-server-api-r0.6.1.md).
+
 ## Prerequisites
 
 To run the program you need the .NET 8 runtime.
