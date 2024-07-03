@@ -10,6 +10,9 @@ Legend:
 * 🚧 - partially implemented / work in progress
 * ❌ - not implemented yet
 
+Note: The parts that are marked as deprecated by the specification will not get
+implemented.
+
 ## 2 API Standards
 
 * ✅ 2.1 [GET /_matrix/client/versions](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-versions)
@@ -106,7 +109,13 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ### 9.5 Getting events for a room
 
-TODO
+* ❌ 9.5.1 [GET /_matrix/client/r0/rooms/{roomId}/event/{eventId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-event-eventid)
+* ❌ 9.5.2 [GET /_matrix/client/r0/rooms/{roomId}/state/{eventType}/{stateKey}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-state-eventtype-statekey)
+* ❌ 9.5.3 [GET /_matrix/client/r0/rooms/{roomId}/state](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-state)
+* ❌ 9.5.4 [GET /_matrix/client/r0/rooms/{roomId}/members](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-members)
+* ❌ 9.5.5 [GET /_matrix/client/r0/rooms/{roomId}/joined_members](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-joined-members)
+* ❌ 9.5.6 [GET /_matrix/client/r0/rooms/{roomId}/messages](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-messages)
+* ❌ 9.5.7 [Deprecated: GET /_matrix/client/r0/rooms/{roomId}/initialSync](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-rooms-roomid-initialsync)
 
 ### 9.6 Sending events to a room
 
