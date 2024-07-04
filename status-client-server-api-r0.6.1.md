@@ -138,7 +138,18 @@ TODO
 
 ## 11 User Data
 
-TODO
+### 11.1 User Directory
+
+* ❌ 11.1.1 [POST /_matrix/client/r0/user_directory/search](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-user-directory-search)
+
+### 11.2 Profiles
+
+* ✅ 11.2.1 [PUT /_matrix/client/r0/profile/{userId}/displayname](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-profile-userid-displayname)
+* ✅ 11.2.2 [GET /_matrix/client/r0/profile/{userId}/displayname](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid-displayname)
+* ✅ 11.2.3 [PUT /_matrix/client/r0/profile/{userId}/avatar_url](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-profile-userid-avatar-url)
+* ✅ 11.2.4 [GET /_matrix/client/r0/profile/{userId}/avatar_url](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid-avatar-url)
+* ✅ 11.2.5 [GET /_matrix/client/r0/profile/{userId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid)
+* ❌ 11.2.6 [Events on Change of Profile Information](https://spec.matrix.org/historical/client_server/r0.6.1.html#events-on-change-of-profile-information)
 
 ## 12 Security
 
