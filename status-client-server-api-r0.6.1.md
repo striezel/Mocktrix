@@ -134,7 +134,48 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ## 10 Rooms
 
-TODO
+### 10.1 Creation
+
+* ❌ 10.1.1 [POST /_matrix/client/r0/createRoom](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-createroom)
+
+### 10.2 Room aliases
+
+* ❌ 10.2.1 [PUT /_matrix/client/r0/directory/room/{roomAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-room-roomalias)
+* ❌ 10.2.2 [GET /_matrix/client/r0/directory/room/{roomAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-room-roomalias)
+* ❌ 10.2.3 [DELETE /_matrix/client/r0/directory/room/{roomAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-directory-room-roomalias)
+* ❌ 10.2.4 [GET /_matrix/client/r0/rooms/{roomId}/aliases](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-aliases)
+
+### 10.3 Permissions
+
+❌Not implemented.
+
+### 10.4 Room membership
+
+* ❌ 10.4.1 [GET /_matrix/client/r0/joined_rooms](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-joined-rooms)
+
+#### 10.4.2 Joining rooms
+
+* ❌ 10.4.2.1 [POST /_matrix/client/r0/rooms/{roomId}/invite](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-invite)
+* ❌ 10.4.2.2 [POST /_matrix/client/r0/rooms/{roomId}/join](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-join)
+* ❌ 10.4.2.3 [POST /_matrix/client/r0/join/{roomIdOrAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-join-roomidoralias)
+
+#### 10.4.3 Leaving rooms
+
+* ❌ 10.4.3.1 [POST /_matrix/client/r0/rooms/{roomId}/leave](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-leave)
+* ❌ 10.4.3.2 [POST /_matrix/client/r0/rooms/{roomId}/forget](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-forget)
+* ❌ 10.4.3.3 [POST /_matrix/client/r0/rooms/{roomId}/kick](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-kick)
+
+#### 10.4.4 Banning users in a room
+
+* ❌ 10.4.4.1 [POST /_matrix/client/r0/rooms/{roomId}/ban](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-ban)
+* ❌ 10.4.4.2 [POST /_matrix/client/r0/rooms/{roomId}/unban](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-unban)
+
+### 10.5 Listing rooms
+
+* ❌ 10.5.1 [GET /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-list-room-roomid)
+* ❌ 10.5.2 [PUT /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-list-room-roomid)
+* ❌ 10.5.3 [GET /_matrix/client/r0/publicRooms](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-publicrooms)
+* ❌ 10.5.4 [POST /_matrix/client/r0/publicRooms](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-publicrooms)
 
 ## 11 User Data
 
