@@ -208,14 +208,14 @@ TODO
 
 #### 13.7.1 Events
 
-* ❌13.7.1.1 [m.presence](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-presence)
+* ❌ 13.7.1.1 [m.presence](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-presence)
 
 #### 13.7.2 Client behaviour
 
-* ❌13.7.2.1 [PUT /_matrix/client/r0/presence/{userId}/status](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-presence-userid-status)
-* ❌13.7.2.2 [GET /_matrix/client/r0/presence/{userId}/status](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-presence-userid-status)
-* ❌13.7.2.3 [Last active ago](https://spec.matrix.org/historical/client_server/r0.6.1.html#last-active-ago)
-* ❌13.7.2.4 [Idle timeout](https://spec.matrix.org/historical/client_server/r0.6.1.html#idle-timeout)
+* ❌ 13.7.2.1 [PUT /_matrix/client/r0/presence/{userId}/status](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-presence-userid-status)
+* ❌ 13.7.2.2 [GET /_matrix/client/r0/presence/{userId}/status](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-presence-userid-status)
+* ❌ 13.7.2.3 [Last active ago](https://spec.matrix.org/historical/client_server/r0.6.1.html#last-active-ago)
+* ❌ 13.7.2.4 [Idle timeout](https://spec.matrix.org/historical/client_server/r0.6.1.html#idle-timeout)
 
 #### [13.7.3 Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id65)
 
