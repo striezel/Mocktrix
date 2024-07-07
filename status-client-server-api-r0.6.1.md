@@ -200,9 +200,23 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ## 13 Modules
 
-### 13.1 to 13.6
+### 13.1 to 13.5
 
 TODO
+
+### 13.6 Fully read markers
+
+#### 13.6.1 Events
+
+* ❌ 13.6.1.1 [m.fully_read](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-fully-read)
+
+#### 13.6.2 Client behaviour
+
+* ❌ 13.6.2.1 [POST /_matrix/client/r0/rooms/{roomId}/read_markers](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-read-markers)
+
+#### 13.6.3 Server behaviour
+
+* ❌ Not implemented.
 
 ### 13.7 Presence
 
