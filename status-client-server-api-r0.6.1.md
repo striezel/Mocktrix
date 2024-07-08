@@ -200,9 +200,25 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ## 13 Modules
 
-### 13.1 to 13.5
+### 13.1 to 13.4
 
 TODO
+
+### 13.5 Receipts
+
+#### 13.5.1 Events
+
+* ❌ 13.5.1.1 [m.receipt](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-receipt)
+
+#### 13.5.2 Client behaviour
+
+* ❌ 13.5.2.1 [POST /_matrix/client/r0/rooms/{roomId}/receipt/{receiptType}/{eventId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-receipt-receipttype-eventid)
+
+#### 13.5.3 Server behaviour
+
+* ❌ Not implemented yet.
+
+#### 13.5.4 [Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id57)
 
 ### 13.6 Fully read markers
 
