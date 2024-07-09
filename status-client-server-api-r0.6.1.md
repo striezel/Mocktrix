@@ -200,9 +200,21 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ## 13 Modules
 
-### 13.1 to 13.4
+### 13.1 to 13.3
 
 TODO
+
+### 13.4 Typing Notifications
+
+#### 13.4.1 Events
+
+* ❌ 13.4.1.1 [m.typing](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-typing)
+
+#### [13.4.2 Client behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id51)
+
+* ❌ 13.4.2.1 [PUT /_matrix/client/r0/rooms/{roomId}/typing/{userId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-rooms-roomid-typing-userid)
+
+#### [13.4.3 Security consideration](https://spec.matrix.org/historical/client_server/r0.6.1.html#id52)
 
 ### 13.5 Receipts
 
