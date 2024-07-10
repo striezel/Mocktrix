@@ -46,6 +46,7 @@ namespace Mocktrix
             var name = asm.GetName().Name;
             var ver = asm.GetName().Version;
             Console.WriteLine(name + ", version " + ver?.ToString(3));
+            Console.WriteLine("(running on " + System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription + ")");
             Console.WriteLine();
             Console.WriteLine("Copyright (C) 2024  Dirk Stolle");
             Console.WriteLine("License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>");
