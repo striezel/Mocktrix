@@ -33,6 +33,10 @@ namespace Mocktrix.Protocol.Types
         public string BaseUrl { get; set; }
     }
 
+    /// <summary>
+    /// Contains server discovery information (currently only homeserver and no
+    /// identity server information).
+    /// </summary>
     public struct DiscoveryInformation
     {
         /// <summary>

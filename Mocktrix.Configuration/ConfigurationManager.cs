@@ -18,6 +18,10 @@
 
 namespace Mocktrix.Configuration
 {
+    /// <summary>
+    /// Holds the current configuration and provides a way to get the default
+    /// configuration.
+    /// </summary>
     public static class ConfigurationManager
     {
         /// <summary>

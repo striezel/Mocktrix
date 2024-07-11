@@ -26,7 +26,9 @@ namespace Mocktrix.client.r0_6_1
     internal record LoginFlow(string type);
 #pragma warning restore IDE1006
 
-
+    /// <summary>
+    /// Contains user identification information.
+    /// </summary>
     public class UserIdentifier
     {
         /// <summary>
@@ -42,6 +44,10 @@ namespace Mocktrix.client.r0_6_1
         public string User { get; set; } = string.Empty;
     }
 
+
+    /// <summary>
+    /// Data sent by a client via POST request to perform a login.
+    /// </summary>
     public class LoginPostData
     {
         /// <summary>
@@ -50,6 +56,9 @@ namespace Mocktrix.client.r0_6_1
         [JsonPropertyName("type")]
         public string Type { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Identification information of the user.
+        /// </summary>
         [JsonPropertyName("identifier")]
         public UserIdentifier? Identifier { get; set; } = null;
 

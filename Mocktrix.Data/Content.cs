@@ -37,7 +37,7 @@ namespace Mocktrix.Data
 
 
         /// <summary>
-        /// hashed password
+        /// the Content-Type of the uploaded file, e.g. "text/plain"
         /// </summary>
         public string? ContentType = content_type;
 
