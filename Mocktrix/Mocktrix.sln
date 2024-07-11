@@ -21,9 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Configuration", ".
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Configuration.Tests", "..\Mocktrix.Configuration.Tests\Mocktrix.Configuration.Tests.csproj", "{57E20927-6327-4F2B-A590-7FCACE2334E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.ContentRepository.Memory", "..\Mocktrix.ContentRepository.Memory\Mocktrix.ContentRepository.Memory.csproj", "{388FF77F-CF86-4ED2-96D8-C522C744FE9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.ContentRepository.Memory", "..\Mocktrix.ContentRepository.Memory\Mocktrix.ContentRepository.Memory.csproj", "{388FF77F-CF86-4ED2-96D8-C522C744FE9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.ContentRepository.Memory.Tests", "..\Mocktrix.ContentRepository.Memory.Tests\Mocktrix.ContentRepository.Memory.Tests.csproj", "{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.ContentRepository.Memory.Tests", "..\Mocktrix.ContentRepository.Memory.Tests\Mocktrix.ContentRepository.Memory.Tests.csproj", "{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Events", "..\Mocktrix.Events\Mocktrix.Events.csproj", "{139A0FFC-A3C3-4517-9DFD-70285BEFD8CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Events.Tests", "..\Mocktrix.Events.Tests\Mocktrix.Events.Tests.csproj", "{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +79,14 @@ Global
 		{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{139A0FFC-A3C3-4517-9DFD-70285BEFD8CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{139A0FFC-A3C3-4517-9DFD-70285BEFD8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{139A0FFC-A3C3-4517-9DFD-70285BEFD8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{139A0FFC-A3C3-4517-9DFD-70285BEFD8CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
