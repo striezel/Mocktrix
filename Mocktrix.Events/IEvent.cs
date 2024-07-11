@@ -24,6 +24,7 @@ namespace Mocktrix.Events
     /// Basic interface for all event types.
     /// </summary>
     [JsonDerivedType(typeof(CanonicalAliasEvent))]
+    [JsonDerivedType(typeof(CreateRoomEvent))]
     public interface IEvent
     {
         /// <summary>
