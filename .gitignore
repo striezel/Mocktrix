@@ -6,3 +6,8 @@
 # Visual Studio's stuff
 *.suo
 .vs/
+
+# Doxygen stuff
+doxygen-warnings.log
+html/
+latex/
