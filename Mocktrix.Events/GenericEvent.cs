@@ -21,35 +21,36 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
-    /// Event for join rules of a room.
+    /// Generic state event with zero length key.
     /// </summary>
-    public class JoinRulesEvent: GenericStateEventZeroLengthKey<JoinRulesEventContent>
+    /// <typeparam name="C">type of the event content, must be derived from
+    /// IEventContent</typeparam>
+    public abstract class GenericStateEventZeroLengthKey<C>: StateEventZeroLengthKey
+        where C : IEventContent, new()
     {
-        [JsonPropertyName("type")]
-        [JsonPropertyOrder(-30)]
-        public override string Type
+        [JsonPropertyName("content")]
+        [JsonPropertyOrder(-100)]
+        public override IEventContent Content
         {
-            get => "m.room.join_rules";
+            get => _content;
             set
             {
-                if (value != "m.room.join_rules")
+                if (value is C content)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.room.join_rules'.");
+                    _content = content;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Content must be of type "
+                        + typeof(C).Name + ".");
                 }
             }
         }
-    }
 
 
-    /// <summary>
-    /// Event content for JoinRulesEvent.
-    /// </summary>
-    public class JoinRulesEventContent : IEventContent
-    {
         /// <summary>
-        /// The type of rules used for users wishing to join this room. One of: ["public", "knock", "invite", "private"].
+        /// The event's content.
         /// </summary>
-        [JsonPropertyName("join_rule")]
-        public string JoinRule { get; set; }
+        private C _content = new();
     }
 }

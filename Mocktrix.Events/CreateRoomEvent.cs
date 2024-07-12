@@ -23,27 +23,8 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for creation of a room.
     /// </summary>
-    public class CreateRoomEvent: StateEventZeroLengthKey
+    public class CreateRoomEvent: GenericStateEventZeroLengthKey<CreateRoomEventContent>
     {
-        [JsonPropertyName("content")]
-        [JsonPropertyOrder(-100)]
-        public override IEventContent Content
-        {
-            get => _content;
-            set
-            {
-                if (value is CreateRoomEventContent content)
-                {
-                    _content = content;
-                }
-                else
-                {
-                    throw new InvalidOperationException("Content must be of type "
-                        + nameof(CreateRoomEventContent) + ".");
-                }
-            }
-        }
-
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
         public override string Type
@@ -57,11 +38,6 @@ namespace Mocktrix.Events
                 }
             }
         }
-
-        /// <summary>
-        /// The event's content.
-        /// </summary>
-        private CreateRoomEventContent _content = new();
     }
 
 

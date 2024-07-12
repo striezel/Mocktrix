@@ -23,27 +23,8 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event to set the canonical alias of a room.
     /// </summary>
-    public class CanonicalAliasEvent : StateEventZeroLengthKey
+    public class CanonicalAliasEvent : GenericStateEventZeroLengthKey<CanonicalAliasEventContent>
     {
-        [JsonPropertyName("content")]
-        [JsonPropertyOrder(-100)]
-        public override IEventContent Content
-        {
-            get => _content;
-            set
-            {
-                if (value is CanonicalAliasEventContent content)
-                {
-                    _content = content;
-                }
-                else
-                {
-                    throw new InvalidOperationException("Content must be of type "
-                        + nameof(CanonicalAliasEventContent) + ".");
-                }
-            }
-        }
-
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
         public override string Type
@@ -57,11 +38,6 @@ namespace Mocktrix.Events
                 }
             }
         }
-
-        /// <summary>
-        /// The event's content.
-        /// </summary>
-        private CanonicalAliasEventContent _content = new();
     }
 
 
