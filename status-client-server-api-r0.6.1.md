@@ -200,9 +200,30 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ## 13 Modules
 
-### 13.1 to 13.3
+### 13.1 to 13.2
 
 TODO
+
+### 13.3 Voice over IP
+
+#### 13.3.1 Events
+
+* ❌ 13.3.1.1 [m.call.invite](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-invite)
+* ❌ 13.3.1.2 [m.call.candidates](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-candidates)
+* ❌ 13.3.1.3 [m.call.answer](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-answer)
+* ❌ 13.3.1.4 [m.call.hangup](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-hangup)
+
+#### 13.3.2 Client behaviour
+
+##### 13.3.2.1 Glare
+
+#### 13.3.3 Server behaviour
+
+* ❌ 13.3.3.1 [GET /_matrix/client/r0/voip/turnServer](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-voip-turnserver)
+
+#### 13.3.4 [Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id48)
+
+* ❌ Not implemented.
 
 ### 13.4 Typing Notifications
 
