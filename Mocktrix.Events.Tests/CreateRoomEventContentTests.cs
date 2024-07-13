@@ -20,8 +20,21 @@ using System.Text.Json;
 
 namespace Mocktrix.Events.Tests
 {
+    /// <summary>
+    /// Contains tests for CreateRoomEventContent.
+    /// </summary>
     public class CreateRoomEventContentTests
     {
+        [Fact]
+        public void Construction()
+        {
+            var content = new CreateRoomEventContent();
+            Assert.Null(content.Creator);
+            Assert.Null(content.Federate);
+            Assert.Null(content.Predecessor);
+            Assert.Null(content.Version);
+        }
+
         [Fact]
         public void DeserializeSpecExample()
         {

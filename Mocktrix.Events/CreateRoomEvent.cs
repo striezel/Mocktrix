@@ -50,7 +50,7 @@ namespace Mocktrix.Events
         /// The user id of the creator of the room, e.g. "@alice:matrix.example.org".
         /// </summary>
         [JsonPropertyName("creator")]
-        public string Creator { get; set; }
+        public string Creator { get; set; } = null!;
 
 
         /// <summary>
@@ -87,12 +87,12 @@ namespace Mocktrix.Events
         /// Id of the last known event in the old room.
         /// </summary>
         [JsonPropertyName("event_id")]
-        public string EventId { get; set; }
+        public string EventId { get; set; } = null!;
 
         /// <summary>
         /// The id of the old room.
         /// </summary>
         [JsonPropertyName("room_id")]
-        public string RoomId { get; set; }
+        public string RoomId { get; set; } = null!;
     }
 }

@@ -35,7 +35,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("event_id")]
         [JsonPropertyOrder(-90)]
-        public string EventId { get; set; }
+        public string EventId { get; set; } = null!;
 
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("room_id")]
         [JsonPropertyOrder(-60)]
-        public string RoomId { get; set; }
+        public string RoomId { get; set; } = null!;
 
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("sender")]
         [JsonPropertyOrder(-50)]
-        public string Sender { get; set; }
+        public string Sender { get; set; } = null!;
 
 
         [JsonPropertyName("type")]

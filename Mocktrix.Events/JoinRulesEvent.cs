@@ -50,6 +50,6 @@ namespace Mocktrix.Events
         /// The type of rules used for users wishing to join this room. One of: ["public", "knock", "invite", "private"].
         /// </summary>
         [JsonPropertyName("join_rule")]
-        public string JoinRule { get; set; }
+        public string JoinRule { get; set; } = null!;
     }
 }

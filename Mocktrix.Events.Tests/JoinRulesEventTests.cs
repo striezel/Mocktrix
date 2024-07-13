@@ -20,8 +20,30 @@ using System.Text.Json;
 
 namespace Mocktrix.Events.Tests
 {
+    /// <summary>
+    /// Contains tests for JoinRulesEvent.
+    /// </summary>
     public class JoinRulesEventTests
     {
+        [Fact]
+        public void Construction()
+        {
+            var ev = new JoinRulesEvent();
+            Assert.NotNull(ev.Content);
+            Assert.IsType<JoinRulesEventContent>(ev.Content);
+            var content = ev.Content as JoinRulesEventContent;
+            Assert.NotNull(content);
+            Assert.Null(content.JoinRule);
+            Assert.Null(ev.EventId);
+            Assert.Equal(0, ev.OriginServerTs);
+            Assert.Null(ev.PrevContent);
+            Assert.Null(ev.RoomId);
+            Assert.Null(ev.Sender);
+            Assert.Empty(ev.StateKey);
+            Assert.Equal("m.room.join_rules", ev.Type);
+            Assert.Null(ev.Unsigned);
+        }
+
         /* Interface types are not supported for serialization, so this fails.
 
         [Fact]

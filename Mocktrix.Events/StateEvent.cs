@@ -44,6 +44,6 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("state_key")]
         [JsonPropertyOrder(-40)]
-        public string StateKey  { get; set; }
+        public string StateKey { get; set; } = null!;
     }
 }

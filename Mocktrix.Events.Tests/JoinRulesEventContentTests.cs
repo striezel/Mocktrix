@@ -20,8 +20,18 @@ using System.Text.Json;
 
 namespace Mocktrix.Events.Tests
 {
+    /// <summary>
+    /// Contains tests for JoinRulesEventContent.
+    /// </summary>
     public class JoinRulesEventContentTests
     {
+        [Fact]
+        public void Construction()
+        {
+            var content = new JoinRulesEventContent();
+            Assert.Null(content.JoinRule);
+        }
+
         [Fact]
         public void DeserializeSpecExample()
         {

@@ -20,8 +20,19 @@ using System.Text.Json;
 
 namespace Mocktrix.Events.Tests
 {
+    /// <summary>
+    /// Contains tests for CanonicalAliasEventContent.
+    /// </summary>
     public class CanonicalAliasEventContentTests
     {
+        [Fact]
+        public void Construction()
+        {
+            var content = new CanonicalAliasEventContent();
+            Assert.Null(content.Alias);
+            Assert.Null(content.AlternativeAliases);
+        }
+
         [Fact]
         public void HasCanonicalAlias()
         {

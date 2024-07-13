@@ -20,8 +20,33 @@ using System.Text.Json;
 
 namespace Mocktrix.Events.Tests
 {
+    /// <summary>
+    /// Contains tests for CreateRoomEvent.
+    /// </summary>
     public class CreateRoomEventTests
     {
+        [Fact]
+        public void Construction()
+        {
+            var ev = new CreateRoomEvent();
+            Assert.NotNull(ev.Content);
+            Assert.IsType<CreateRoomEventContent>(ev.Content);
+            var content = ev.Content as CreateRoomEventContent;
+            Assert.NotNull(content);
+            Assert.Null(content.Creator);
+            Assert.Null(content.Federate);
+            Assert.Null(content.Predecessor);
+            Assert.Null(content.Version);
+            Assert.Null(ev.EventId);
+            Assert.Equal(0, ev.OriginServerTs);
+            Assert.Null(ev.PrevContent);
+            Assert.Null(ev.RoomId);
+            Assert.Null(ev.Sender);
+            Assert.Empty(ev.StateKey);
+            Assert.Equal("m.room.create", ev.Type);
+            Assert.Null(ev.Unsigned);
+        }
+
         /* Interface types are not supported for serialization, so this fails.
 
         [Fact]
