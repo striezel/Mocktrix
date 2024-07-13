@@ -21,6 +21,41 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
+    /// Generic state event.
+    /// </summary>
+    /// <typeparam name="C">type of the event content, must be derived from
+    /// IEventContent</typeparam>
+    public abstract class GenericStateEvent<C> : StateEvent
+        where C : IEventContent, new()
+    {
+        [JsonPropertyName("content")]
+        [JsonPropertyOrder(-100)]
+        public override IEventContent Content
+        {
+            get => _content;
+            set
+            {
+                if (value is C content)
+                {
+                    _content = content;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Content must be of type "
+                        + typeof(C).Name + ".");
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// The event's content.
+        /// </summary>
+        private C _content = new();
+    }
+
+
+    /// <summary>
     /// Generic state event with zero length key.
     /// </summary>
     /// <typeparam name="C">type of the event content, must be derived from
