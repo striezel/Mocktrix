@@ -26,6 +26,7 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(CanonicalAliasEventContent))]
     [JsonDerivedType(typeof(CreateRoomEventContent))]
     [JsonDerivedType(typeof(JoinRulesEventContent))]
+    [JsonDerivedType(typeof(MembershipEventContent))]
     public interface IEventContent
     {
     }
