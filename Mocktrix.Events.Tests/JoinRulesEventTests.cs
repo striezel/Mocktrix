@@ -59,7 +59,7 @@ namespace Mocktrix.Events.Tests
                            "room_id": "!jEsUZKDJdhlrceRyVU:example.org",
                            "sender": "@example:example.org",
                            "state_key": "",
-                           "type": "m.room.canonical_alias",
+                           "type": "m.room.join_rules",
                            "unsigned": {
                                "age": 1234
                            }
