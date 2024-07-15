@@ -120,5 +120,63 @@ namespace Mocktrix.Events.Tests
             Assert.NotNull(json);
             Assert.Equal(expected_json, json);
         }
+
+        [Fact]
+        public void GetPowerLevel_DefaultConstructed()
+        {
+            var content = new PowerLevelsEventContent();
+            Assert.Equal(0, content.GetPowerLevel("@alice:matrix.homeserver.tld"));
+            Assert.Equal(0, content.GetPowerLevel("@bob:matrix.homeserver.tld"));
+            Assert.Equal(0, content.GetPowerLevel("@charlie:matrix.homeserver.tld"));
+            Assert.Equal(0, content.GetPowerLevel("@dora:matrix.homeserver.tld"));
+        }
+
+        [Fact]
+        public void GetPowerLevel_WithUserDefaultValue()
+        {
+            var content = new PowerLevelsEventContent()
+            {
+                UsersDefault = 42
+            };
+            Assert.Equal(42, content.GetPowerLevel("@alice:matrix.homeserver.tld"));
+            Assert.Equal(42, content.GetPowerLevel("@bob:matrix.homeserver.tld"));
+            Assert.Equal(42, content.GetPowerLevel("@charlie:matrix.homeserver.tld"));
+            Assert.Equal(42, content.GetPowerLevel("@dora:matrix.homeserver.tld"));
+        }
+
+        [Fact]
+        public void GetPowerLevel_WithUserSpecificValues()
+        {
+            var content = new PowerLevelsEventContent()
+            {
+                Users = new SortedDictionary<string, int>()
+                {
+                    { "@alice:matrix.homeserver.tld", 123},
+                    { "@bob:matrix.homeserver.tld", 456}
+                }
+            };
+            Assert.Equal(123, content.GetPowerLevel("@alice:matrix.homeserver.tld"));
+            Assert.Equal(456, content.GetPowerLevel("@bob:matrix.homeserver.tld"));
+            Assert.Equal(0, content.GetPowerLevel("@charlie:matrix.homeserver.tld"));
+            Assert.Equal(0, content.GetPowerLevel("@dora:matrix.homeserver.tld"));
+        }
+
+        [Fact]
+        public void GetPowerLevel_WithUserSpecificValuesAndUserDefaultValue()
+        {
+            var content = new PowerLevelsEventContent()
+            {
+                Users = new SortedDictionary<string, int>()
+                {
+                    { "@alice:matrix.homeserver.tld", 99},
+                    { "@bob:matrix.homeserver.tld", 66}
+                },
+                UsersDefault = 21
+            };
+            Assert.Equal(99, content.GetPowerLevel("@alice:matrix.homeserver.tld"));
+            Assert.Equal(66, content.GetPowerLevel("@bob:matrix.homeserver.tld"));
+            Assert.Equal(21, content.GetPowerLevel("@charlie:matrix.homeserver.tld"));
+            Assert.Equal(21, content.GetPowerLevel("@dora:matrix.homeserver.tld"));
+        }
     }
 }

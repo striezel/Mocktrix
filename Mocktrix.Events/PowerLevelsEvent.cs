@@ -133,5 +133,20 @@ namespace Mocktrix.Events
         [JsonPropertyName("users_default")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? UsersDefault { get; set; } = null;
+
+
+        /// <summary>
+        /// Gets the power level for a specific user.
+        /// </summary>
+        /// <param name="user_id">the full Matrix user id of a user</param>
+        /// <returns>Returns the corresponding power level for that user.</returns>
+        public int GetPowerLevel(string user_id)
+        {
+            if (Users != null && Users.TryGetValue(user_id, out var powerLevel))
+            {
+                return powerLevel;
+            }
+            return UsersDefault.GetValueOrDefault(0);
+        }
     }
 }
