@@ -302,6 +302,33 @@ TODO
 
 * 🚧 Partially implemented.
 
-### 13.9 to 13.33
+### 13.9 Send-to-Device messaging
+
+#### [13.9.1 Client behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id71)
+
+#### [13.9.2 Server behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id72)
+
+* ❌ Not implemented.
+
+#### 13.9.3 Protocol definitions
+
+* ❌ 13.9.3.1 [PUT /_matrix/client/r0/sendToDevice/{eventType}/{txnId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-sendtodevice-eventtype-txnid)
+* ❌ 13.9.3.2 [Extensions to /sync](https://spec.matrix.org/historical/client_server/r0.6.1.html#extensions-to-sync)
+
+### 13.10 Device Management
+
+#### 13.10.1 Client behaviour
+
+* ✅ 13.10.1.1 [GET /_matrix/client/r0/devices](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices)
+* ✅ 13.10.1.2 [GET /_matrix/client/r0/devices/{deviceId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid)
+* ✅ 13.10.1.3 [PUT /_matrix/client/r0/devices/{deviceId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-devices-deviceid)
+* ✅ 13.10.1.4 [DELETE /_matrix/client/r0/devices/{deviceId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-devices-deviceid)
+* ✅ 13.10.1.5 [POST /_matrix/client/r0/delete_devices](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-delete-devices)
+
+#### [13.10.2 Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id75)
+
+* ❌ Not implemented yet (user-interactive authentication).
+
+### 13.11 to 13.33
 
 TODO
