@@ -23,11 +23,12 @@ namespace Mocktrix.Events
     /// <summary>
     /// Basic interface for all event types.
     /// </summary>
-    [JsonDerivedType(typeof(CanonicalAliasEvent))]
-    [JsonDerivedType(typeof(CreateRoomEvent))]
-    [JsonDerivedType(typeof(JoinRulesEvent))]
-    [JsonDerivedType(typeof(MembershipEvent))]
-    [JsonDerivedType(typeof(PowerLevelsEvent))]
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+    [JsonDerivedType(typeof(CanonicalAliasEvent), "m.room.canonical_alias")]
+    [JsonDerivedType(typeof(CreateRoomEvent), "m.room.create")]
+    [JsonDerivedType(typeof(JoinRulesEvent), "m.room.join_rules")]
+    [JsonDerivedType(typeof(MembershipEvent), "m.room.member")]
+    [JsonDerivedType(typeof(PowerLevelsEvent), "m.room.power_levels")]
     public interface IEvent
     {
         /// <summary>
