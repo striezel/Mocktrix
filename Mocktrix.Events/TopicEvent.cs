@@ -21,18 +21,35 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
-    /// Basic interface for event content.
+    /// Event for topic of a room.
     /// </summary>
-    [JsonDerivedType(typeof(CanonicalAliasEventContent))]
-    [JsonDerivedType(typeof(CreateRoomEventContent))]
-    [JsonDerivedType(typeof(GuestAccessEventContent))]
-    [JsonDerivedType(typeof(HistoryVisibilityEventContent))]
-    [JsonDerivedType(typeof(JoinRulesEventContent))]
-    [JsonDerivedType(typeof(MembershipEventContent))]
-    [JsonDerivedType(typeof(NameEventContent))]
-    [JsonDerivedType(typeof(PowerLevelsEventContent))]
-    [JsonDerivedType(typeof(TopicEventContent))]
-    public interface IEventContent
+    public class TopicEvent: GenericStateEventZeroLengthKey<TopicEventContent>
     {
+        [JsonPropertyName("type")]
+        [JsonPropertyOrder(-30)]
+        public override string Type
+        {
+            get => "m.room.topic";
+            set
+            {
+                if (value != "m.room.topic")
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.room.topic'.");
+                }
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Event content for TopicEvent.
+    /// </summary>
+    public class TopicEventContent : IEventContent
+    {
+        /// <summary>
+        /// The topic text for the room.
+        /// </summary>
+        [JsonPropertyName("topic")]
+        public string Topic { get; set; } = null!;
     }
 }
