@@ -26,6 +26,7 @@ namespace Mocktrix.Events
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
     [JsonDerivedType(typeof(CanonicalAliasEvent), "m.room.canonical_alias")]
     [JsonDerivedType(typeof(CreateRoomEvent), "m.room.create")]
+    [JsonDerivedType(typeof(HistoryVisibilityEvent), "m.room.history_visibility")]
     [JsonDerivedType(typeof(JoinRulesEvent), "m.room.join_rules")]
     [JsonDerivedType(typeof(MembershipEvent), "m.room.member")]
     [JsonDerivedType(typeof(PowerLevelsEvent), "m.room.power_levels")]
