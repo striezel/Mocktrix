@@ -78,7 +78,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal("!jEsUZKDJdhlrceRyVU:example.org", ev.RoomId);
             Assert.Equal("@example:example.org", ev.Sender);
             Assert.Empty(ev.StateKey);
-            Assert.Equal("m.room.canonical_alias", ev.Type);
+            Assert.Equal("m.room.join_rules", ev.Type);
             Assert.NotNull(ev.Unsigned);
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
