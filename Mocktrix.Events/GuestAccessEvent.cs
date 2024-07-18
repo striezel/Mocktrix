@@ -51,5 +51,21 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("guest_access")]
         public string GuestAccess { get; set; } = null!;
+
+
+        /// <summary>
+        /// Returns the current guest access string as an enumeration value.
+        /// </summary>
+        /// <returns>Returns the corresponding enumeration value, or null if
+        /// GuestAccess is an unrecognized string value.</returns>
+        public Enums.GuestAccess? ToEnum()
+        {
+            return GuestAccess switch
+            {
+                "can_join" => Enums.GuestAccess.CanJoin,
+                "forbidden" => Enums.GuestAccess.Forbidden,
+                _ => null
+            };
+        }
     }
 }

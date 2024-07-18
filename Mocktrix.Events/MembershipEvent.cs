@@ -71,6 +71,25 @@ namespace Mocktrix.Events
 
 
         /// <summary>
+        /// Returns the current membership string as an enumeration value.
+        /// </summary>
+        /// <returns>Returns the corresponding enumeration value, or null if
+        /// Membership is an unrecognized string value.</returns>
+        public Enums.Membership? MembershipAsEnum()
+        {
+            return Membership switch
+            {
+                "invite" => Enums.Membership.Invite,
+                "join" => Enums.Membership.Join,
+                "knock" => Enums.Membership.Knock,
+                "leave" => Enums.Membership.Leave,
+                "ban" => Enums.Membership.Ban,
+                _ => null
+            };
+        }
+
+
+        /// <summary>
         /// Whether this room was created with the intention to be a direct chat.
         /// </summary>
         [JsonPropertyName("is_direct")]

@@ -51,5 +51,23 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("history_visibility")]
         public string HistoryVisibility { get; set; } = null!;
+
+
+        /// <summary>
+        /// Returns the current history visibility string as an enumeration value.
+        /// </summary>
+        /// <returns>Returns the corresponding enumeration value, or null if
+        /// HistoryVisibility is an unrecognized string value.</returns>
+        public Enums.HistoryVisibility? ToEnum()
+        {
+            return HistoryVisibility switch
+            {
+                "invited" => Enums.HistoryVisibility.Invited,
+                "joined" => Enums.HistoryVisibility.Joined,
+                "shared" => Enums.HistoryVisibility.Shared,
+                "world_readable" => Enums.HistoryVisibility.WorldReadable,
+                _ => null
+            };
+        }
     }
 }

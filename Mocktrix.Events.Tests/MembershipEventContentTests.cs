@@ -214,5 +214,36 @@ namespace Mocktrix.Events.Tests
             Assert.NotNull(json);
             Assert.Equal(expected_json, json);
         }
+
+        [Theory]
+        [InlineData("invite", Enums.Membership.Invite)]
+        [InlineData("join", Enums.Membership.Join)]
+        [InlineData("knock", Enums.Membership.Knock)]
+        [InlineData("leave", Enums.Membership.Leave)]
+        [InlineData("ban", Enums.Membership.Ban)]
+        public void MembershipAsEnum(string membership_string, Enums.Membership? expected)
+        {
+            var content = new MembershipEventContent()
+            {
+                Membership = membership_string
+            };
+            Assert.Equal(expected, content.MembershipAsEnum());
+        }
+
+        [Fact]
+        public void MembershipAsEnum_Invalid()
+        {
+            var content = new MembershipEventContent()
+            {
+                Membership = null!
+            };
+            Assert.Null(content.MembershipAsEnum());
+
+            content.Membership = "";
+            Assert.Null(content.MembershipAsEnum());
+
+            content.Membership = "foo";
+            Assert.Null(content.MembershipAsEnum());
+        }
     }
 }

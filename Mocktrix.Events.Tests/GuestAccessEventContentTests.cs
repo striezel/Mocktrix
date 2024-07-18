@@ -59,5 +59,33 @@ namespace Mocktrix.Events.Tests
             Assert.NotNull(json);
             Assert.Equal(expected_json, json);
         }
+
+        [Theory]
+        [InlineData("can_join", Enums.GuestAccess.CanJoin)]
+        [InlineData("forbidden", Enums.GuestAccess.Forbidden)]
+        public void ToEnum(string ga_string, Enums.GuestAccess? expected)
+        {
+            var content = new GuestAccessEventContent()
+            {
+                GuestAccess = ga_string
+            };
+            Assert.Equal(expected, content.ToEnum());
+        }
+
+        [Fact]
+        public void ToEnum_Invalid()
+        {
+            var content = new GuestAccessEventContent()
+            {
+                GuestAccess = null!
+            };
+            Assert.Null(content.ToEnum());
+
+            content.GuestAccess = "";
+            Assert.Null(content.ToEnum());
+
+            content.GuestAccess = "foo";
+            Assert.Null(content.ToEnum());
+        }
     }
 }

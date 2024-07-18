@@ -59,5 +59,35 @@ namespace Mocktrix.Events.Tests
             Assert.NotNull(json);
             Assert.Equal(expected_json, json);
         }
+
+        [Theory]
+        [InlineData("invited", Enums.HistoryVisibility.Invited)]
+        [InlineData("joined", Enums.HistoryVisibility.Joined)]
+        [InlineData("shared", Enums.HistoryVisibility.Shared)]
+        [InlineData("world_readable", Enums.HistoryVisibility.WorldReadable)]
+        public void ToEnum(string visibility_string, Enums.HistoryVisibility? expected)
+        {
+            var content = new HistoryVisibilityEventContent()
+            {
+                HistoryVisibility = visibility_string
+            };
+            Assert.Equal(expected, content.ToEnum());
+        }
+
+        [Fact]
+        public void ToEnum_Invalid()
+        {
+            var content = new HistoryVisibilityEventContent()
+            {
+                HistoryVisibility = null!
+            };
+            Assert.Null(content.ToEnum());
+
+            content.HistoryVisibility = "";
+            Assert.Null(content.ToEnum());
+
+            content.HistoryVisibility = "foo";
+            Assert.Null(content.ToEnum());
+        }
     }
 }
