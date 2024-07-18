@@ -61,5 +61,20 @@ namespace Mocktrix.Data
         /// The topic of this room, if any.
         /// </summary>
         public string? Topic { get; set; } = null;
+
+        /// <summary>
+        /// The join rule of this room, if any.
+        /// </summary>
+        public Enums.JoinRule? JoinRule { get; set; } = null;
+
+        /// <summary>
+        /// Current history visibility of the room, if any.
+        /// </summary>
+        public Enums.HistoryVisibility? HistoryVisibility { get; set; } = null;
+
+        /// <summary>
+        /// Guest access setting of the room, if any.
+        /// </summary>
+        public Enums.GuestAccess? GuestAccess { get; set; } = null;
     }
 }
