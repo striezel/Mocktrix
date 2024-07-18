@@ -51,5 +51,23 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("join_rule")]
         public string JoinRule { get; set; } = null!;
+
+
+        /// <summary>
+        /// Returns the current join rule string as an enumeration value.
+        /// </summary>
+        /// <returns>Returns the corresponding enumeration value, or null if
+        /// JoinRule is an unrecognized string value.</returns>
+        public Enums.JoinRule? ToEnum()
+        {
+            return JoinRule switch
+            {
+                "public" => Enums.JoinRule.Public,
+                "knock" => Enums.JoinRule.Knock,
+                "invite" => Enums.JoinRule.Invite,
+                "private" => Enums.JoinRule.Private,
+                _ => null,
+            };
+        }
     }
 }

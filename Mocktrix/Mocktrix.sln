@@ -25,9 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.ContentRepository.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.ContentRepository.Memory.Tests", "..\Mocktrix.ContentRepository.Memory.Tests\Mocktrix.ContentRepository.Memory.Tests.csproj", "{8CFEB57E-C59E-4DE4-93A5-CBBA36560258}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Events", "..\Mocktrix.Events\Mocktrix.Events.csproj", "{139A0FFC-A3C3-4517-9DFD-70285BEFD8CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Events", "..\Mocktrix.Events\Mocktrix.Events.csproj", "{139A0FFC-A3C3-4517-9DFD-70285BEFD8CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Events.Tests", "..\Mocktrix.Events.Tests\Mocktrix.Events.Tests.csproj", "{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mocktrix.Events.Tests", "..\Mocktrix.Events.Tests\Mocktrix.Events.Tests.csproj", "{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocktrix.Enums", "..\Mocktrix.Enums\Mocktrix.Enums.csproj", "{748CCFE0-5F97-42B9-8E4C-2494912ADC1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,10 @@ Global
 		{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2A0C71A-07B6-46E1-BEC8-0AAB968D9911}.Release|Any CPU.Build.0 = Release|Any CPU
+		{748CCFE0-5F97-42B9-8E4C-2494912ADC1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{748CCFE0-5F97-42B9-8E4C-2494912ADC1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{748CCFE0-5F97-42B9-8E4C-2494912ADC1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{748CCFE0-5F97-42B9-8E4C-2494912ADC1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

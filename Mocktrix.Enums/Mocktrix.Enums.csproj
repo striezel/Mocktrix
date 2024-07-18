@@ -4,15 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.1.0</Version>
     <Authors>Dirk Stolle</Authors>
-    <Description>Contains Matrix protocol event types for use by Mocktrix.</Description>
-    <Copyright>Copyright (C) 2024  Dirk Stolle</Copyright>
+    <Description>Contains enumeration types for use by Mocktrix.</Description>
+    <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
+    <Version>0.1.1-next</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Mocktrix.Enums\Mocktrix.Enums.csproj" />
-  </ItemGroup>
 
 </Project>

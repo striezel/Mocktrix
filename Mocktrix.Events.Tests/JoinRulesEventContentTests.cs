@@ -59,5 +59,35 @@ namespace Mocktrix.Events.Tests
             Assert.NotNull(json);
             Assert.Equal(expected_json, json);
         }
+
+        [Theory]
+        [InlineData("public", Enums.JoinRule.Public)]
+        [InlineData("knock", Enums.JoinRule.Knock)]
+        [InlineData("invite", Enums.JoinRule.Invite)]
+        [InlineData("private", Enums.JoinRule.Private)]
+        public void ToEnum(string jr_string, Enums.JoinRule expected)
+        {
+            var content = new JoinRulesEventContent()
+            {
+                JoinRule = jr_string
+            };
+            Assert.Equal(expected, content.ToEnum());
+        }
+
+        [Fact]
+        public void ToEnum_Invalid()
+        {
+            var content = new JoinRulesEventContent()
+            {
+                JoinRule = null!
+            };
+            Assert.Null(content.ToEnum());
+
+            content.JoinRule = "";
+            Assert.Null(content.ToEnum());
+
+            content.JoinRule = "foo";
+            Assert.Null(content.ToEnum());
+        }
     }
 }
