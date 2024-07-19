@@ -34,13 +34,16 @@ namespace Mocktrix.Database.Memory.Tests
             Assert.False(room.Public);
             Assert.Null(room.Name);
             Assert.Null(room.Topic);
+            Assert.Null(room.JoinRule);
+            Assert.Null(room.HistoryVisibility);
+            Assert.Null(room.GuestAccess);
         }
 
 
         [Fact]
         public void GetRoom_NonExistentRoomNotFound()
         {
-            const string room_id = "@not_here:matrix.example.com";
+            const string room_id = "!not_here:matrix.example.com";
             var room = Rooms.GetRoom(room_id);
 
             // Room does not exist, function shall return null.
@@ -65,6 +68,9 @@ namespace Mocktrix.Database.Memory.Tests
             Assert.False(room.Public);
             Assert.Equal(room_of_bob.Name, room.Name);
             Assert.Equal(room_of_bob.Topic, room.Topic);
+            Assert.Equal(room_of_bob.JoinRule, room.JoinRule);
+            Assert.Equal(room_of_bob.HistoryVisibility, room.HistoryVisibility);
+            Assert.Equal(room_of_bob.GuestAccess, room.GuestAccess);
             // As a special property of this implementation, both rooms refer to
             // the same instance.
             Assert.True(ReferenceEquals(room, room_of_bob));
