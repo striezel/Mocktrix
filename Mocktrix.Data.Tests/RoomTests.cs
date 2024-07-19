@@ -32,6 +32,7 @@ namespace Mocktrix.Data.Tests
             Assert.True(room.Public);
             Assert.Null(room.Name);
             Assert.Null(room.Topic);
+            Assert.Null(room.CanonicalAlias);
             Assert.Null(room.JoinRule);
             Assert.Null(room.HistoryVisibility);
             Assert.Null(room.GuestAccess);

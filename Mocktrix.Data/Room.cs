@@ -62,15 +62,25 @@ namespace Mocktrix.Data
         /// </summary>
         public string? Topic { get; set; } = null;
 
+
+        /// <summary>
+        /// The canonical alias of this room, if any
+        /// (e.g. "#some-alias:matrix.example.org").
+        /// </summary>
+        public string? CanonicalAlias { get; set; } = null;
+
+
         /// <summary>
         /// The join rule of this room, if any.
         /// </summary>
         public Enums.JoinRule? JoinRule { get; set; } = null;
 
+
         /// <summary>
         /// Current history visibility of the room, if any.
         /// </summary>
         public Enums.HistoryVisibility? HistoryVisibility { get; set; } = null;
+
 
         /// <summary>
         /// Guest access setting of the room, if any.
