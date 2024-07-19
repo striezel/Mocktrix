@@ -19,6 +19,7 @@ The database contents are not persisted and vanish when the server process exits
 
   <ItemGroup>
     <ProjectReference Include="..\Mocktrix.Data\Mocktrix.Data.csproj" />
+    <ProjectReference Include="..\Mocktrix.Events\Mocktrix.Events.csproj" />
   </ItemGroup>
 
 </Project>
