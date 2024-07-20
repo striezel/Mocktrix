@@ -39,9 +39,15 @@ namespace Mocktrix.Database.Memory
         /// Returns false otherwise.</returns>
         private static bool AllowAdd(RoomEvent ev)
         {
-            return !string.IsNullOrWhiteSpace(ev.EventId) && ev.EventId.StartsWith('$')
-                && !string.IsNullOrWhiteSpace(ev.RoomId) && ev.RoomId.StartsWith('!')
-                && (ev.Content != null) && events.FindIndex(e => e.EventId == ev.EventId) == -1;
+            if (string.IsNullOrWhiteSpace(ev.EventId) || !ev.EventId.StartsWith('$')
+                || string.IsNullOrWhiteSpace(ev.RoomId) || !ev.RoomId.StartsWith('!')
+                || (events.FindIndex(e => e.EventId == ev.EventId) != -1))
+            {
+                return false;
+            }
+
+            var property = ev.GetType().GetProperty("Content");
+            return property == null || property.GetValue(ev) != null;
         }
 
 

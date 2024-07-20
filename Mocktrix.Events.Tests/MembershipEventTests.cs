@@ -32,14 +32,12 @@ namespace Mocktrix.Events.Tests
             var ev = new MembershipEvent();
             Assert.NotNull(ev.Content);
             Assert.IsType<MembershipEventContent>(ev.Content);
-            var content = ev.Content as MembershipEventContent;
-            Assert.NotNull(content);
-            Assert.Null(content.AvatarURL);
-            Assert.Null(content.DisplayName);
-            Assert.Null(content.IsDirect);
-            Assert.Null(content.Membership);
-            Assert.Null(content.ThirdPartyInvite);
-            Assert.Null(content.Unsigned);
+            Assert.Null(ev.Content.AvatarURL);
+            Assert.Null(ev.Content.DisplayName);
+            Assert.Null(ev.Content.IsDirect);
+            Assert.Null(ev.Content.Membership);
+            Assert.Null(ev.Content.ThirdPartyInvite);
+            Assert.Null(ev.Content.Unsigned);
             Assert.Null(ev.EventId);
             Assert.Equal(0, ev.OriginServerTs);
             Assert.Null(ev.PrevContent);
@@ -49,8 +47,6 @@ namespace Mocktrix.Events.Tests
             Assert.Equal("m.room.member", ev.Type);
             Assert.Null(ev.Unsigned);
         }
-
-        /* Interface types are not supported for serialization, so this fails.
 
         [Fact]
         public void DeserializeSpecExample_One()
@@ -77,8 +73,7 @@ namespace Mocktrix.Events.Tests
 
             Assert.NotNull(ev);
             Assert.NotNull(ev.Content);
-            var content = ev.Content as MembershipEventContent;
-            Assert.NotNull(content);
+            var content = ev.Content;
             Assert.Equal("mxc://example.org/SEsfnsuifSDFSSEF", content.AvatarURL);
             Assert.Equal("Alice Margatroid", content.DisplayName);
             Assert.Null(content.IsDirect);
@@ -95,7 +90,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
             Assert.Null(ev.Unsigned.TransactionId);
-        }*/
+        }
 
         [Fact]
         public void SerializeSpecExample_One()

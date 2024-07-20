@@ -23,8 +23,17 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for membership change of a user in a room.
     /// </summary>
-    public class MembershipEvent: GenericStateEvent<MembershipEventContent>
+    public class MembershipEvent: StateEvent<MembershipEventContent>
     {
+        /// <summary>
+        /// The content object of the event. Type and available field differ
+        /// depending on the concrete type.
+        /// </summary>
+        [JsonPropertyName("content")]
+        [JsonPropertyOrder(IEvent.ContentPropertyOrder)]
+        public MembershipEventContent Content { get; set; } = new();
+
+
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
         public override string Type

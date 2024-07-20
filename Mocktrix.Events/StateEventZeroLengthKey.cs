@@ -21,7 +21,10 @@ namespace Mocktrix.Events
     /// <summary>
     /// Specialization of StateEvent for empty state keys.
     /// </summary>
-    public abstract class StateEventZeroLengthKey: StateEvent
+    /// <typeparam name="C">type of the event content, must be derived from
+    /// IEventContent</typeparam>
+    public abstract class StateEventZeroLengthKey<C>: StateEvent<C>
+        where C : IEventContent, new()
     {
         /// <summary>
         /// Sets the state key to an empty string.

@@ -23,7 +23,10 @@ namespace Mocktrix.Events
     /// <summary>
     /// Abstract class that contains data members common to all state events.
     /// </summary>
-    public abstract class StateEvent: RoomEvent
+    /// <typeparam name="C">type of the event content, must be derived from
+    /// IEventContent</typeparam>
+    public abstract class StateEvent<C>: RoomEvent
+        where C : IEventContent, new()
     {
         /// <summary>
         /// Previous content for that event, if any.
@@ -31,7 +34,7 @@ namespace Mocktrix.Events
         [JsonPropertyName("prev_content")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyOrder(-70)]
-        public IEventContent? PrevContent { get; set; }
+        public C? PrevContent { get; set; }
 
 
         /// <summary>

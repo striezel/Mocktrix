@@ -23,8 +23,17 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for name of a room.
     /// </summary>
-    public class NameEvent: GenericStateEventZeroLengthKey<NameEventContent>
+    public class NameEvent: StateEventZeroLengthKey<NameEventContent>
     {
+        /// <summary>
+        /// The content object of the event. Type and available field differ
+        /// depending on the concrete type.
+        /// </summary>
+        [JsonPropertyName("content")]
+        [JsonPropertyOrder(IEvent.ContentPropertyOrder)]
+        public NameEventContent Content { get; set; } = new();
+
+
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
         public override string Type

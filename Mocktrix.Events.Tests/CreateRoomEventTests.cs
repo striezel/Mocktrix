@@ -31,8 +31,7 @@ namespace Mocktrix.Events.Tests
             var ev = new CreateRoomEvent();
             Assert.NotNull(ev.Content);
             Assert.IsType<CreateRoomEventContent>(ev.Content);
-            var content = ev.Content as CreateRoomEventContent;
-            Assert.NotNull(content);
+            var content = ev.Content;
             Assert.Null(content.Creator);
             Assert.Null(content.Federate);
             Assert.Null(content.Predecessor);
@@ -46,8 +45,6 @@ namespace Mocktrix.Events.Tests
             Assert.Equal("m.room.create", ev.Type);
             Assert.Null(ev.Unsigned);
         }
-
-        /* Interface types are not supported for serialization, so this fails.
 
         [Fact]
         public void DeserializeSpecExample()
@@ -78,8 +75,7 @@ namespace Mocktrix.Events.Tests
 
             Assert.NotNull(ev);
             Assert.NotNull(ev.Content);
-            var content = ev.Content as CreateRoomEventContent;
-            Assert.NotNull(content);
+            var content = ev.Content;
             Assert.Equal("@example:example.org", content.Creator);
             Assert.True(content.Federate);
             Assert.NotNull(content.Predecessor);
@@ -96,7 +92,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
             Assert.Null(ev.Unsigned.TransactionId);
-        }*/
+        }
 
         [Fact]
         public void SerializeSpecExample()

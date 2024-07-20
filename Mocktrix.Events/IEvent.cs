@@ -36,12 +36,9 @@ namespace Mocktrix.Events
     public interface IEvent
     {
         /// <summary>
-        /// The content object of the event. Type and available field differ
-        /// depending on the concrete type.
+        /// The JsonPropertyOrder value for the Content object in events.
         /// </summary>
-        [JsonPropertyName("content")]
-        [JsonPropertyOrder(-100)]
-        public IEventContent Content { get; set; }
+        public const int ContentPropertyOrder = -100;
 
 
         /// <summary>

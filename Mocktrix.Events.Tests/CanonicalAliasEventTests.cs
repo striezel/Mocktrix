@@ -31,7 +31,7 @@ namespace Mocktrix.Events.Tests
             var ev = new CanonicalAliasEvent();
             Assert.NotNull(ev.Content);
             Assert.IsType<CanonicalAliasEventContent>(ev.Content);
-            var content = ev.Content as CanonicalAliasEventContent;
+            var content = ev.Content;
             Assert.NotNull(content);
             Assert.Null(content.Alias);
             Assert.Null(content.Alias);
@@ -45,7 +45,6 @@ namespace Mocktrix.Events.Tests
             Assert.Null(ev.Unsigned);
         }
 
-        /* Interface types are not supported for serialization, so this fails.
 
         [Fact]
         public void DeserializeSpecExample()
@@ -74,8 +73,7 @@ namespace Mocktrix.Events.Tests
 
             Assert.NotNull(ev);
             Assert.NotNull(ev.Content);
-            var content = ev.Content as CanonicalAliasEventContent;
-            Assert.NotNull(content);
+            var content = ev.Content;
             Assert.Equal("#somewhere:localhost", content.Alias);
             Assert.NotNull(content.AlternativeAliases);
             Assert.Equal(2, content.AlternativeAliases.Count);
@@ -92,7 +90,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
             Assert.Null(ev.Unsigned.TransactionId);
-        }*/
+        }
 
         [Fact]
         public void SerializeSpecExample()

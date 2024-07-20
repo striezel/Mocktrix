@@ -31,9 +31,7 @@ namespace Mocktrix.Events.Tests
             var ev = new TopicEvent();
             Assert.NotNull(ev.Content);
             Assert.IsType<TopicEventContent>(ev.Content);
-            var content = ev.Content as TopicEventContent;
-            Assert.NotNull(content);
-            Assert.Null(content.Topic);
+            Assert.Null(ev.Content.Topic);
             Assert.Null(ev.EventId);
             Assert.Equal(0, ev.OriginServerTs);
             Assert.Null(ev.PrevContent);
@@ -43,8 +41,6 @@ namespace Mocktrix.Events.Tests
             Assert.Equal("m.room.topic", ev.Type);
             Assert.Null(ev.Unsigned);
         }
-
-        /* Interface types are not supported for serialization, so this fails.
 
         [Fact]
         public void DeserializeSpecExample()
@@ -69,9 +65,7 @@ namespace Mocktrix.Events.Tests
 
             Assert.NotNull(ev);
             Assert.NotNull(ev.Content);
-            var content = ev.Content as TopicEventContent;
-            Assert.NotNull(content);
-            Assert.Equal("A room topic", content.Topic);
+            Assert.Equal("A room topic", ev.Content.Topic);
 
             Assert.Equal("$143273582443PhrSn:example.org", ev.EventId);
             Assert.Equal(1432735824653, ev.OriginServerTs);
@@ -83,7 +77,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
             Assert.Null(ev.Unsigned.TransactionId);
-        }*/
+        }
 
         [Fact]
         public void SerializeSpecExample()

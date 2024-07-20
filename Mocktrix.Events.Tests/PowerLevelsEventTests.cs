@@ -31,18 +31,16 @@ namespace Mocktrix.Events.Tests
             var ev = new PowerLevelsEvent();
             Assert.NotNull(ev.Content);
             Assert.IsType<PowerLevelsEventContent>(ev.Content);
-            var content = ev.Content as PowerLevelsEventContent;
-            Assert.NotNull(content);
-            Assert.Null(content.Ban);
-            Assert.Null(content.Events);
-            Assert.Null(content.EventsDefault);
-            Assert.Null(content.Invite);
-            Assert.Null(content.Kick);
-            Assert.Null(content.Notifications);
-            Assert.Null(content.Redact);
-            Assert.Null(content.StateDefault);
-            Assert.Null(content.Users);
-            Assert.Null(content.UsersDefault);
+            Assert.Null(ev.Content.Ban);
+            Assert.Null(ev.Content.Events);
+            Assert.Null(ev.Content.EventsDefault);
+            Assert.Null(ev.Content.Invite);
+            Assert.Null(ev.Content.Kick);
+            Assert.Null(ev.Content.Notifications);
+            Assert.Null(ev.Content.Redact);
+            Assert.Null(ev.Content.StateDefault);
+            Assert.Null(ev.Content.Users);
+            Assert.Null(ev.Content.UsersDefault);
             Assert.Null(ev.EventId);
             Assert.Equal(0, ev.OriginServerTs);
             Assert.Null(ev.PrevContent);
@@ -52,8 +50,6 @@ namespace Mocktrix.Events.Tests
             Assert.Equal("m.room.power_levels", ev.Type);
             Assert.Null(ev.Unsigned);
         }
-
-        /* Interface types are not supported for serialization, so this fails.
 
         [Fact]
         public void DeserializeSpecExample()
@@ -94,8 +90,7 @@ namespace Mocktrix.Events.Tests
 
             Assert.NotNull(ev);
             Assert.NotNull(ev.Content);
-            var content = ev.Content as PowerLevelsEventContent;
-            Assert.NotNull(content);
+            var content = ev.Content;
             Assert.Equal(50, content.Ban);
             Assert.NotNull(content.Events);
             Assert.Contains("m.room.name", content.Events.Keys);
@@ -125,7 +120,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
             Assert.Null(ev.Unsigned.TransactionId);
-        }*/
+        }
 
         [Fact]
         public void SerializeSpecExample()

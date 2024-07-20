@@ -25,11 +25,6 @@ namespace Mocktrix.Events
     /// </summary>
     public abstract class RoomEvent : IEvent
     {
-        [JsonPropertyName("content")]
-        [JsonPropertyOrder(-100)]
-        public abstract IEventContent Content { get; set; }
-
-
         /// <summary>
         /// A globally unique event identifier.
         /// </summary>

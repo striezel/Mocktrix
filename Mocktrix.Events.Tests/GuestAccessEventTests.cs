@@ -31,8 +31,7 @@ namespace Mocktrix.Events.Tests
             var ev = new GuestAccessEvent();
             Assert.NotNull(ev.Content);
             Assert.IsType<GuestAccessEventContent>(ev.Content);
-            var content = ev.Content as GuestAccessEventContent;
-            Assert.NotNull(content);
+            var content = ev.Content;
             Assert.Null(content.GuestAccess);
             Assert.Null(ev.EventId);
             Assert.Equal(0, ev.OriginServerTs);
@@ -43,8 +42,6 @@ namespace Mocktrix.Events.Tests
             Assert.Equal("m.room.guest_access", ev.Type);
             Assert.Null(ev.Unsigned);
         }
-
-        /* Interface types are not supported for deserialization, so this fails.
 
         [Fact]
         public void DeserializeSpecExample()
@@ -69,9 +66,7 @@ namespace Mocktrix.Events.Tests
 
             Assert.NotNull(ev);
             Assert.NotNull(ev.Content);
-            var content = ev.Content as GuestAccessEventContent;
-            Assert.NotNull(content);
-            Assert.Equal("can_join", content.GuestAccess);
+            Assert.Equal("can_join", ev.Content.GuestAccess);
 
             Assert.Equal("$143273582443PhrSn:example.org", ev.EventId);
             Assert.Equal(1432735824653, ev.OriginServerTs);
@@ -83,7 +78,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
             Assert.Null(ev.Unsigned.TransactionId);
-        }*/
+        }
 
         [Fact]
         public void SerializeSpecExample()

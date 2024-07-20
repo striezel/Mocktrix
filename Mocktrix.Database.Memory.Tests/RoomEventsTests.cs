@@ -94,6 +94,10 @@ namespace Mocktrix.Database.Memory.Tests
 
             ev.RoomId = "@wrong_sigil_character:matrix.example.com";
             Assert.False(RoomEvents.Add(ev));
+
+            ev = GetTestEvent();
+            ev.Content = null!;
+            Assert.False(RoomEvents.Add(ev));
         }
 
         [Fact]
@@ -117,12 +121,11 @@ namespace Mocktrix.Database.Memory.Tests
             var the_event = RoomEvents.GetEvent(ev.EventId);
             Assert.NotNull(the_event);
             // Values of created event and queried event must match.
-            Assert.IsType<HistoryVisibilityEventContent>(the_event.Content);
-            var typed_event_content = (HistoryVisibilityEventContent)the_event.Content;
-            Assert.Equal(((HistoryVisibilityEventContent)ev.Content).HistoryVisibility, typed_event_content.HistoryVisibility);
+            Assert.IsType<HistoryVisibilityEvent>(the_event);
+            var typed_event = (HistoryVisibilityEvent)the_event;
+            Assert.Equal(ev.Content.HistoryVisibility, typed_event.Content.HistoryVisibility);
             Assert.Equal(ev.EventId, the_event.EventId);
             Assert.Equal(ev.OriginServerTs, the_event.OriginServerTs);
-            var typed_event = (HistoryVisibilityEvent)the_event;
             Assert.Null(typed_event.PrevContent);
             Assert.Equal(ev.RoomId, the_event.RoomId);
             Assert.Equal(ev.Sender, the_event.Sender);
