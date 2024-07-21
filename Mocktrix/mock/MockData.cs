@@ -76,6 +76,22 @@ namespace Mocktrix
 
             // Add content for use in repository tests.
             _ = ContentRepository.Memory.Media.Create("testDownload", "Hello, test code. :)"u8.ToArray(), "text/plain", "hello.txt");
+
+            AddRoomData(base_address);
+        }
+
+        private static void AddRoomData(Uri base_address)
+        {
+            // User and room memberships for test of joined rooms.
+            var joined_user = Database.Memory.Users.CreateUser("@joined_user:" + base_address.Host, "the password");
+            Database.Memory.RoomMemberships.Create("!first_joined_room:matrix.example.org", joined_user.user_id, Enums.Membership.Join);
+            Database.Memory.RoomMemberships.Create("!second_joined_room:matrix.example.org", joined_user.user_id, Enums.Membership.Join);
+            Database.Memory.RoomMemberships.Create("!banned_room:matrix.example.org", joined_user.user_id, Enums.Membership.Ban);
+            Database.Memory.RoomMemberships.Create("!invited_room:matrix.example.org", joined_user.user_id, Enums.Membership.Invite);
+            Database.Memory.RoomMemberships.Create("!knock_room:matrix.example.org", joined_user.user_id, Enums.Membership.Knock);
+            Database.Memory.RoomMemberships.Create("!left_room:matrix.example.org", joined_user.user_id, Enums.Membership.Leave);
+
+            _ = Database.Memory.Users.CreateUser("@not_a_joined_user:" + base_address.Host, "some password");
         }
     }
 }
