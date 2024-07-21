@@ -90,7 +90,9 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ### 9.1 Types of room events
 
-* ❌ Not implemented.
+* ✅ 9.1.1 [Event Fields](https://spec.matrix.org/historical/client_server/r0.6.1.html#event-fields)
+* ✅ 9.1.2 [Room Event Fields](https://spec.matrix.org/historical/client_server/r0.6.1.html#room-event-fields)
+* ✅ 9.1.3 [State Event Fields](https://spec.matrix.org/historical/client_server/r0.6.1.html#state-event-fields)
 
 ### 9.2 Size limits
 
@@ -98,7 +100,13 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ### 9.3 Room events
 
-* ❌ Not implemented.
+* ✅ 9.3.1 [m.room.canonical_alias](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-canonical-alias)
+* ✅ 9.3.2 [m.room.create](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-create)
+* ✅ 9.3.3 [m.room.join_rules](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-join-rules)
+* ✅ 9.3.4 [m.room.member](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-member)
+* ✅ 9.3.5 [m.room.power_levels](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-power-levels)
+* ❌ 9.3.6 [m.room.redaction](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-redaction)
+* ❌ 9.3.7 [Historical events](https://spec.matrix.org/historical/client_server/r0.6.1.html#historical-events)
 
 ### 9.4 Syncing
 
