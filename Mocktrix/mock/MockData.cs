@@ -40,6 +40,25 @@ namespace Mocktrix
             // User for test of logging out all access tokens of a user at once.
             _ = Database.Memory.Users.CreateUser("@all_alice:matrix.example.org", "my secret password");
 
+            AddProfileTestData(base_address);
+
+            // User for password change tests.
+            _ = Database.Memory.Users.CreateUser("@password_change:" + base_address.Host, "the old password");
+
+            // Users for account deactivation tests.
+            var inactive_user = Database.Memory.Users.CreateUser("@inactive:" + base_address.Host, "some password");
+            inactive_user.inactive = true;
+
+            _ = Database.Memory.Users.CreateUser("@deactivatable:" + base_address.Host, "silly password");
+
+            // Add content for use in repository tests.
+            _ = ContentRepository.Memory.Media.Create("testDownload", "Hello, test code. :)"u8.ToArray(), "text/plain", "hello.txt");
+
+            AddRoomData(base_address);
+        }
+
+        private static void AddProfileTestData(Uri base_address)
+        {
             // Users for display name testing.
             var display_name_user = Database.Memory.Users.CreateUser("@unnamed_user:" + base_address.Host, "bad password");
             display_name_user.display_name = null;
@@ -64,20 +83,6 @@ namespace Mocktrix
             var profile_user = Database.Memory.Users.CreateUser("@profile:" + base_address.Host, "don't use this password");
             profile_user.avatar_url = "mxc://matrix.org/DifferentMediaId";
             profile_user.display_name = "Profiler";
-
-            // User for password change tests.
-            _ = Database.Memory.Users.CreateUser("@password_change:" + base_address.Host, "the old password");
-
-            // Users for account deactivation tests.
-            var inactive_user = Database.Memory.Users.CreateUser("@inactive:" + base_address.Host, "some password");
-            inactive_user.inactive = true;
-
-            _ = Database.Memory.Users.CreateUser("@deactivatable:" + base_address.Host, "silly password");
-
-            // Add content for use in repository tests.
-            _ = ContentRepository.Memory.Media.Create("testDownload", "Hello, test code. :)"u8.ToArray(), "text/plain", "hello.txt");
-
-            AddRoomData(base_address);
         }
 
         private static void AddRoomData(Uri base_address)
