@@ -208,9 +208,40 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ## 13 Modules
 
-### 13.1 to 13.2
+### 13.1 [Feature profiles](https://spec.matrix.org/historical/client_server/r0.6.1.html#feature-profiles)
 
 TODO
+
+### 13.2 Instant Messaging
+
+#### 13.2.1 Events
+
+* ❌ 13.2.1.1 [m.room.message](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message)
+* ❌ 13.2.1.2 [m.room.message.feedback](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message-feedback)
+* ✅ 13.2.1.3 [m.room.name](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-name)
+* ✅ 13.2.1.4 [m.room.topic](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-topic)
+* ❌ 13.2.1.5 [m.room.avatar](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-avatar)
+* ❌ 13.2.1.6 [m.room.pinned_events](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-pinned-events)
+* ❌ 13.2.1.7 [m.room.message msgtypes](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message-msgtypes)
+  * ❌ 13.2.1.7.1 [m.text](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-text)
+  * ❌ 13.2.1.7.2 [m.emote](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-emote)
+  * ❌ 13.2.1.7.3 [m.notice](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-notice)
+  * ❌ 13.2.1.7.4 [m.image](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-image)
+  * ❌ 13.2.1.7.5 [m.file](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-file)
+  * ❌ 13.2.1.7.6 [m.audio](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-audio)
+  * ❌ 13.2.1.7.7 [m.location](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-location)
+  * ❌ 13.2.1.7.8 [m.video](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-video)
+
+#### 13.2.2 [Client behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id44)
+
+#### 13.2.3 [Server behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#server-behaviour)
+
+* ❌ Homeservers SHOULD reject `m.room.message` events which don't have a
+    `msgtype` key, or which don't have a textual `body` key, with an HTTP status code of 400.
+
+#### 13.2.4 [Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#security-considerations)
+
+* ❌ Not implemented.
 
 ### 13.3 Voice over IP
 
