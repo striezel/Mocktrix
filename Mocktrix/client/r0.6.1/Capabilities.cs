@@ -27,57 +27,65 @@ namespace Mocktrix.client.r0_6_1
     public static class Capabilities
     {
         /// <summary>
-        /// Adds capabilities negotiation endpoint to the web application.
+        /// Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-capabilities,
+        /// i.e. the endpoint to get information about the server's
+        /// capabilities and features.
         /// </summary>
-        /// <param name="app">the app to which the endpoint shall be added</param>
-        public static void AddEndpoints(WebApplication app)
+        private static IResult GetCapabilities(HttpContext context)
         {
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-capabilities,
-            // i.e. the endpoint to get information about the server's
-            // capabilities and features.
-            app.MapGet("/_matrix/client/r0/capabilities", (HttpContext context) =>
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
             {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
+                var error = new ErrorResponse
                 {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
                 {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
 
-                // Token was found, so get capabilities.
-                var result = new
+            // Token was found, so get capabilities.
+            var result = new
+            {
+                capabilities = new ServerCapabilities
                 {
-                    capabilities = new ServerCapabilities
+                    ChangePassword = new ChangePasswordCapability { Enabled = true },
+                    RoomVersions = new RoomVersionsCapability
                     {
-                        ChangePassword = new ChangePasswordCapability { Enabled = true },
-                        RoomVersions = new RoomVersionsCapability
-                        {
-                            DefaultVersion = "1",
-                            Available = new Dictionary<string, string>(3)
+                        DefaultVersion = "1",
+                        Available = new Dictionary<string, string>(3)
                             {
                                 { "1", "stable" },
                                 { "2", "unstable" },
                                 { "3", "unstable" },
                             }
-                        }
                     }
-                };
-                return Results.Ok(result);
-            });
+                }
+            };
+            return Results.Ok(result);
+        }
+
+
+        /// <summary>
+        /// Adds capabilities negotiation endpoint to the web application.
+        /// </summary>
+        /// <param name="app">the app to which the endpoint shall be added</param>
+        public static void AddEndpoints(WebApplication app)
+        {
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-capabilities,
+            // i.e. the endpoint to get information about the server's
+            // capabilities and features.
+            app.MapGet("/_matrix/client/r0/capabilities", GetCapabilities);
         }
     }
 }

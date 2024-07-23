@@ -25,6 +25,48 @@ namespace Mocktrix.client.r0_6_1
     /// </summary>
     public static class Rooms
     {
+        // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-joined-rooms,
+        // i.e. the endpoint to get information about joined rooms of a
+        // user.
+        private static IResult GetJoinedRooms(HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            // Token was found, so get joined rooms.
+            var joined_rooms = Database.Memory.RoomMemberships
+                              .GetAllMembershipsOfUser(token.user_id)
+                              .FindAll(e => e.Membership == Enums.Membership.Join);
+            var result = new
+            {
+                joined_rooms = new List<string>(joined_rooms.Count)
+            };
+            foreach (var element in joined_rooms)
+            {
+                result.joined_rooms.Add(element.RoomId);
+            }
+            return Results.Ok(result);
+        }
+
+
         /// <summary>
         /// Adds room-related endpoints to the web application.
         /// </summary>
@@ -34,43 +76,7 @@ namespace Mocktrix.client.r0_6_1
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-joined-rooms,
             // i.e. the endpoint to get information about joined rooms of a
             // user.
-            app.MapGet("/_matrix/client/r0/joined_rooms", (HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                // Token was found, so get joined rooms.
-                var joined_rooms = Database.Memory.RoomMemberships
-                                  .GetAllMembershipsOfUser(token.user_id)
-                                  .FindAll(e => e.Membership == Enums.Membership.Join);
-                var result = new
-                {
-                    joined_rooms = new List<string>(joined_rooms.Count)
-                };
-                foreach (var element in joined_rooms)
-                {
-                    result.joined_rooms.Add(element.RoomId);
-                }
-                return Results.Ok(result);
-            });
+            app.MapGet("/_matrix/client/r0/joined_rooms", GetJoinedRooms);
         }
     }
 }

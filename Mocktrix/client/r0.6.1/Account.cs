@@ -29,6 +29,79 @@ namespace Mocktrix.client.r0_6_1
     /// </summary>
     public static class Account
     {
+        private static IResult DoNotAllowThreePID(HttpContext context)
+        {
+            var error = new ErrorResponse
+            {
+                errcode = "M_THREEPID_DENIED",
+                error = "Third-party identifier is not allowed here."
+            };
+            return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
+        }
+
+        private static IResult DoNotAllowThreePIDAuthRequired(HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var response = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var response = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            var error = new ErrorResponse
+            {
+                errcode = "M_THREEPID_DENIED",
+                error = "Third-party identifier is not allowed here."
+            };
+            return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
+        }
+
+        /// <summary>
+        /// Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami,
+        /// i.e. gets the user id associated with an access token.
+        /// </summary>
+        private static IResult WhoAmI(HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            // Token was found.
+            return Results.Ok(new { token.user_id });
+        }
+
+
         /// <summary>
         /// Adds account management endpoint to the web application.
         /// </summary>
@@ -165,48 +238,6 @@ namespace Mocktrix.client.r0_6_1
                 // Return empty JSON object to indicate success.
                 return Results.Ok(new { });
             });
-
-
-            var DoNotAllowThreePID = (HttpContext context) =>
-            {
-                var error = new ErrorResponse
-                {
-                    errcode = "M_THREEPID_DENIED",
-                    error = "Third-party identifier is not allowed here."
-                };
-                return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
-            };
-
-            var DoNotAllowThreePIDAuthRequired = (HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var response = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var response = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                var error = new ErrorResponse
-                {
-                    errcode = "M_THREEPID_DENIED",
-                    error = "Third-party identifier is not allowed here."
-                };
-                return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
-            };
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-password-email-requesttoken
             // by not allowing it.
@@ -388,32 +419,7 @@ namespace Mocktrix.client.r0_6_1
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-whoami,
             // i.e. gets the user id associated with an access token.
-            app.MapGet("/_matrix/client/r0/account/whoami", (HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                // Token was found.
-                return Results.Ok(new { token.user_id });
-            });
+            app.MapGet("/_matrix/client/r0/account/whoami", WhoAmI);
         }
     }
 }

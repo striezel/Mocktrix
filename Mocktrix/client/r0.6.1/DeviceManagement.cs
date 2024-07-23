@@ -39,97 +39,109 @@ namespace Mocktrix.client.r0_6_1
     public static class DeviceManagement
     {
         /// <summary>
+        /// Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices,
+        /// i.e. the endpoint to list all devices of the user.
+        /// </summary>
+        private static IResult ListDevicesOfUser(HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            var devices = Database.Memory.Devices.GetDevicesOfUser(token.user_id);
+
+            var result = new List<DeviceData>(devices.Count);
+            foreach (var device in devices)
+            {
+                result.Add(new DeviceData()
+                {
+                    DeviceId = device.device_id,
+                    DisplayName = device.display_name,
+                    LastSeenIP = null,
+                    LastSeenTimestamp = null
+                });
+            }
+            return Results.Ok(new { devices = result });
+        }
+
+        /// <summary>
+        ///Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
+        /// i.e. the endpoint to get information about a specific device.
+        /// </summary>
+        private static IResult SingleDeviceInfo(string deviceId, HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+            if (dev == null)
+            {
+                return Results.NotFound(new ErrorResponse
+                {
+                    errcode = "M_NOT_FOUND",
+                    error = "Device not found"
+                });
+            }
+
+            // Device was found.
+            return Results.Ok(new DeviceData
+            {
+                DeviceId = dev.device_id,
+                DisplayName = dev.display_name,
+                LastSeenIP = null,
+                LastSeenTimestamp = null
+            });
+        }
+
+        /// <summary>
         /// Adds device management endpoints to the web application.
         /// </summary>
         /// <param name="app">the app to which the endpoint shall be added</param>
         public static void AddEndpoints(WebApplication app)
         {
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices,
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices,
             // i.e. the endpoint to list all devices of the user.
-            app.MapGet("/_matrix/client/r0/devices", (HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                var devices = Database.Memory.Devices.GetDevicesOfUser(token.user_id);
-
-                var result = new List<DeviceData>(devices.Count);
-                foreach (var device in devices)
-                {
-                    result.Add(new DeviceData()
-                    {
-                        DeviceId = device.device_id,
-                        DisplayName = device.display_name,
-                        LastSeenIP = null,
-                        LastSeenTimestamp = null
-                    });
-                }
-                return Results.Ok(new { devices = result });
-            });
+            app.MapGet("/_matrix/client/r0/devices", ListDevicesOfUser);
 
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
             // i.e. the endpoint to get information about a specific device.
-            app.MapGet("/_matrix/client/r0/devices/{deviceId}", (string deviceId, HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
-                if (dev == null)
-                {
-                    return Results.NotFound(new ErrorResponse
-                    {
-                        errcode = "M_NOT_FOUND",
-                        error = "Device not found"
-                    });
-                }
-
-                // Device was found.
-                return Results.Ok(new DeviceData
-                {
-                    DeviceId = dev.device_id,
-                    DisplayName = dev.display_name,
-                    LastSeenIP = null,
-                    LastSeenTimestamp = null
-                });
-            });
+            app.MapGet("/_matrix/client/r0/devices/{deviceId}", SingleDeviceInfo);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-devices-deviceid,
             // i.e. the possibility to chance the display name of a device.
