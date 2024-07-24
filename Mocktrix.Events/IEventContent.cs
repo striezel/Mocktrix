@@ -25,6 +25,7 @@ namespace Mocktrix.Events
     /// </summary>
     [JsonDerivedType(typeof(CanonicalAliasEventContent))]
     [JsonDerivedType(typeof(CreateRoomEventContent))]
+    [JsonDerivedType(typeof(EncryptionEventContent))]
     [JsonDerivedType(typeof(GuestAccessEventContent))]
     [JsonDerivedType(typeof(HistoryVisibilityEventContent))]
     [JsonDerivedType(typeof(JoinRulesEventContent))]
