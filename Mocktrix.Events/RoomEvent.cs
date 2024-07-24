@@ -69,7 +69,18 @@ namespace Mocktrix.Events
         [JsonPropertyOrder(-20)]
         [JsonPropertyName("unsigned")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public UnsignedData? Unsigned {  get; set; }   
+        public UnsignedData? Unsigned {  get; set; }
+
+
+        /// <summary>
+        /// Indicates whether this event is a state event.
+        /// </summary>
+        /// <returns>Returns true, if the event is a state event.
+        /// Returns false otherwise.</returns>
+        public virtual bool IsStateEvent()
+        {
+            return false;
+        }
     }
 
 

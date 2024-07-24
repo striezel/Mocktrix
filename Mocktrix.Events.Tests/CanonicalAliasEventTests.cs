@@ -121,5 +121,11 @@ namespace Mocktrix.Events.Tests
             Assert.NotNull(json);
             Assert.Equal(expected_json, json);
         }
+
+        [Fact]
+        public void IsStateEvent()
+        {
+            Assert.True(new CanonicalAliasEvent().IsStateEvent());
+        }
     }
 }

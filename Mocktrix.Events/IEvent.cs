@@ -48,5 +48,13 @@ namespace Mocktrix.Events
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
         public string Type { get; set; }
+
+
+        /// <summary>
+        /// Indicates whether this event is a state event.
+        /// </summary>
+        /// <returns>Returns true, if the event is a state event.
+        /// Returns false otherwise.</returns>
+        public bool IsStateEvent();
     }
 }
