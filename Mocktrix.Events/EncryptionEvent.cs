@@ -67,6 +67,7 @@ namespace Mocktrix.Events
         /// 604800000 (a week) is the recommended default.
         /// </summary>
         [JsonPropertyName("rotation_period_ms")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public long? RotationPeriodMilliseconds { get; set; } = null;
 
         /// <summary>
@@ -74,6 +75,7 @@ namespace Mocktrix.Events
         /// 100 is the recommended default.
         /// </summary>
         [JsonPropertyName("rotation_period_msgs")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public long? RotationPeriodMessages { get; set; } = null;
     }
 }

@@ -17,6 +17,7 @@
 */
 
 using System.Net;
+using System.Net.Http.Json;
 
 namespace MocktrixTests
 {
@@ -121,6 +122,217 @@ namespace MocktrixTests
             };
             var content = Utilities.GetContent(response, expected);
             Assert.Empty(content.joined_rooms);
+        }
+
+        [Fact]
+        public async Task TestCreateRoom_NoAuthorization()
+        {
+            var data = new {
+                preset = "public_chat"
+            };
+            var response = await client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestCreateRoom_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+
+            var data = new
+            {
+                preset = "public_chat"
+            };
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestCreateRoom_UnsupportedRoomVersion()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new
+            {
+                preset = "private_chat",
+                room_version = "69"
+            };
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNSUPPORTED_ROOM_VERSION",
+                error = "The given room version is not supported."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestCreateRoom_AliasContainsInvalidChar()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new
+            {
+                preset = "private_chat",
+                room_alias_name = "abcdef\r\nghijkl"
+            };
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN",
+                error = "The requested alias contains invalid characters."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestCreateRoom_AliasFullyQualified()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new
+            {
+                preset = "private_chat",
+                room_alias_name = "#abcdef:matrix.example.org"
+            };
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN",
+                error = "The ':' character is not allowed in the room alias."
+                      + " This endpoint only expects the localpart "
+                      + "of the alias and not the fully-qualified alias,"
+                      + " e.g. 'foo' instead of '#foo:example.org'."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestCreateRoom_AliasTooLong()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new
+            {
+                preset = "private_chat",
+                room_alias_name = new string('a', 300)
+            };
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN",
+                error = "The requested alias is too long."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestCreateRoom_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new
+            {
+                preset = "private_chat",
+                room_version = "1",
+                name = "My first created room",
+                topic = "Just testing ..."
+            };
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                room_id = "!some_id_here:server.domain"
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.NotNull(content.room_id);
+            Assert.StartsWith("!", content.room_id);
+            Assert.EndsWith(":" + Utilities.BaseAddress.Host, content.room_id);
+            Assert.Matches("^![a-zA-Z0-9]+:", content.room_id);
         }
     }
 }

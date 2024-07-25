@@ -16,4 +16,8 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Mocktrix.Events\Mocktrix.Events.csproj" />
+  </ItemGroup>
+
 </Project>
