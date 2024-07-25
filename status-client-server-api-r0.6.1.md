@@ -144,7 +144,7 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ### 10.1 Creation
 
-* ❌ 10.1.1 [POST /_matrix/client/r0/createRoom](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-createroom)
+* 🚧 10.1.1 [POST /_matrix/client/r0/createRoom](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-createroom)
 
 ### 10.2 Room aliases
 
@@ -198,7 +198,7 @@ passwords with error code `M_WEAK_PASSWORD`.
 * ✅ 11.2.3 [PUT /_matrix/client/r0/profile/{userId}/avatar_url](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-profile-userid-avatar-url)
 * ✅ 11.2.4 [GET /_matrix/client/r0/profile/{userId}/avatar_url](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid-avatar-url)
 * ✅ 11.2.5 [GET /_matrix/client/r0/profile/{userId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-profile-userid)
-* ❌ 11.2.6 [Events on Change of Profile Information](https://spec.matrix.org/historical/client_server/r0.6.1.html#events-on-change-of-profile-information)
+* 🚧 11.2.6 [Events on Change of Profile Information](https://spec.matrix.org/historical/client_server/r0.6.1.html#events-on-change-of-profile-information)
 
 ## 12 Security
 
