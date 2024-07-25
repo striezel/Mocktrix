@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Mocktrix.Events;
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Profile;
 using System.Text.Json;
@@ -28,6 +29,51 @@ namespace Mocktrix.client.r0_6_1
     /// </summary>
     public static class Profile
     {
+        /// <summary>
+        /// Generates the room events after a change of profile information of a
+        /// user in all joined rooms.
+        /// </summary>
+        /// <param name="app">the app which handles the requests</param>
+        /// <param name="user">the user whose information changed</param>
+        private static void GenerateEventsOnProfileChange(WebApplication app, Data.User user)
+        {
+            Uri server = new(app.Urls.FirstOrDefault("http://localhost"));
+            var memberships = Database.Memory.RoomMemberships.GetAllMembershipsOfUser(user.user_id);
+            foreach (var element in memberships)
+            {
+                if (element.Membership != Enums.Membership.Join)
+                {
+                    continue;
+                }
+
+                var member = new MembershipEvent()
+                {
+                    Content = new MembershipEventContent()
+                    {
+                        AvatarURL = user.avatar_url,
+                        DisplayName = user.display_name,
+                        Membership = "join"
+                    },
+                    // Note: Do events always belong to the same server that
+                    // the rooms belong to, or can the domain be different?
+                    // TODO: Investigate.
+                    EventId = Id.Generate(server),
+                    OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    RoomId = element.RoomId,
+                    Sender = element.UserId,
+                    StateKey = element.UserId
+                };
+                Database.Memory.RoomEvents.Add(member);
+
+                // Note: The specification also mentions the creation of an event
+                // of type m.presence. However, that may be seen as an intrusion
+                // of privacy, so we do not generate it here. Maybe we will add
+                // it when there is a way to explicitly opt-in for these kinds
+                // of events.
+            }
+        }
+
+
         /// <summary>
         /// Adds profile-related endpoints to the web application.
         /// </summary>
@@ -128,6 +174,7 @@ namespace Mocktrix.client.r0_6_1
                 if (user != null)
                 {
                     user.display_name = data.DisplayName;
+                    GenerateEventsOnProfileChange(app, user);
                 }
                 return Results.Ok(new { });
             });
@@ -226,6 +273,7 @@ namespace Mocktrix.client.r0_6_1
                 if (user != null)
                 {
                     user.avatar_url = data.AvatarUrl;
+                    GenerateEventsOnProfileChange(app, user);
                 }
                 return Results.Ok(new { });
             });
