@@ -32,6 +32,7 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(JoinRulesEvent), "m.room.join_rules")]
     [JsonDerivedType(typeof(MembershipEvent), "m.room.member")]
     [JsonDerivedType(typeof(NameEvent), "m.room.name")]
+    [JsonDerivedType(typeof(PinnedEventsEvent), "m.room.pinned_events")]
     [JsonDerivedType(typeof(PowerLevelsEvent), "m.room.power_levels")]
     [JsonDerivedType(typeof(TopicEvent), "m.room.topic")]
     public interface IEvent

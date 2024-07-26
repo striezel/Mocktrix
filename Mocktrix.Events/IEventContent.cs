@@ -31,6 +31,7 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(JoinRulesEventContent))]
     [JsonDerivedType(typeof(MembershipEventContent))]
     [JsonDerivedType(typeof(NameEventContent))]
+    [JsonDerivedType(typeof(PinnedEventsEvent))]
     [JsonDerivedType(typeof(PowerLevelsEventContent))]
     [JsonDerivedType(typeof(TopicEventContent))]
     public interface IEventContent
