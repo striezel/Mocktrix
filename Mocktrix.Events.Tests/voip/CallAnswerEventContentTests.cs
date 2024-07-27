@@ -21,17 +21,16 @@ using System.Text.Json;
 namespace Mocktrix.Events.VoIP.Tests
 {
     /// <summary>
-    /// Contains tests for CallInviteEventContent.
+    /// Contains tests for CallAnswerEventContent.
     /// </summary>
-    public class CallInviteEventContentTests
+    public class CallAnswerEventContentTests
     {
         [Fact]
         public void Construction()
         {
-            var content = new CallInviteEventContent();
+            var content = new CallAnswerEventContent();
+            Assert.Null(content.Answer);
             Assert.Null(content.CallId);
-            Assert.Equal(-1, content.LifeTime);
-            Assert.Null(content.Offer);
             Assert.Equal(-1, content.Version);
         }
 
@@ -40,40 +39,40 @@ namespace Mocktrix.Events.VoIP.Tests
         {
             var json = """ 
                        {
+                           "answer": {
+                               "sdp": "v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]",
+                               "type": "answer"
+                           },
                            "call_id": "12345",
                            "lifetime": 60000,
-                           "offer": {
-                               "sdp": "v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]",
-                               "type": "offer"
-                           },
                            "version": 0
                        }
                        """;
-            var content = JsonSerializer.Deserialize<CallInviteEventContent>(json);
+            var content = JsonSerializer.Deserialize<CallAnswerEventContent>(json);
 
             Assert.NotNull(content);
+            Assert.NotNull(content.Answer);
+            Assert.Equal("v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]", content.Answer.SDP);
+            Assert.Equal("answer", content.Answer.Type);
             Assert.Equal("12345", content.CallId);
-            Assert.Equal(60000, content.LifeTime);
-            Assert.NotNull(content.Offer);
-            Assert.Equal("v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]", content.Offer.SDP);
-            Assert.Equal("offer", content.Offer.Type);
+            Assert.Equal(0, content.Version);
+
         }
 
         [Fact]
         public void SerializeSpecExample()
         {
-            var content = new CallInviteEventContent
+            var content = new CallAnswerEventContent
             {
-                CallId = "12345",
-                LifeTime = 60000,
-                Offer = new SessionDescription()
+                Answer = new SessionDescription()
                 {
                     SDP = "v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]",
-                    Type = "offer"
+                    Type = "answer"
                 },
+                CallId = "12345",
                 Version = 0
             };
-            var expected_json = "{\"call_id\":\"12345\",\"lifetime\":60000,\"offer\":{\"sdp\":\"v=0\\r\\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]\",\"type\":\"offer\"},\"version\":0}";
+            var expected_json = "{\"answer\":{\"sdp\":\"v=0\\r\\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]\",\"type\":\"answer\"},\"call_id\":\"12345\",\"version\":0}";
             var json = JsonSerializer.Serialize(content);
 
             Assert.NotNull(json);

@@ -34,6 +34,10 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(PinnedEventsEvent))]
     [JsonDerivedType(typeof(PowerLevelsEventContent))]
     [JsonDerivedType(typeof(TopicEventContent))]
+    [JsonDerivedType(typeof(VoIP.CallAnswerEventContent))]
+    [JsonDerivedType(typeof(VoIP.CallCandidatesEventContent))]
+    [JsonDerivedType(typeof(VoIP.CallHangUpEventContent))]
+    [JsonDerivedType(typeof(VoIP.CallInviteEventContent))]
     public interface IEventContent
     {
     }

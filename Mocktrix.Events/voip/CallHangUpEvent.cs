@@ -21,9 +21,9 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events.VoIP
 {
     /// <summary>
-    /// Event for invite to a VoIP call in a room.
+    /// Event for end of a VoIP call in a room.
     /// </summary>
-    public class CallInviteEvent: RoomEvent
+    public class CallHangUpEvent: RoomEvent
     {
         /// <summary>
         /// The content object of the event. Type and available field differ
@@ -31,19 +31,19 @@ namespace Mocktrix.Events.VoIP
         /// </summary>
         [JsonPropertyName("content")]
         [JsonPropertyOrder(IEvent.ContentPropertyOrder)]
-        public CallInviteEventContent Content { get; set; } = new();
+        public CallHangUpEventContent Content { get; set; } = new();
 
 
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
         public override string Type
         {
-            get => "m.call.invite";
+            get => "m.call.hangup";
             set
             {
-                if (value != "m.call.invite")
+                if (value != "m.call.hangup")
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.call.invite'.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.call.hangup'.");
                 }
             }
         }
@@ -51,31 +51,27 @@ namespace Mocktrix.Events.VoIP
 
 
     /// <summary>
-    /// Event content for CallInviteEvent.
+    /// Event content for CallHangUpEvent.
     /// </summary>
-    public class CallInviteEventContent : IEventContent
+    public class CallHangUpEventContent : IEventContent
     {
         /// <summary>
-        /// Unique identifier for the call.
+        /// The ID of the call this event relates to.
         /// </summary>
         [JsonPropertyName("call_id")]
         public string CallId { get; set; } = null!;
 
 
         /// <summary>
-        /// The time in milliseconds that the invite is valid for. Once the
-        /// invite age exceeds this value, clients should discard it. They
-        /// should also no longer show the call as awaiting an answer in the UI.
+        /// Optional error reason for the hangup. This should not be provided
+        /// when the user naturally ends or rejects the call. When there was an
+        /// error in the call negotiation, this should be "ice_failed" for when
+        /// ICE negotiation fails or "invite_timeout" for when the other party
+        /// did not answer in time. One of: ["ice_failed", "invite_timeout"].
         /// </summary>
-        [JsonPropertyName("lifetime")]
-        public long LifeTime { get; set; } = -1;
-
-
-        /// <summary>
-        /// The session description object.
-        /// </summary>
-        [JsonPropertyName("offer")]
-        public SessionDescription Offer { get; set; } = null!;
+        [JsonPropertyName("reason")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Reason { get; set; } = null;
 
 
         /// <summary>
@@ -84,26 +80,5 @@ namespace Mocktrix.Events.VoIP
         /// </summary>
         [JsonPropertyName("version")]
         public long Version { get; set; } = -1;
-    }
-
-
-    /// <summary>
-    /// A session description object.
-    /// </summary>
-    public class SessionDescription
-    {
-        /// <summary>
-        /// The SDP text of the session description.
-        /// </summary>
-        [JsonPropertyName("sdp")]
-        public string SDP { get; set; } = null!;
-
-
-        /// <summary>
-        /// The type of session description.
-        /// Must be 'offer' for invites and 'answer' for answers.
-        /// </summary>
-        [JsonPropertyName("type")]
-        public string Type { get; set; } = null!;
     }
 }

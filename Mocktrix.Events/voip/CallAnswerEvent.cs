@@ -21,9 +21,9 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events.VoIP
 {
     /// <summary>
-    /// Event for invite to a VoIP call in a room.
+    /// Event for answer to a VoIP call in a room.
     /// </summary>
-    public class CallInviteEvent: RoomEvent
+    public class CallAnswerEvent: RoomEvent
     {
         /// <summary>
         /// The content object of the event. Type and available field differ
@@ -31,19 +31,19 @@ namespace Mocktrix.Events.VoIP
         /// </summary>
         [JsonPropertyName("content")]
         [JsonPropertyOrder(IEvent.ContentPropertyOrder)]
-        public CallInviteEventContent Content { get; set; } = new();
+        public CallAnswerEventContent Content { get; set; } = new();
 
 
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
         public override string Type
         {
-            get => "m.call.invite";
+            get => "m.call.answer";
             set
             {
-                if (value != "m.call.invite")
+                if (value != "m.call.answer")
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.call.invite'.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.call.answer'.");
                 }
             }
         }
@@ -51,31 +51,22 @@ namespace Mocktrix.Events.VoIP
 
 
     /// <summary>
-    /// Event content for CallInviteEvent.
+    /// Event content for CallAnswerEvent.
     /// </summary>
-    public class CallInviteEventContent : IEventContent
+    public class CallAnswerEventContent : IEventContent
     {
-        /// <summary>
-        /// Unique identifier for the call.
-        /// </summary>
-        [JsonPropertyName("call_id")]
-        public string CallId { get; set; } = null!;
-
-
-        /// <summary>
-        /// The time in milliseconds that the invite is valid for. Once the
-        /// invite age exceeds this value, clients should discard it. They
-        /// should also no longer show the call as awaiting an answer in the UI.
-        /// </summary>
-        [JsonPropertyName("lifetime")]
-        public long LifeTime { get; set; } = -1;
-
-
         /// <summary>
         /// The session description object.
         /// </summary>
-        [JsonPropertyName("offer")]
-        public SessionDescription Offer { get; set; } = null!;
+        [JsonPropertyName("answer")]
+        public SessionDescription Answer { get; set; } = null!;
+
+
+        /// <summary>
+        /// The id the call this event relates to.
+        /// </summary>
+        [JsonPropertyName("call_id")]
+        public string CallId { get; set; } = null!;
 
 
         /// <summary>
@@ -84,26 +75,5 @@ namespace Mocktrix.Events.VoIP
         /// </summary>
         [JsonPropertyName("version")]
         public long Version { get; set; } = -1;
-    }
-
-
-    /// <summary>
-    /// A session description object.
-    /// </summary>
-    public class SessionDescription
-    {
-        /// <summary>
-        /// The SDP text of the session description.
-        /// </summary>
-        [JsonPropertyName("sdp")]
-        public string SDP { get; set; } = null!;
-
-
-        /// <summary>
-        /// The type of session description.
-        /// Must be 'offer' for invites and 'answer' for answers.
-        /// </summary>
-        [JsonPropertyName("type")]
-        public string Type { get; set; } = null!;
     }
 }

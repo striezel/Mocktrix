@@ -24,6 +24,10 @@ namespace Mocktrix.Events
     /// Basic interface for all event types.
     /// </summary>
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+    [JsonDerivedType(typeof(VoIP.CallAnswerEvent), "m.call.answer")]
+    [JsonDerivedType(typeof(VoIP.CallCandidatesEvent), "m.call.candidates")]
+    [JsonDerivedType(typeof(VoIP.CallHangUpEvent), "m.call.hangup")]
+    [JsonDerivedType(typeof(VoIP.CallInviteEvent), "m.call.invite")]
     [JsonDerivedType(typeof(CanonicalAliasEvent), "m.room.canonical_alias")]
     [JsonDerivedType(typeof(CreateRoomEvent), "m.room.create")]
     [JsonDerivedType(typeof(EncryptionEvent), "m.room.encryption")]

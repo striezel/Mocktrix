@@ -21,17 +21,16 @@ using System.Text.Json;
 namespace Mocktrix.Events.VoIP.Tests
 {
     /// <summary>
-    /// Contains tests for CallInviteEventContent.
+    /// Contains tests for CallHangUpEventContent.
     /// </summary>
-    public class CallInviteEventContentTests
+    public class CallHangUpEventContentTests
     {
         [Fact]
         public void Construction()
         {
-            var content = new CallInviteEventContent();
+            var content = new CallHangUpEventContent();
             Assert.Null(content.CallId);
-            Assert.Equal(-1, content.LifeTime);
-            Assert.Null(content.Offer);
+            Assert.Null(content.Reason);
             Assert.Equal(-1, content.Version);
         }
 
@@ -41,39 +40,27 @@ namespace Mocktrix.Events.VoIP.Tests
             var json = """ 
                        {
                            "call_id": "12345",
-                           "lifetime": 60000,
-                           "offer": {
-                               "sdp": "v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]",
-                               "type": "offer"
-                           },
                            "version": 0
                        }
                        """;
-            var content = JsonSerializer.Deserialize<CallInviteEventContent>(json);
+            var content = JsonSerializer.Deserialize<CallHangUpEventContent>(json);
 
             Assert.NotNull(content);
             Assert.Equal("12345", content.CallId);
-            Assert.Equal(60000, content.LifeTime);
-            Assert.NotNull(content.Offer);
-            Assert.Equal("v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]", content.Offer.SDP);
-            Assert.Equal("offer", content.Offer.Type);
+            Assert.Null(content.Reason);
+            Assert.Equal(0, content.Version);
         }
 
         [Fact]
         public void SerializeSpecExample()
         {
-            var content = new CallInviteEventContent
+            var content = new CallHangUpEventContent
             {
                 CallId = "12345",
-                LifeTime = 60000,
-                Offer = new SessionDescription()
-                {
-                    SDP = "v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]",
-                    Type = "offer"
-                },
+                Reason = null,
                 Version = 0
             };
-            var expected_json = "{\"call_id\":\"12345\",\"lifetime\":60000,\"offer\":{\"sdp\":\"v=0\\r\\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]\",\"type\":\"offer\"},\"version\":0}";
+            var expected_json = "{\"call_id\":\"12345\",\"version\":0}";
             var json = JsonSerializer.Serialize(content);
 
             Assert.NotNull(json);

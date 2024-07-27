@@ -21,25 +21,24 @@ using System.Text.Json;
 namespace Mocktrix.Events.VoIP.Tests
 {
     /// <summary>
-    /// Contains tests for CallInviteEvent.
+    /// Contains tests for CallAnswerEvent.
     /// </summary>
-    public class CallInviteEventTests
+    public class CallAnswerEventTests
     {
         [Fact]
         public void Construction()
         {
-            var ev = new CallInviteEvent();
+            var ev = new CallAnswerEvent();
             Assert.NotNull(ev.Content);
-            Assert.IsType<CallInviteEventContent>(ev.Content);
+            Assert.IsType<CallAnswerEventContent>(ev.Content);
+            Assert.Null(ev.Content.Answer);
             Assert.Null(ev.Content.CallId);
-            Assert.Equal(-1, ev.Content.LifeTime);
-            Assert.Null(ev.Content.Offer);
             Assert.Equal(-1, ev.Content.Version);
             Assert.Null(ev.EventId);
             Assert.Equal(0, ev.OriginServerTs);
             Assert.Null(ev.RoomId);
             Assert.Null(ev.Sender);
-            Assert.Equal("m.call.invite", ev.Type);
+            Assert.Equal("m.call.answer", ev.Type);
             Assert.Null(ev.Unsigned);
         }
 
@@ -49,40 +48,38 @@ namespace Mocktrix.Events.VoIP.Tests
             var json = """ 
                        {
                            "content": {
-                               "call_id": "12345",
-                               "lifetime": 60000,
-                               "offer": {
+                               "answer": {
                                    "sdp": "v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]",
-                                   "type": "offer"
+                                   "type": "answer"
                                },
+                               "call_id": "12345",
                                "version": 0
                            },
                            "event_id": "$143273582443PhrSn:example.org",
                            "origin_server_ts": 1432735824653,
                            "room_id": "!jEsUZKDJdhlrceRyVU:example.org",
                            "sender": "@example:example.org",
-                           "type": "m.call.invite",
+                           "type": "m.call.answer",
                            "unsigned": {
                                "age": 1234
                            }
                        }
                        """;
-            var ev = JsonSerializer.Deserialize<CallInviteEvent>(json);
+            var ev = JsonSerializer.Deserialize<CallAnswerEvent>(json);
 
             Assert.NotNull(ev);
             Assert.NotNull(ev.Content);
+            Assert.NotNull(ev.Content.Answer);
+            Assert.Equal("v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]", ev.Content.Answer.SDP);
+            Assert.Equal("answer", ev.Content.Answer.Type);
             Assert.Equal("12345", ev.Content.CallId);
-            Assert.Equal(60000, ev.Content.LifeTime);
-            Assert.NotNull(ev.Content.Offer);
-            Assert.Equal("v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]", ev.Content.Offer.SDP);
-            Assert.Equal("offer", ev.Content.Offer.Type);
             Assert.Equal(0, ev.Content.Version);
 
             Assert.Equal("$143273582443PhrSn:example.org", ev.EventId);
             Assert.Equal(1432735824653, ev.OriginServerTs);
             Assert.Equal("!jEsUZKDJdhlrceRyVU:example.org", ev.RoomId);
             Assert.Equal("@example:example.org", ev.Sender);
-            Assert.Equal("m.call.invite", ev.Type);
+            Assert.Equal("m.call.answer", ev.Type);
             Assert.NotNull(ev.Unsigned);
             Assert.Equal(1234, ev.Unsigned.Age);
             Assert.Null(ev.Unsigned.RedactedBecause);
@@ -92,24 +89,23 @@ namespace Mocktrix.Events.VoIP.Tests
         [Fact]
         public void SerializeSpecExample()
         {
-            var ev = new CallInviteEvent
+            var ev = new CallAnswerEvent
             {
-                Content = new CallInviteEventContent
+                Content = new CallAnswerEventContent
                 {
-                    CallId = "12345",
-                    LifeTime = 60000,
-                    Offer = new SessionDescription()
+                    Answer = new SessionDescription()
                     {
                         SDP = "v=0\r\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]",
-                        Type = "offer"
+                        Type = "answer"
                     },
+                    CallId = "12345",
                     Version = 0
                 },
                 EventId = "$143273582443PhrSn:example.org",
                 OriginServerTs = 1432735824653,
                 RoomId = "!jEsUZKDJdhlrceRyVU:example.org",
                 Sender = "@example:example.org",
-                Type = "m.call.invite",
+                Type = "m.call.answer",
                 Unsigned = new UnsignedData()
                 {
                     Age = 1234,
@@ -118,7 +114,7 @@ namespace Mocktrix.Events.VoIP.Tests
                 }
             };
 
-            var expected_json = "{\"content\":{\"call_id\":\"12345\",\"lifetime\":60000,\"offer\":{\"sdp\":\"v=0\\r\\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]\",\"type\":\"offer\"},\"version\":0},\"event_id\":\"$143273582443PhrSn:example.org\",\"origin_server_ts\":1432735824653,\"room_id\":\"!jEsUZKDJdhlrceRyVU:example.org\",\"sender\":\"@example:example.org\",\"type\":\"m.call.invite\",\"unsigned\":{\"age\":1234}}";
+            var expected_json = "{\"content\":{\"answer\":{\"sdp\":\"v=0\\r\\no=- 6584580628695956864 2 IN IP4 127.0.0.1[...]\",\"type\":\"answer\"},\"call_id\":\"12345\",\"version\":0},\"event_id\":\"$143273582443PhrSn:example.org\",\"origin_server_ts\":1432735824653,\"room_id\":\"!jEsUZKDJdhlrceRyVU:example.org\",\"sender\":\"@example:example.org\",\"type\":\"m.call.answer\",\"unsigned\":{\"age\":1234}}";
             var json = JsonSerializer.Serialize(ev);
             Assert.NotNull(json);
             Assert.Equal(expected_json, json);
@@ -127,7 +123,7 @@ namespace Mocktrix.Events.VoIP.Tests
         [Fact]
         public void IsStateEvent()
         {
-            Assert.False(new CallInviteEvent().IsStateEvent());
+            Assert.False(new CallAnswerEvent().IsStateEvent());
         }
     }
 }
