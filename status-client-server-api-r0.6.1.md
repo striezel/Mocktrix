@@ -216,15 +216,15 @@ TODO
 
 #### 13.2.1 Events
 
-* ❌ 13.2.1.1 [m.room.message](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message)
+* 🚧 13.2.1.1 [m.room.message](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message)
 * ❌ 13.2.1.2 [m.room.message.feedback](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message-feedback)
 * ✅ 13.2.1.3 [m.room.name](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-name)
 * ✅ 13.2.1.4 [m.room.topic](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-topic)
 * ❌ 13.2.1.5 [m.room.avatar](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-avatar)
-* ❌ 13.2.1.6 [m.room.pinned_events](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-pinned-events)
-* ❌ 13.2.1.7 [m.room.message msgtypes](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message-msgtypes)
-  * ❌ 13.2.1.7.1 [m.text](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-text)
-  * ❌ 13.2.1.7.2 [m.emote](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-emote)
+* ✅ 13.2.1.6 [m.room.pinned_events](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-pinned-events)
+* 🚧 13.2.1.7 [m.room.message msgtypes](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-message-msgtypes)
+  * ✅ 13.2.1.7.1 [m.text](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-text)
+  * ✅ 13.2.1.7.2 [m.emote](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-emote)
   * ❌ 13.2.1.7.3 [m.notice](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-notice)
   * ❌ 13.2.1.7.4 [m.image](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-image)
   * ❌ 13.2.1.7.5 [m.file](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-file)
@@ -247,10 +247,10 @@ TODO
 
 #### 13.3.1 Events
 
-* ❌ 13.3.1.1 [m.call.invite](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-invite)
-* ❌ 13.3.1.2 [m.call.candidates](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-candidates)
-* ❌ 13.3.1.3 [m.call.answer](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-answer)
-* ❌ 13.3.1.4 [m.call.hangup](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-hangup)
+* ✅ 13.3.1.1 [m.call.invite](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-invite)
+* ✅ 13.3.1.2 [m.call.candidates](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-candidates)
+* ✅ 13.3.1.3 [m.call.answer](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-answer)
+* ✅ 13.3.1.4 [m.call.hangup](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-call-hangup)
 
 #### 13.3.2 Client behaviour
 
