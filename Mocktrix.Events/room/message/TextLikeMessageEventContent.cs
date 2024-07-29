@@ -31,6 +31,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("format")]
         [JsonPropertyOrder(-90)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Format { get; set; } = null;
 
 
@@ -39,6 +40,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("formatted_body")]
         [JsonPropertyOrder(-80)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? FormattedBody { get; set; } = null;
     }
 }
