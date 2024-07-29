@@ -21,17 +21,17 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
-    /// Event for text messages in a room.
+    /// Event for notice messages in a room.
     /// </summary>
-    public class TextMessageEvent: RoomMessageEvent<TextMessageEventContent>
+    public class NoticeMessageEvent: RoomMessageEvent<NoticeMessageEventContent>
     {
     }
 
 
     /// <summary>
-    /// Event content for TextMessageEvent.
+    /// Event content for NoticeMessageEvent.
     /// </summary>
-    public class TextMessageEventContent : TextLikeMessageEventContent
+    public class NoticeMessageEventContent : TextLikeMessageEventContent
     {
         /// <summary>
         /// The type of message, e.g. "m.text", "m.file", ...
@@ -39,12 +39,12 @@ namespace Mocktrix.Events
         [JsonPropertyName("msgtype")]
         public override string MessageType
         {
-            get => "m.text";
+            get => "m.notice";
             set
             {
-                if (value != "m.text")
+                if (value != "m.notice")
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.text'.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.notice'.");
                 }
             }
         }

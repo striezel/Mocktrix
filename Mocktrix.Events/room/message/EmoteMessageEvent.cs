@@ -31,7 +31,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event content for EmoteMessageEvent.
     /// </summary>
-    public class EmoteMessageEventContent : TextMessageEventContent
+    public class EmoteMessageEventContent : TextLikeMessageEventContent
     {
         /// <summary>
         /// The type of message, e.g. "m.text", "m.file", ...

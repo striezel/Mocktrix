@@ -56,6 +56,7 @@ namespace Mocktrix.Events
     /// </summary>
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "msgtype")]
     [JsonDerivedType(typeof(EmoteMessageEventContent), "m.emote")]
+    [JsonDerivedType(typeof(NoticeMessageEventContent), "m.notice")]
     [JsonDerivedType(typeof(TextMessageEventContent), "m.text")]
     public abstract class RoomMessageEventContent : IEventContent
     {

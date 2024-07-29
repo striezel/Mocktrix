@@ -21,32 +21,24 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
-    /// Event for text messages in a room.
+    /// Event content for text-like room messages.
     /// </summary>
-    public class TextMessageEvent: RoomMessageEvent<TextMessageEventContent>
-    {
-    }
-
-
-    /// <summary>
-    /// Event content for TextMessageEvent.
-    /// </summary>
-    public class TextMessageEventContent : TextLikeMessageEventContent
+    public abstract class TextLikeMessageEventContent : RoomMessageEventContent
     {
         /// <summary>
-        /// The type of message, e.g. "m.text", "m.file", ...
+        /// The format used in the formatted_body.
+        /// Currently only "org.matrix.custom.html" is supported.
         /// </summary>
-        [JsonPropertyName("msgtype")]
-        public override string MessageType
-        {
-            get => "m.text";
-            set
-            {
-                if (value != "m.text")
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.text'.");
-                }
-            }
-        }
+        [JsonPropertyName("format")]
+        [JsonPropertyOrder(-90)]
+        public string? Format { get; set; } = null;
+
+
+        /// <summary>
+        /// The formatted version of the body. This is required if format is specified.
+        /// </summary>
+        [JsonPropertyName("formatted_body")]
+        [JsonPropertyOrder(-80)]
+        public string? FormattedBody { get; set; } = null;
     }
 }
