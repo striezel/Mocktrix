@@ -17,6 +17,9 @@ build:
     # Run tests for Mocktrix.Configuration.
     - cd Mocktrix.Configuration.Tests
     - dotnet test
+    # Run tests for Mocktrix.ContentRepository.Memory.
+    - cd ../Mocktrix.ContentRepository.Memory.Tests
+    - dotnet test
     # Run tests for Mocktrix.Data.
     - cd ../Mocktrix.Data.Tests
     - dotnet test
@@ -25,9 +28,6 @@ build:
     - dotnet test
     # Run tests for Mocktrix.Events.
     - cd ../Mocktrix.Events.Tests
-    - dotnet test
-    # Run tests for Mocktrix.ContentRepository.Memory.
-    - cd ../Mocktrix.ContentRepository.Memory.Tests
     - dotnet test
     # Run tests for Mocktrix server.
     - cd ../Mocktrix/
