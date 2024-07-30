@@ -30,6 +30,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("duration")]
         [JsonPropertyOrder(-30)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? Duration { get; set; } = null;
 
 
