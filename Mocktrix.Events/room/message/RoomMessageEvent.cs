@@ -55,7 +55,10 @@ namespace Mocktrix.Events
     /// Event content for RoomMessageEvent.
     /// </summary>
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "msgtype")]
+    [JsonDerivedType(typeof(AudioMessageEventContent), "m.audio")]
     [JsonDerivedType(typeof(EmoteMessageEventContent), "m.emote")]
+    [JsonDerivedType(typeof(FileMessageEventContent), "m.file")]
+    [JsonDerivedType(typeof(ImageMessageEventContent), "m.image")]
     [JsonDerivedType(typeof(NoticeMessageEventContent), "m.notice")]
     [JsonDerivedType(typeof(TextMessageEventContent), "m.text")]
     public abstract class RoomMessageEventContent : IEventContent
