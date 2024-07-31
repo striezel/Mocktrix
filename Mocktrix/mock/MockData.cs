@@ -97,6 +97,10 @@ namespace Mocktrix
             Database.Memory.RoomMemberships.Create("!left_room:matrix.example.org", joined_user.user_id, Enums.Membership.Leave);
 
             _ = Database.Memory.Users.CreateUser("@not_a_joined_user:" + base_address.Host, "some password");
+
+            // Room visibility tests.
+            _ = Database.Memory.Rooms.Create("!public_test_room:matrix.example.org", "@tester:matrix.example.org", "1", true);
+            _ = Database.Memory.Rooms.Create("!private_test_room:matrix.example.org", "@tester:matrix.example.org", "1", false);
         }
     }
 }

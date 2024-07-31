@@ -334,5 +334,49 @@ namespace MocktrixTests
             Assert.EndsWith(":" + Utilities.BaseAddress.Host, content.room_id);
             Assert.Matches("^![a-zA-Z0-9]+:", content.room_id);
         }
+
+        [Fact]
+        public async Task TestGetRoomVisibility_NotFound()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21does-not-exist%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "The requested room was not found."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestGetRoomVisibility_PublicVisibility()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21public_test_room%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                visibility = "public"
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.visibility, content.visibility);
+        }
+
+        [Fact]
+        public async Task TestGetRoomVisibility_PrivateVisibility()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21private_test_room%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                visibility = "private"
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.visibility, content.visibility);
+        }
     }
 }

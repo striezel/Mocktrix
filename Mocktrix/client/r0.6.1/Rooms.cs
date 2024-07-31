@@ -68,6 +68,26 @@ namespace Mocktrix.client.r0_6_1
             return Results.Ok(result);
         }
 
+        // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-list-room-roomid,
+        // i.e. the endpoint to get a room's visibility.
+        private static IResult GetRoomVisibility(string roomId, HttpContext context)
+        {
+            var room = Database.Memory.Rooms.GetRoom(roomId);
+            if (room == null)
+            {
+                return Results.NotFound(new ErrorResponse
+                {
+                    errcode = "M_NOT_FOUND",
+                    error = "The requested room was not found."
+                });
+            }
+
+            return Results.Json(new
+            {
+                visibility = room.Public ? "public" : "private"
+            });
+        }
+
 
         /// <summary>
         /// Adds room-related endpoints to the web application.
@@ -426,6 +446,11 @@ namespace Mocktrix.client.r0_6_1
 
                 return Results.Ok(new { room_id });
             });
+
+
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-list-room-roomid,
+            // i.e. the endpoint to get a room's visibility.
+            app.MapGet("/_matrix/client/r0/directory/list/room/{roomId}", GetRoomVisibility);
         }
     }
 }
