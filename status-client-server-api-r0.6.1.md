@@ -180,7 +180,7 @@ passwords with error code `M_WEAK_PASSWORD`.
 
 ### 10.5 Listing rooms
 
-* ❌ 10.5.1 [GET /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-list-room-roomid)
+* ✅ 10.5.1 [GET /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-list-room-roomid)
 * ❌ 10.5.2 [PUT /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-list-room-roomid)
 * ❌ 10.5.3 [GET /_matrix/client/r0/publicRooms](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-publicrooms)
 * ❌ 10.5.4 [POST /_matrix/client/r0/publicRooms](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-publicrooms)
@@ -229,7 +229,7 @@ TODO
   * ✅ 13.2.1.7.4 [m.image](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-image)
   * ✅ 13.2.1.7.5 [m.file](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-file)
   * ✅ 13.2.1.7.6 [m.audio](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-audio)
-  * ❌ 13.2.1.7.7 [m.location](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-location)
+  * ✅ 13.2.1.7.7 [m.location](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-location)
   * ❌ 13.2.1.7.8 [m.video](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-video)
 
 #### 13.2.2 [Client behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id44)
