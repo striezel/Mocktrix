@@ -70,6 +70,8 @@ passwords with error code `M_WEAK_PASSWORD`.
 ## 6 Capabilities negotiation
 
 * ✅ 6.1 [GET /_matrix/client/r0/capabilities](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-capabilities)
+* ✅ 6.2 [m.change_password capability](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-change-password-capability)
+* ✅ 6.3 [m.room_versions capability](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-versions-capability)
 
 ## 7 Pagination
 
@@ -368,6 +370,24 @@ TODO
 
 * ❌ Not implemented yet (user-interactive authentication).
 
-### 13.11 to 13.33
+### 13.11 [End-to-End Encryption](https://spec.matrix.org/historical/client_server/r0.6.1.html#id76)
+
+TODO
+
+### 13.12 Room History Visibility
+
+#### 13.12.1 Events
+
+* ✅ 13.12.1.1 [m.room.history_visibility](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-history-visibility)
+
+#### 13.12.2 Client behaviour
+
+#### 13.12.3 [Server behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id87)
+
+* ❌ Not implemented yet.
+
+#### 13.12.4 [Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id88)
+
+### 13.13 to 13.33
 
 TODO
