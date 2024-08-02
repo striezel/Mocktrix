@@ -62,6 +62,7 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(LocationMessageEventContent), "m.location")]
     [JsonDerivedType(typeof(NoticeMessageEventContent), "m.notice")]
     [JsonDerivedType(typeof(TextMessageEventContent), "m.text")]
+    [JsonDerivedType(typeof(VideoMessageEventContent), "m.video")]
     public abstract class RoomMessageEventContent : IEventContent
     {
         /// <summary>
