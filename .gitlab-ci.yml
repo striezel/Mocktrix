@@ -29,6 +29,9 @@ build:
     # Run tests for Mocktrix.Events.
     - cd ../Mocktrix.Events.Tests
     - dotnet test
+    # Run tests for Mocktrix.RoomVersions.
+    - cd ../Mocktrix.RoomVersions.Tests
+    - dotnet test
     # Run tests for Mocktrix server.
     - cd ../Mocktrix/
     - dotnet run &

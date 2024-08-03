@@ -145,10 +145,7 @@ namespace Mocktrix.client.r0_6_1
 
                 // Check room version.
                 string version = string.IsNullOrWhiteSpace(data.RoomVersion) ? "1" : data.RoomVersion;
-                // TODO: Currently, the "supported" room versions are hard-coded.
-                // This should change once the rules for different room versions
-                // are actually implemented.
-                if ((version != "1") && (version != "2") && (version != "3"))
+                if (!RoomVersions.Support.IsSupportedVersion(version))
                 {
                     return Results.BadRequest(new ErrorResponse
                     {

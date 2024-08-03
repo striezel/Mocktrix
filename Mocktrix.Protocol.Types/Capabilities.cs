@@ -49,7 +49,7 @@ namespace Mocktrix.Protocol.Types.Capabilities
         /// Stability level must be one of ["stable", "unstable"].
         /// </summary>
         [JsonPropertyName("available")]
-        public Dictionary<string, string> Available { get; set; } = [];
+        public IDictionary<string, string> Available { get; set; } = new Dictionary<string, string>([]);
     }
 
     /// <summary>

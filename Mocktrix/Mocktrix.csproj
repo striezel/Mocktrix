@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Mocktrix.Database.Memory\Mocktrix.Database.Memory.csproj" />
     <ProjectReference Include="..\Mocktrix.Data\Mocktrix.Data.csproj" />
     <ProjectReference Include="..\Mocktrix.Protocol.Types\Mocktrix.Protocol.Types.csproj" />
+    <ProjectReference Include="..\Mocktrix.RoomVersions\Mocktrix.RoomVersions.csproj" />
   </ItemGroup>
 
 </Project>

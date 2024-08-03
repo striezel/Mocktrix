@@ -63,12 +63,7 @@ namespace Mocktrix.client.r0_6_1
                     RoomVersions = new RoomVersionsCapability
                     {
                         DefaultVersion = "1",
-                        Available = new Dictionary<string, string>(3)
-                            {
-                                { "1", "stable" },
-                                { "2", "unstable" },
-                                { "3", "unstable" },
-                            }
+                        Available = RoomVersions.Support.GetSupportedVersions()
                     }
                 }
             };
