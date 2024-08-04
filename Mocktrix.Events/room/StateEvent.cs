@@ -21,22 +21,10 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
-    /// Abstract class that contains data members common to all state events.
+    /// Abstract class that contains the data member for state key values.
     /// </summary>
-    /// <typeparam name="C">type of the event content, must be derived from
-    /// IEventContent</typeparam>
-    public abstract class StateEvent<C>: RoomEvent
-        where C : IEventContent, new()
+    public abstract class BasicStateEvent: RoomEvent
     {
-        /// <summary>
-        /// Previous content for that event, if any.
-        /// </summary>
-        [JsonPropertyName("prev_content")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        [JsonPropertyOrder(-70)]
-        public C? PrevContent { get; set; }
-
-
         /// <summary>
         /// A unique key which defines the overwriting semantics for this piece
         /// of room state. This value is often a zero-length string. The
@@ -58,5 +46,23 @@ namespace Mocktrix.Events
         {
             return true;
         }
+    }
+
+
+    /// <summary>
+    /// Abstract class that contains data members common to all state events.
+    /// </summary>
+    /// <typeparam name="C">type of the event content, must be derived from
+    /// IEventContent</typeparam>
+    public abstract class StateEvent<C>: BasicStateEvent
+        where C : IEventContent, new()
+    {
+        /// <summary>
+        /// Previous content for that event, if any.
+        /// </summary>
+        [JsonPropertyName("prev_content")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyOrder(-70)]
+        public C? PrevContent { get; set; }
     }
 }

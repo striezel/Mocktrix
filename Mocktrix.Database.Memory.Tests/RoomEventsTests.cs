@@ -44,6 +44,30 @@ namespace Mocktrix.Database.Memory.Tests
             };
         }
 
+        /// <summary>
+        /// Provides a test event with random event id.
+        /// </summary>
+        /// <param name="membership">membership state of the event</param>
+        /// <returns>Returns the test event.</returns>
+        private static MembershipEvent GetMembershipTestEvent(string membership = "invite")
+        {
+            var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".AsSpan();
+
+            return new MembershipEvent()
+            {
+                Content = new MembershipEventContent()
+                {
+                    DisplayName = "The Test User",
+                    Membership = membership
+                },
+                EventId = "$test_" + RandomNumberGenerator.GetString(alphabet, 12) + ":matrix.example.org",
+                OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                RoomId = "!test_room_events_04:matrix.example.org",
+                Sender = "@alice:matrix.example.org",
+                StateKey = "@alice:matrix.example.org"
+            };
+        }
+
         [Fact]
         public void AddEvent_Success()
         {
@@ -216,6 +240,40 @@ namespace Mocktrix.Database.Memory.Tests
                 Assert.Contains(events, e => e.EventId == event_one_room_two.EventId);
                 Assert.Contains(events, e => e.EventId == event_two_room_two.EventId);
             }
+        }
+
+        [Fact]
+        public void GetLastStateEvent_NonExistentRoomNotFound()
+        {
+            const string room_id = "!not_here:matrix.example.org";
+            var ev = RoomEvents.GetLastStateEvent<CreateRoomEvent>(room_id, "m.room.create", "");
+
+            // Room does not exist, function shall return null.
+            Assert.Null(ev);
+        }
+
+        [Fact]
+        public void GetLastStateEvent()
+        {
+            const string room_id = "!test_room_events_04:matrix.example.org";
+            const string user_id = "@alice:matrix.example.org";
+
+            var event_one = GetMembershipTestEvent("invite");
+            Assert.True(RoomEvents.Add(event_one));
+            var event_two = GetMembershipTestEvent("join");
+            Assert.True(RoomEvents.Add(event_two));
+            var ev = RoomEvents.GetLastStateEvent<MembershipEvent>(room_id, "m.room.member", user_id);
+            Assert.NotNull(ev);
+            Assert.Equal("join", ev.Content.Membership);
+            var event_three = GetMembershipTestEvent("leave");
+            Assert.True(RoomEvents.Add(event_three));
+            ev = RoomEvents.GetLastStateEvent<MembershipEvent>(room_id, "m.room.member", user_id);
+            Assert.NotNull(ev);
+            Assert.Equal("leave", ev.Content.Membership);
+
+            // No event with other state key should be found.
+            ev = RoomEvents.GetLastStateEvent<MembershipEvent>(room_id, "m.room.member", "@bob:matrix.example.org");
+            Assert.Null(ev);
         }
     }
 }

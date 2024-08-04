@@ -81,7 +81,7 @@ namespace Mocktrix.Database.Memory
 
 
         /// <summary>
-        /// Gets an existing event.
+        /// Gets all existing events of a room.
         /// </summary>
         /// <param name="room_id">id of the room, e.g. "!some_room:matrix.example.org"</param>
         /// <returns>Returns all events with the matching room id, if any exist.
@@ -89,6 +89,23 @@ namespace Mocktrix.Database.Memory
         public static List<RoomEvent> GetEventsOfRoom(string room_id)
         {
             return events.FindAll(e => e.RoomId == room_id);
+        }
+
+
+        /// <summary>
+        /// Get the last state event from a room with given type and state key.
+        /// </summary>
+        /// <typeparam name="E">type for the state event</typeparam>
+        /// <param name="room_id">id of the room, e.g. "!some_room:matrix.example.org"</param>
+        /// <param name="type">event type, e.g. "m.room.history_visibility"</param>
+        /// <param name="state_key">the state key value of the event</param>
+        /// <returns>Returns a matching event, if it was found.
+        /// Returns null, if no match was found.</returns>
+        public static E? GetLastStateEvent<E>(string room_id, string type, string state_key)
+            where E : BasicStateEvent, new()
+        {
+            return events.FindAll(e => e.RoomId == room_id && e.Type == type && e.IsStateEvent())
+                .FindLast(e => (e as E)?.StateKey == state_key) as E;
         }
     }
 }
