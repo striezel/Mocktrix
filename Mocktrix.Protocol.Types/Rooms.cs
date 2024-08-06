@@ -39,7 +39,7 @@ namespace Mocktrix.Protocol.Types.Rooms
 
 
         /// <summary>
-        /// Checks whether public room visibility is set.
+        /// Checks whether public room visibility is public.
         /// </summary>
         /// <returns>Returns true, if visibility is public.</returns>
         public bool IsPublic()

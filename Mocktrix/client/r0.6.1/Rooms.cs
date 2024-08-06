@@ -208,6 +208,12 @@ namespace Mocktrix.client.r0_6_1
                     StateKey = ""
                 };
                 Database.Memory.RoomEvents.Add(create_event);
+                var state = Database.Memory.RoomStates.Create(room_id, []);
+                state.State.Add(new Data.StateDictionaryKey()
+                {
+                    EventType = create_event.Type,
+                    StateKey = create_event.StateKey
+                }, create_event.EventId);
 
                 var user = Database.Memory.Users.GetUser(token.user_id);
                 var member_event = new MembershipEvent()
@@ -227,6 +233,11 @@ namespace Mocktrix.client.r0_6_1
                 };
                 Database.Memory.RoomEvents.Add(member_event);
                 _ = Database.Memory.RoomMemberships.Create(room_id, token.user_id, Enums.Membership.Join);
+                state.State.Add(new Data.StateDictionaryKey()
+                {
+                    EventType = member_event.Type,
+                    StateKey = member_event.StateKey
+                }, member_event.EventId);
 
                 var power_levels_event = new PowerLevelsEvent()
                 {
@@ -251,6 +262,11 @@ namespace Mocktrix.client.r0_6_1
                     StateKey = string.Empty
                 };
                 Database.Memory.RoomEvents.Add(power_levels_event);
+                state.State.Add(new Data.StateDictionaryKey()
+                {
+                    EventType = power_levels_event.Type,
+                    StateKey = power_levels_event.StateKey
+                }, power_levels_event.EventId);
 
                 string real_preset = data.Preset ?? (data.IsPublic() ? "public_chat" : "private_chat");
                 var join_rules = new JoinRulesEvent()
@@ -280,6 +296,11 @@ namespace Mocktrix.client.r0_6_1
                 }
                 Database.Memory.RoomEvents.Add(join_rules);
                 room.JoinRule = join_rules.Content.ToEnum();
+                state.State.Add(new Data.StateDictionaryKey()
+                {
+                    EventType = join_rules.Type,
+                    StateKey = join_rules.StateKey
+                }, join_rules.EventId);
 
                 var history_visibility = new HistoryVisibilityEvent()
                 {
@@ -304,6 +325,11 @@ namespace Mocktrix.client.r0_6_1
                 }
                 Database.Memory.RoomEvents.Add(history_visibility);
                 room.HistoryVisibility = history_visibility.Content.ToEnum();
+                state.State.Add(new Data.StateDictionaryKey()
+                {
+                    EventType = history_visibility.Type,
+                    StateKey = history_visibility.StateKey
+                }, history_visibility.EventId);
 
                 var guest_access = new GuestAccessEvent()
                 {
@@ -332,6 +358,11 @@ namespace Mocktrix.client.r0_6_1
                 }
                 Database.Memory.RoomEvents.Add(guest_access);
                 room.GuestAccess = guest_access.Content.ToEnum();
+                state.State.Add(new Data.StateDictionaryKey()
+                {
+                    EventType = guest_access.Type,
+                    StateKey = guest_access.StateKey
+                }, guest_access.EventId);
 
                 if (!string.IsNullOrWhiteSpace(data.RoomAliasName))
                 {
@@ -349,7 +380,12 @@ namespace Mocktrix.client.r0_6_1
                         StateKey = string.Empty
                     };
                     Database.Memory.RoomEvents.Add(alias_event);
-                    // TODO: Save alias in in-memory database.
+                    Database.Memory.RoomAliases.Create(room_id, full_alias, token.user_id);
+                    state.State.Add(new Data.StateDictionaryKey()
+                    {
+                        EventType = alias_event.Type,
+                        StateKey = alias_event.StateKey
+                    }, alias_event.EventId);
                 }
 
                 // Add initial state events.
@@ -368,12 +404,17 @@ namespace Mocktrix.client.r0_6_1
                         continue;
                     }
 
-                    RoomEvent ev = (RoomEvent)element;
+                    BasicStateEvent ev = (BasicStateEvent)element;
                     ev.EventId = Id.Generate(server);
                     ev.OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                     ev.RoomId = room_id;
                     ev.Sender = token.user_id;
                     Database.Memory.RoomEvents.Add(ev);
+                    state.State.Add(new Data.StateDictionaryKey()
+                    {
+                        EventType = ev.Type,
+                        StateKey = ev.StateKey
+                    }, ev.EventId);
                 }
 
                 if (!string.IsNullOrWhiteSpace(data.Name))
@@ -392,6 +433,11 @@ namespace Mocktrix.client.r0_6_1
                     };
                     Database.Memory.RoomEvents.Add(name_event);
                     room.Name = data.Name;
+                    state.State.Add(new Data.StateDictionaryKey()
+                    {
+                        EventType = name_event.Type,
+                        StateKey = name_event.StateKey
+                    }, name_event.EventId);
                 }
 
                 if (!string.IsNullOrWhiteSpace(data.Topic))
@@ -410,6 +456,11 @@ namespace Mocktrix.client.r0_6_1
                     };
                     Database.Memory.RoomEvents.Add(topic_event);
                     room.Topic = data.Topic;
+                    state.State.Add(new Data.StateDictionaryKey()
+                    {
+                        EventType = topic_event.Type,
+                        StateKey = topic_event.StateKey
+                    }, topic_event.EventId);
                 }
 
                 // Add invite events.
@@ -433,6 +484,11 @@ namespace Mocktrix.client.r0_6_1
                     };
                     Database.Memory.RoomEvents.Add(invite_event);
                     _ = Database.Memory.RoomMemberships.Create(room_id, user_id, Enums.Membership.Invite);
+                    state.State.Add(new Data.StateDictionaryKey()
+                    {
+                        EventType = invite_event.Type,
+                        StateKey = invite_event.StateKey
+                    }, invite_event.EventId);
                 }
 
                 // TODO: Handle or outright deny third party invites. Currently
