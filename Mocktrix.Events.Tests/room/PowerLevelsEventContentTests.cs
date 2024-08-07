@@ -89,12 +89,118 @@ namespace Mocktrix.Events.Tests
         }
 
         [Fact]
+        public void DeserializeMaximumCanonicalJsonIntegerValue()
+        {
+            // According to the canonical JSON specification of Matrix, numbers
+            // must be integers in the range [-(2^53)+1, (2^53)-1], so just a
+            // simple 32-bit signed integer is not enough. This test checks
+            // whether the maximum value can be specified for each part of the
+            // power level event content.
+            var json = """ 
+                       {
+                           "ban": 9007199254740991,
+                           "events": {
+                               "m.room.name": 9007199254740991,
+                               "m.room.power_levels": 9007199254740991
+                           },
+                           "events_default": 9007199254740991,
+                           "invite": 9007199254740991,
+                           "kick": 9007199254740991,
+                           "notifications": {
+                               "room": 9007199254740991
+                           },
+                           "redact": 9007199254740991,
+                           "state_default": 9007199254740991,
+                           "users": {
+                               "@example:localhost": 9007199254740991
+                           },
+                           "users_default": 9007199254740991
+                       }
+                       """;
+            var content = JsonSerializer.Deserialize<PowerLevelsEventContent>(json);
+
+            const long maxJsonInteger = 9007199254740991;
+            Assert.NotNull(content);
+            Assert.Equal(maxJsonInteger, content.Ban);
+            Assert.NotNull(content.Events);
+            Assert.Contains("m.room.name", content.Events.Keys);
+            Assert.Equal(maxJsonInteger, content.Events["m.room.name"]);
+            Assert.Contains("m.room.power_levels", content.Events.Keys);
+            Assert.Equal(maxJsonInteger, content.Events["m.room.power_levels"]);
+            Assert.Equal(maxJsonInteger, content.EventsDefault);
+            Assert.Equal(maxJsonInteger, content.Invite);
+            Assert.Equal(maxJsonInteger, content.Kick);
+            Assert.NotNull(content.Notifications);
+            Assert.Contains("room", content.Notifications.Keys);
+            Assert.Equal(maxJsonInteger, content.Notifications["room"]);
+            Assert.Equal(maxJsonInteger, content.Redact);
+            Assert.Equal(maxJsonInteger, content.StateDefault);
+            Assert.NotNull(content.Users);
+            Assert.Contains("@example:localhost", content.Users.Keys);
+            Assert.Equal(maxJsonInteger, content.Users["@example:localhost"]);
+            Assert.Equal(maxJsonInteger, content.UsersDefault);
+        }
+
+        [Fact]
+        public void DeserializeMinimumCanonicalJsonIntegerValue()
+        {
+            // According to the canonical JSON specification of Matrix, numbers
+            // must be integers in the range [-(2^53)+1, (2^53)-1], so just a
+            // simple 32-bit signed integer is not enough. This test checks
+            // whether the minimum value can be specified for each part of the
+            // power level event content.
+            var json = """ 
+                       {
+                           "ban": -9007199254740991,
+                           "events": {
+                               "m.room.name": -9007199254740991,
+                               "m.room.power_levels": -9007199254740991
+                           },
+                           "events_default": -9007199254740991,
+                           "invite": -9007199254740991,
+                           "kick": -9007199254740991,
+                           "notifications": {
+                               "room": -9007199254740991
+                           },
+                           "redact": -9007199254740991,
+                           "state_default": -9007199254740991,
+                           "users": {
+                               "@example:localhost": -9007199254740991
+                           },
+                           "users_default": -9007199254740991
+                       }
+                       """;
+            var content = JsonSerializer.Deserialize<PowerLevelsEventContent>(json);
+
+            const long minJsonInteger = -9007199254740991;
+            Assert.NotNull(content);
+            Assert.Equal(minJsonInteger, content.Ban);
+            Assert.NotNull(content.Events);
+            Assert.Contains("m.room.name", content.Events.Keys);
+            Assert.Equal(minJsonInteger, content.Events["m.room.name"]);
+            Assert.Contains("m.room.power_levels", content.Events.Keys);
+            Assert.Equal(minJsonInteger, content.Events["m.room.power_levels"]);
+            Assert.Equal(minJsonInteger, content.EventsDefault);
+            Assert.Equal(minJsonInteger, content.Invite);
+            Assert.Equal(minJsonInteger, content.Kick);
+            Assert.NotNull(content.Notifications);
+            Assert.Contains("room", content.Notifications.Keys);
+            Assert.Equal(minJsonInteger, content.Notifications["room"]);
+            Assert.Equal(minJsonInteger, content.Redact);
+            Assert.Equal(minJsonInteger, content.StateDefault);
+            Assert.NotNull(content.Users);
+            Assert.Contains("@example:localhost", content.Users.Keys);
+            Assert.Equal(minJsonInteger, content.Users["@example:localhost"]);
+            Assert.Equal(minJsonInteger, content.UsersDefault);
+        }
+
+        [Fact]
         public void SerializeSpecExample()
         {
             var content = new PowerLevelsEventContent
             {
                 Ban = 50,
-                Events = new SortedDictionary<string, int>()
+                Events = new SortedDictionary<string, long>()
                 {
                     { "m.room.name", 100 },
                     { "m.room.power_levels", 100 }
@@ -102,13 +208,13 @@ namespace Mocktrix.Events.Tests
                 EventsDefault = 0,
                 Invite = 50,
                 Kick = 50,
-                Notifications = new SortedDictionary<string, int>()
+                Notifications = new SortedDictionary<string, long>()
                 {
                     { "room", 20 }
                 },
                 Redact = 50,
                 StateDefault = 50,
-                Users = new SortedDictionary<string, int>()
+                Users = new SortedDictionary<string, long>()
                 {
                     { "@example:localhost", 100 }
                 },
@@ -149,7 +255,7 @@ namespace Mocktrix.Events.Tests
         {
             var content = new PowerLevelsEventContent()
             {
-                Users = new SortedDictionary<string, int>()
+                Users = new SortedDictionary<string, long>()
                 {
                     { "@alice:matrix.homeserver.tld", 123},
                     { "@bob:matrix.homeserver.tld", 456}
@@ -166,7 +272,7 @@ namespace Mocktrix.Events.Tests
         {
             var content = new PowerLevelsEventContent()
             {
-                Users = new SortedDictionary<string, int>()
+                Users = new SortedDictionary<string, long>()
                 {
                     { "@alice:matrix.homeserver.tld", 99},
                     { "@bob:matrix.homeserver.tld", 66}

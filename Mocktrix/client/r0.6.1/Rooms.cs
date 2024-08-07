@@ -249,7 +249,7 @@ namespace Mocktrix.client.r0_6_1
                         Kick = 50,
                         Redact = 50,
                         StateDefault = 50,
-                        Users = new SortedDictionary<string, int>()
+                        Users = new SortedDictionary<string, long>()
                         {
                             { token.user_id, 100 }
                         },

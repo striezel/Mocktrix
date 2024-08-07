@@ -130,7 +130,7 @@ namespace Mocktrix.Events.Tests
                 Content = new PowerLevelsEventContent
                 {
                     Ban = 50,
-                    Events = new SortedDictionary<string, int>()
+                    Events = new SortedDictionary<string, long>()
                     {
                         { "m.room.name", 100 },
                         { "m.room.power_levels", 100 }
@@ -138,13 +138,13 @@ namespace Mocktrix.Events.Tests
                     EventsDefault = 0,
                     Invite = 50,
                     Kick = 50,
-                    Notifications = new SortedDictionary<string, int>()
+                    Notifications = new SortedDictionary<string, long>()
                     {
                         { "room", 20 }
                     },
                     Redact = 50,
                     StateDefault = 50,
-                    Users = new SortedDictionary<string, int>()
+                    Users = new SortedDictionary<string, long>()
                     {
                         { "@example:localhost", 100 }
                     },

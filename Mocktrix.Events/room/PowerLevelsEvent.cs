@@ -60,7 +60,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("ban")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? Ban { get; set; } = null;
+        public long? Ban { get; set; } = null;
 
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("events")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public SortedDictionary<string, int>? Events { get; set; } = null;
+        public SortedDictionary<string, long>? Events { get; set; } = null;
 
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("events_default")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? EventsDefault { get; set; } = null;
+        public long? EventsDefault { get; set; } = null;
 
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("invite")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? Invite { get; set; } = null;
+        public long? Invite { get; set; } = null;
 
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("kick")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? Kick { get; set; } = null;
+        public long? Kick { get; set; } = null;
 
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Mocktrix.Events
         /// defaults to 50 if unspecified.</remarks>
         [JsonPropertyName("notifications")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public SortedDictionary<string, int>? Notifications { get; set; } = null;
+        public SortedDictionary<string, long>? Notifications { get; set; } = null;
 
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("redact")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? Redact { get; set; } = null;
+        public long? Redact { get; set; } = null;
 
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("state_default")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? StateDefault { get; set; } = null;
+        public long? StateDefault { get; set; } = null;
 
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("users")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public SortedDictionary<string, int>? Users { get; set; } = null;
+        public SortedDictionary<string, long>? Users { get; set; } = null;
 
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Mocktrix.Events
         /// </summary>
         [JsonPropertyName("users_default")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? UsersDefault { get; set; } = null;
+        public long? UsersDefault { get; set; } = null;
 
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Mocktrix.Events
         /// </summary>
         /// <param name="user_id">the full Matrix user id of a user</param>
         /// <returns>Returns the corresponding power level for that user.</returns>
-        public int GetPowerLevel(string user_id)
+        public long GetPowerLevel(string user_id)
         {
             if (Users != null && Users.TryGetValue(user_id, out var powerLevel))
             {
