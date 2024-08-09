@@ -55,6 +55,7 @@ namespace Mocktrix
             _ = ContentRepository.Memory.Media.Create("testDownload", "Hello, test code. :)"u8.ToArray(), "text/plain", "hello.txt");
 
             AddRoomData(base_address);
+            AddTagData(base_address);
         }
 
         private static void AddProfileTestData(Uri base_address)
@@ -101,6 +102,25 @@ namespace Mocktrix
             // Room visibility tests.
             _ = Database.Memory.Rooms.Create("!public_test_room:matrix.example.org", "@tester:matrix.example.org", "1", true);
             _ = Database.Memory.Rooms.Create("!private_test_room:matrix.example.org", "@tester:matrix.example.org", "1", false);
+        }
+
+        private static void AddTagData(Uri base_address)
+        {
+            // User and rooms and tags for test of tagged rooms.
+            string tag_user_id = "@tag_user:" + base_address.Host;
+            var tag_user = Database.Memory.Users.CreateUser(tag_user_id, "secret password");
+
+            const string room_without_tags_id = "!room_without_tags:matrix.example.org";
+            _ = Database.Memory.Rooms.Create(room_without_tags_id, tag_user_id, "1", false);
+            Database.Memory.RoomMemberships.Create(room_without_tags_id, tag_user.user_id, Enums.Membership.Join);
+
+            const string room_with_some_tags_id = "!room_with_some_tags:matrix.example.org";
+            _ = Database.Memory.Rooms.Create(room_with_some_tags_id, tag_user_id, "1", false);
+            Database.Memory.RoomMemberships.Create(room_with_some_tags_id, tag_user.user_id, Enums.Membership.Join);
+
+            Database.Memory.Tags.Create(tag_user_id, room_with_some_tags_id, "m.favourite", 0.25);
+            Database.Memory.Tags.Create(tag_user_id, room_with_some_tags_id, "u.null", null);
+            Database.Memory.Tags.Create(tag_user_id, room_with_some_tags_id, "u.some_tag", 1.0);
         }
     }
 }

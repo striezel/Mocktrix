@@ -41,6 +41,7 @@ namespace Mocktrix.client.r0_6_1
             Profile.AddEndpoints(app);
             Syncing.AddEndpoints(app);
             Rooms.AddEndpoints(app);
+            Tags.AddEndpoints(app);
         }
     }
 }
