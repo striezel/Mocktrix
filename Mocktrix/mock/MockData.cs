@@ -121,6 +121,14 @@ namespace Mocktrix
             Database.Memory.Tags.Create(tag_user_id, room_with_some_tags_id, "m.favourite", 0.25);
             Database.Memory.Tags.Create(tag_user_id, room_with_some_tags_id, "u.null", null);
             Database.Memory.Tags.Create(tag_user_id, room_with_some_tags_id, "u.some_tag", 1.0);
+
+            // Data for tag deletion tests.
+            const string room_with_tag_to_delete_id = "!room_with_tag_to_delete:matrix.example.org";
+            _ = Database.Memory.Rooms.Create(room_with_tag_to_delete_id, tag_user_id, "1", false);
+            Database.Memory.RoomMemberships.Create(room_with_tag_to_delete_id, tag_user.user_id, Enums.Membership.Join);
+
+            Database.Memory.Tags.Create(tag_user_id, room_with_tag_to_delete_id, "u.delete_me", 0.5);
+            Database.Memory.Tags.Create(tag_user_id, room_with_tag_to_delete_id, "u.keep_me", 0.25);
         }
     }
 }

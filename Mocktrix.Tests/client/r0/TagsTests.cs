@@ -160,5 +160,124 @@ namespace MocktrixTests
             Assert.True(content.Tags.ContainsKey("u.some_tag"));
             Assert.Equal(1.0, content.Tags["u.some_tag"].Order);
         }
+
+        [Fact]
+        public async Task TestDeleteTag_NoAuthorization()
+        {
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            var response = await client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDeleteTag_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+            var response = await unauthenticated_client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDeleteTag_WithAuthorization_OtherUser()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            var access_token = await Utilities.PerformLogin(client, user_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "You cannot delete tags of other users."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestDeleteTag_WithAuthorization()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            var access_token = await Utilities.PerformLogin(client, user_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            // Tag should still be set before deletion.
+            {
+                var pre_delete_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags");
+                Assert.Equal(HttpStatusCode.OK, pre_delete_response.StatusCode);
+                Assert.Equal("application/json", pre_delete_response.Content.Headers.ContentType?.MediaType);
+
+                string pre_delete_content = await pre_delete_response.Content.ReadAsStringAsync();
+                Assert.Equal("{\"tags\":{\"u.delete_me\":{\"order\":0.5},\"u.keep_me\":{\"order\":0.25}}}", pre_delete_content);
+            }
+
+            // Perform deletion.
+            {
+                var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+                var content = await response.Content.ReadAsStringAsync();
+                Assert.Equal("{}", content);
+            }
+
+            // Check tags after deletion.
+            {
+                var post_delete_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags");
+                Assert.Equal(HttpStatusCode.OK, post_delete_response.StatusCode);
+                Assert.Equal("application/json", post_delete_response.Content.Headers.ContentType?.MediaType);
+
+                string post_delete_content = await post_delete_response.Content.ReadAsStringAsync();
+                Assert.Equal("{\"tags\":{\"u.keep_me\":{\"order\":0.25}}}", post_delete_content);
+            }
+        }
     }
 }
