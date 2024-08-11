@@ -388,6 +388,22 @@ TODO
 
 #### 13.12.4 [Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id88)
 
-### 13.13 to 13.33
+### 13.13 to 13.17
+
+TODO
+
+### 13.18 Room Tagging
+
+#### 13.18.1 Events
+
+* ✅ 13.18.1.1 [m.tag](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-tag)
+
+#### 13.18.2 Client Behaviour
+
+* ✅ 13.18.2.1 [GET /_matrix/client/r0/user/{userId}/rooms/{roomId}/tags](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-user-userid-rooms-roomid-tags)
+* ✅ 13.18.2.2 [PUT /_matrix/client/r0/user/{userId}/rooms/{roomId}/tags/{tag}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-rooms-roomid-tags-tag)
+* ✅ 13.18.2.3 [DELETE /_matrix/client/r0/user/{userId}/rooms/{roomId}/tags/{tag}](https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-user-userid-rooms-roomid-tags-tag)
+
+### 13.19 to 13.33
 
 TODO
