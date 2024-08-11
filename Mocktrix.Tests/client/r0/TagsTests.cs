@@ -18,6 +18,7 @@
 
 using Mocktrix.Events;
 using System.Net;
+using System.Net.Http.Json;
 
 namespace MocktrixTests
 {
@@ -277,6 +278,176 @@ namespace MocktrixTests
 
                 string post_delete_content = await post_delete_response.Content.ReadAsStringAsync();
                 Assert.Equal("{\"tags\":{\"u.keep_me\":{\"order\":0.25}}}", post_delete_content);
+            }
+        }
+
+        [Fact]
+        public async Task TestAddTag_NoAuthorization()
+        {
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            var data = new { order = 0.25 };
+            var response = await client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestAddTag_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+            var data = new { order = 0.25 };
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestAddTag_WithAuthorization_OtherUser()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            var access_token = await Utilities.PerformLogin(client, user_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { order = 0.25 };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "You cannot add tags for other users."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestAddTag_WithAuthorization_Create()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            var access_token = await Utilities.PerformLogin(client, user_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            // No tag should be set before adding tag.
+            {
+                var pre_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags");
+                Assert.Equal(HttpStatusCode.OK, pre_add_response.StatusCode);
+                Assert.Equal("application/json", pre_add_response.Content.Headers.ContentType?.MediaType);
+
+                string pre_add_content = await pre_add_response.Content.ReadAsStringAsync();
+                Assert.Equal("{\"tags\":{}}", pre_add_content);
+            }
+
+            // Perform tag creation.
+            {
+                var data = new { order = 0.25 };
+                var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+                var content = await response.Content.ReadAsStringAsync();
+                Assert.Equal("{}", content);
+            }
+
+            // Check tags after creation.
+            {
+                var post_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags");
+                Assert.Equal(HttpStatusCode.OK, post_add_response.StatusCode);
+                Assert.Equal("application/json", post_add_response.Content.Headers.ContentType?.MediaType);
+
+                string post_add_content = await post_add_response.Content.ReadAsStringAsync();
+                Assert.Equal("{\"tags\":{\"u.add_me\":{\"order\":0.25}}}", post_add_content);
+            }
+        }
+
+        [Fact]
+        public async Task TestAddTag_WithAuthorization_Update()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
+            var access_token = await Utilities.PerformLogin(client, user_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            // Existing tag should be set before adding/updating tag.
+            {
+                var pre_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags");
+                Assert.Equal(HttpStatusCode.OK, pre_add_response.StatusCode);
+                Assert.Equal("application/json", pre_add_response.Content.Headers.ContentType?.MediaType);
+
+                string pre_add_content = await pre_add_response.Content.ReadAsStringAsync();
+                Assert.Equal("{\"tags\":{\"u.existing\":{\"order\":0.5}}}", pre_add_content);
+            }
+
+            // Perform tag update.
+            {
+                var data = new { order = 0.75 };
+                var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags/u.existing", JsonContent.Create(data));
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+                var content = await response.Content.ReadAsStringAsync();
+                Assert.Equal("{}", content);
+            }
+
+            // Check tags after update.
+            {
+                var post_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags");
+                Assert.Equal(HttpStatusCode.OK, post_add_response.StatusCode);
+                Assert.Equal("application/json", post_add_response.Content.Headers.ContentType?.MediaType);
+
+                string post_add_content = await post_add_response.Content.ReadAsStringAsync();
+                Assert.Equal("{\"tags\":{\"u.existing\":{\"order\":0.75}}}", post_add_content);
             }
         }
     }

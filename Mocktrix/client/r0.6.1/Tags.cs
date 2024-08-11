@@ -137,6 +137,65 @@ namespace Mocktrix.client.r0_6_1
             // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-user-userid-rooms-roomid-tags-tag,
             // i.e. the endpoint to delete a tag.
             app.MapDelete("/_matrix/client/r0/user/{userId}/rooms/{roomId}/tags/{tag}", DeleteTag);
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-rooms-roomid-tags-tag,
+            // i.e. the endpoint to add a tag.
+            app.MapPut("/_matrix/client/r0/user/{userId}/rooms/{roomId}/tags/{tag}", async (string userId, string roomId, string tag, HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                if (token.user_id != userId)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "You cannot add tags for other users."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
+                }
+
+                OrderInfo? data;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<OrderInfo>();
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                if (data == null)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+
+                // Delete any possibly existing tag with different order value.
+                _ = Database.Memory.Tags.DeleteTag(token.user_id, roomId, tag);
+                // Add tag with new value.
+                _= Database.Memory.Tags.Create(token.user_id, roomId, tag, data.Order);
+                return Results.Ok(new { });
+            });
         }
     }
 }
