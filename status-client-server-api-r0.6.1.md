@@ -421,6 +421,22 @@ TODO
 
 ❌ Not implemented yet.
 
-### 13.20 to 13.33
+### 13.20 Server Administration
+
+#### 13.20.1 Client behaviour
+
+* ❌ 13.20.1.1 [GET /_matrix/client/r0/admin/whois/{userId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-admin-whois-userid)
+
+### 13.21 Event Context
+
+#### 13.21.1 Client behaviour
+
+* ❌ 13.21.1.1 [GET /_matrix/client/r0/rooms/{roomId}/context/{eventId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-context-eventid)
+
+### 13.21.2 Security considerations
+
+❌ Not implemented yet.
+
+### 13.22 to 13.33
 
 TODO
