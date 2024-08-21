@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for name of a room.
     /// </summary>
-    public class NameEvent: StateEventZeroLengthKey<NameEventContent>
+    public class NameEvent : StateEventZeroLengthKey<NameEventContent>
     {
         /// <summary>
         /// The content object of the event. Type and available field differ

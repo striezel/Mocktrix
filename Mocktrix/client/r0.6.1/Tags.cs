@@ -193,7 +193,7 @@ namespace Mocktrix.client.r0_6_1
                 // Delete any possibly existing tag with different order value.
                 _ = Database.Memory.Tags.DeleteTag(token.user_id, roomId, tag);
                 // Add tag with new value.
-                _= Database.Memory.Tags.Create(token.user_id, roomId, tag, data.Order);
+                _ = Database.Memory.Tags.Create(token.user_id, roomId, tag, data.Order);
                 return Results.Ok(new { });
             });
         }

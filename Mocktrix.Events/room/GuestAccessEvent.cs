@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for guest access rules of a room.
     /// </summary>
-    public class GuestAccessEvent: StateEventZeroLengthKey<GuestAccessEventContent>
+    public class GuestAccessEvent : StateEventZeroLengthKey<GuestAccessEventContent>
     {
         /// <summary>
         /// The content object of the event. Type and available field differ

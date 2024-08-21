@@ -369,10 +369,10 @@ namespace Mocktrix.client.r0_6_1
                     string full_alias = "#" + data.RoomAliasName + ":" + server.Host;
                     var alias_event = new CanonicalAliasEvent()
                     {
-                         Content = new CanonicalAliasEventContent()
-                         {
-                             Alias = full_alias
-                         },
+                        Content = new CanonicalAliasEventContent()
+                        {
+                            Alias = full_alias
+                        },
                         EventId = Id.Generate(server),
                         OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                         RoomId = room_id,
@@ -400,7 +400,7 @@ namespace Mocktrix.client.r0_6_1
                         || (element.Type == "m.room.name" && string.IsNullOrWhiteSpace(data.Name))
                         || (element.Type == "m.room.topic" && string.IsNullOrWhiteSpace(data.Topic))
                         || element.Type == "m.room.guest_access")
-                    { 
+                    {
                         continue;
                     }
 

@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Contains metadata for an image.
     /// </summary>
-    public class ImageInfo: ThumbnailInfo
+    public class ImageInfo : ThumbnailInfo
     {
         // TODO: Add ThumbnailFile when encryption module is supported.
         // public ThumbnailFile? ThumbnailFile { get; set; } = null;

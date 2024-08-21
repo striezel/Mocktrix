@@ -34,10 +34,10 @@ namespace Mocktrix.Data.Tests
         {
             StateDictionaryKey key = new()
             {
-                EventType = "m.foo.bar", 
+                EventType = "m.foo.bar",
                 StateKey = ""
             };
-            
+
             Assert.False(key.Equals(null));
             Assert.False(key.Equals("m.foo.bar"));
             Assert.False(key.Equals(""));

@@ -26,7 +26,7 @@ namespace Mocktrix.Database.Memory.Tests
             const string user_id = "@alice:matrix.example.com";
             const string room_id = "!testRoom:matrix.example.com";
             const string tag_name = "u.nice_test";
-            
+
             var tag = Tags.Create(user_id, room_id, tag_name, 0.75);
 
             Assert.NotNull(tag);

@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for topic of a room.
     /// </summary>
-    public class FeedbackEvent: RoomEvent
+    public class FeedbackEvent : RoomEvent
     {
         /// <summary>
         /// The content object of the event. Type and available field differ

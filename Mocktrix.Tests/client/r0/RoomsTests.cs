@@ -127,7 +127,8 @@ namespace MocktrixTests
         [Fact]
         public async Task TestCreateRoom_NoAuthorization()
         {
-            var data = new {
+            var data = new
+            {
                 preset = "public_chat"
             };
             var response = await client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));

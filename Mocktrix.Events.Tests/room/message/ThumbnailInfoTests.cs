@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace Mocktrix.Events.Tests

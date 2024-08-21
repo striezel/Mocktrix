@@ -57,7 +57,7 @@ namespace Mocktrix.Events.Tests
             Assert.Equal(301, info.ThumbnailInfo.Width);
             Assert.Equal("mxc://example.org/FHyPlCeYUSFFxlgbQYZmoEoe", info.ThumbnailUrl);
         }
-        
+
         [Fact]
         public void SerializeSpecExample()
         {
@@ -68,7 +68,7 @@ namespace Mocktrix.Events.Tests
                     Height = 300,
                     MimeType = "image/jpeg",
                     Size = 46144,
-                    Width= 301
+                    Width = 301
                 },
                 ThumbnailUrl = "mxc://example.org/FHyPlCeYUSFFxlgbQYZmoEoe"
             };

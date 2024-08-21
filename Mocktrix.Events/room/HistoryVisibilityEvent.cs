@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for visibility of the history of a room.
     /// </summary>
-    public class HistoryVisibilityEvent: StateEventZeroLengthKey<HistoryVisibilityEventContent>
+    public class HistoryVisibilityEvent : StateEventZeroLengthKey<HistoryVisibilityEventContent>
     {
         /// <summary>
         /// The content object of the event. Type and available field differ

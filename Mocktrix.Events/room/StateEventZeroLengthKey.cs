@@ -23,14 +23,14 @@ namespace Mocktrix.Events
     /// </summary>
     /// <typeparam name="C">type of the event content, must be derived from
     /// IEventContent</typeparam>
-    public abstract class StateEventZeroLengthKey<C>: StateEvent<C>
+    public abstract class StateEventZeroLengthKey<C> : StateEvent<C>
         where C : IEventContent, new()
     {
         /// <summary>
         /// Sets the state key to an empty string.
         /// </summary>
         public StateEventZeroLengthKey()
-        { 
+        {
             StateKey = string.Empty;
         }
     }

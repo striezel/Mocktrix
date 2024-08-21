@@ -115,7 +115,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/"+user_id+"/rooms/!room_without_tags:matrix.example.org/tags");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_without_tags:matrix.example.org/tags");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 

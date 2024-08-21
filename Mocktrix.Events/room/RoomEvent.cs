@@ -69,7 +69,7 @@ namespace Mocktrix.Events
         [JsonPropertyOrder(-20)]
         [JsonPropertyName("unsigned")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public UnsignedData? Unsigned {  get; set; }
+        public UnsignedData? Unsigned { get; set; }
 
 
         /// <summary>

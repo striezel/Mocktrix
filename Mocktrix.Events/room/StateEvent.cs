@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Abstract class that contains the data member for state key values.
     /// </summary>
-    public abstract class BasicStateEvent: RoomEvent
+    public abstract class BasicStateEvent : RoomEvent
     {
         /// <summary>
         /// A unique key which defines the overwriting semantics for this piece
@@ -54,7 +54,7 @@ namespace Mocktrix.Events
     /// </summary>
     /// <typeparam name="C">type of the event content, must be derived from
     /// IEventContent</typeparam>
-    public abstract class StateEvent<C>: BasicStateEvent
+    public abstract class StateEvent<C> : BasicStateEvent
         where C : IEventContent, new()
     {
         /// <summary>

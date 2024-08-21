@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for encryption settings of a room.
     /// </summary>
-    public class EncryptionEvent: StateEventZeroLengthKey<EncryptionEventContent>
+    public class EncryptionEvent : StateEventZeroLengthKey<EncryptionEventContent>
     {
         /// <summary>
         /// The content object of the event. Type and available field differ

@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for location messages in a room.
     /// </summary>
-    public class LocationMessageEvent: RoomMessageEvent<LocationMessageEventContent>
+    public class LocationMessageEvent : RoomMessageEvent<LocationMessageEventContent>
     {
     }
 

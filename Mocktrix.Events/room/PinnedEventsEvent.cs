@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for pinned events of a room.
     /// </summary>
-    public class PinnedEventsEvent: StateEventZeroLengthKey<PinnedEventsEventContent>
+    public class PinnedEventsEvent : StateEventZeroLengthKey<PinnedEventsEventContent>
     {
         /// <summary>
         /// The content object of the event. Type and available field differ

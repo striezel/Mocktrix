@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for emote messages in a room.
     /// </summary>
-    public class EmoteMessageEvent: RoomMessageEvent<EmoteMessageEventContent>
+    public class EmoteMessageEvent : RoomMessageEvent<EmoteMessageEventContent>
     {
     }
 

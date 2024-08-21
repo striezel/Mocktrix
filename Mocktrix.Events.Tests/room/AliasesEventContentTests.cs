@@ -57,7 +57,7 @@ namespace Mocktrix.Events.Tests
         {
             var content = new AliasesEventContent
             {
-                Aliases = [ "#somewhere:example.org", "#another:example.org" ]
+                Aliases = ["#somewhere:example.org", "#another:example.org"]
             };
             var expected_json = "{\"aliases\":[\"#somewhere:example.org\",\"#another:example.org\"]}";
             var json = JsonSerializer.Serialize(content);

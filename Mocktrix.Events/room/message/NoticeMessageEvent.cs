@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for notice messages in a room.
     /// </summary>
-    public class NoticeMessageEvent: RoomMessageEvent<NoticeMessageEventContent>
+    public class NoticeMessageEvent : RoomMessageEvent<NoticeMessageEventContent>
     {
     }
 

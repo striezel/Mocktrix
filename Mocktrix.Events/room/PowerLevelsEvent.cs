@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for power levels of a room.
     /// </summary>
-    public class PowerLevelsEvent: StateEventZeroLengthKey<PowerLevelsEventContent>
+    public class PowerLevelsEvent : StateEventZeroLengthKey<PowerLevelsEventContent>
     {
         /// <summary>
         /// The content object of the event. Type and available field differ

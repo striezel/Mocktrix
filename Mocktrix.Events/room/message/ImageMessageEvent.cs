@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for image messages in a room.
     /// </summary>
-    public class ImageMessageEvent: RoomMessageEvent<ImageMessageEventContent>
+    public class ImageMessageEvent : RoomMessageEvent<ImageMessageEventContent>
     {
     }
 

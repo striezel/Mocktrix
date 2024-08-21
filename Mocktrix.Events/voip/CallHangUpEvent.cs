@@ -23,7 +23,7 @@ namespace Mocktrix.Events.VoIP
     /// <summary>
     /// Event for end of a VoIP call in a room.
     /// </summary>
-    public class CallHangUpEvent: RoomEvent
+    public class CallHangUpEvent : RoomEvent
     {
         /// <summary>
         /// The content object of the event. Type and available field differ
