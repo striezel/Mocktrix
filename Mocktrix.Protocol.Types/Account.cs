@@ -21,32 +21,6 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Protocol.Types.Account
 {
     /// <summary>
-    /// Holds information about user-interactive authentication.
-    /// </summary>
-    public class AuthenticationData
-    {
-        /// <summary>
-        /// The login type that the client attempts to complete.
-        /// </summary>
-        [JsonPropertyName("type")]
-        public required string Type { get; set; } = string.Empty;
-
-
-        /// <summary>
-        /// The session key which was provided by the homeserver.
-        /// </summary>
-        [JsonPropertyName("session")]
-        public string? Session { get; set; } = string.Empty;
-
-
-        /// <summary>
-        /// The current password of the account.
-        /// </summary>
-        [JsonPropertyName("password")]
-        public string? Password { get; set; } = string.Empty;
-    }
-
-    /// <summary>
     /// Data sent by a client via POST request to change the password of an
     /// account.
     /// </summary>
