@@ -586,6 +586,134 @@ namespace MocktrixTests
         }
 
         [Fact]
+        public async Task TestDeviceDeletion_InteractiveAuthRequired()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_delete_id_2_interactive_required",
+                initial_device_display_name = "My deletion device #2 - interactive fail"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+            Assert.Equal(body.device_id, login_content.device_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var request = new HttpRequestMessage()
+            {
+                Content = JsonContent.Create(new { }),
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri("/_matrix/client/r0/devices/" + login_content.device_id, UriKind.Relative)
+            };
+            var response = await authenticated_client.SendAsync(request);
+            // Deletion should not succeed.
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                session = "some string",
+                flows = new[]
+                        {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                @params = new { }
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.NotEmpty(content.session);
+            Assert.Single(content.flows);
+            Assert.Single(content.flows[0].stages);
+            Assert.Equal("m.login.password", content.flows[0].stages[0]);
+            var raw_content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("\"params\":{}", raw_content);
+            Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
+        }
+
+        [Fact]
+        public async Task TestDeviceDeletion_WrongPassword()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var body = new
+            {
+                type = "m.login.password",
+                identifier = new
+                {
+                    type = "m.id.user",
+                    user = "@alice:matrix.example.org"
+                },
+                password = "secret password",
+                device_id = "test_dev_mgmt_delete_id_2_wrong_password",
+                initial_device_display_name = "My deletion device #2 - password fail"
+            };
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_data = new
+            {
+                user_id = "@alice:matrix.example.org",
+                access_token = "random ...",
+                device_id = "also random ..."
+            };
+            var login_content = Utilities.GetContent(login_response, login_data);
+            var access_token = login_content.access_token;
+            Assert.Equal(body.device_id, login_content.device_id);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+            var request = new HttpRequestMessage()
+            {
+                Content = JsonContent.Create(new
+                {
+                    auth = new
+                    {
+                        type = "m.login.password",
+                        session = "dummy",
+                        password = "wrong password here"
+                    }
+                }),
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri("/_matrix/client/r0/devices/" + login_content.device_id, UriKind.Relative)
+            };
+            var response = await authenticated_client.SendAsync(request);
+            // Deletion should not succeed.
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "Invalid password."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
         public async Task TestDeviceDeletion_Success()
         {
             // We need to be logged in and have an access token before we can
@@ -638,7 +766,21 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/devices/" + second_device_id);
+            var request = new HttpRequestMessage()
+            {
+                Content = JsonContent.Create(new
+                {
+                    auth = new
+                    {
+                        type = "m.login.password",
+                        session = "dummy",
+                        password = "secret password"
+                    }
+                }),
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri("/_matrix/client/r0/devices/" + second_device_id, UriKind.Relative)
+            };
+            var response = await authenticated_client.SendAsync(request);
             // Deletion should succeed.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);

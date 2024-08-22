@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Mocktrix.Protocol.Types.Account;
 using System.Text.Json.Serialization;
 
 namespace Mocktrix.Protocol.Types.DeviceManagement
@@ -63,5 +64,18 @@ namespace Mocktrix.Protocol.Types.DeviceManagement
         /// </summary>
         [JsonPropertyName("display_name")]
         public string? DisplayName { get; set; }
+    }
+
+
+    /// <summary>
+    /// Data sent by a client via DELETE request to delete a device.
+    /// </summary>
+    public class DeviceDeletionData
+    {
+        /// <summary>
+        /// Information for the user-interactive authentication.
+        /// </summary>
+        [JsonPropertyName("auth")]
+        public AuthenticationData? Auth { get; set; } = null;
     }
 }

@@ -18,6 +18,7 @@
 
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.DeviceManagement;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -214,7 +215,7 @@ namespace Mocktrix.client.r0_6_1
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-devices-deviceid,
             // i.e. the endpoint to remove a specific device and the
             // corresponding access token.
-            app.MapDelete("/_matrix/client/r0/devices/{deviceId}", (string deviceId, HttpContext context) =>
+            app.MapDelete("/_matrix/client/r0/devices/{deviceId}", async (string deviceId, HttpContext context) =>
             {
                 var access_token = Utilities.GetAccessToken(context);
                 if (string.IsNullOrWhiteSpace(access_token))
@@ -237,8 +238,18 @@ namespace Mocktrix.client.r0_6_1
                     return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
-                // TODO: Device deletion should use the user-interactive
-                // authentication API and require the user to re-submit the
+                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+                if (dev == null)
+                {
+                    // As per specification, status code 200 is also send for a
+                    // device that cannot be found, because the assumption is
+                    // that it was deleted earlier. Assumption is not that it
+                    // never existed in the first place.
+                    return Results.Ok(new { });
+                }
+
+                // Note: Device deletion uses the user-interactive
+                // authentication API and requires the user to re-submit the
                 // current password for the account.
                 //
                 // A possible response could be HTTP 401 and then:
@@ -262,14 +273,77 @@ namespace Mocktrix.client.r0_6_1
                 //
                 // Then the actual deletion can be performed.
 
-                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
-                if (dev == null)
+                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
                 {
-                    // As per specification, status code 200 is also send for a
-                    // device that cannot be found, because the assumption is
-                    // that it was deleted earlier. Assumption is not that it
-                    // never existed in the first place.
-                    return Results.Ok(new { });
+                    AllowTrailingCommas = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                };
+                DeviceDeletionData? data;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<DeviceDeletionData>(options);
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                if (data == null)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+                if (data.Auth == null || data.Auth.Type != "m.login.password")
+                {
+                    // Data for available flows looks like:
+                    // {
+                    //  "session": "random server-generated session ID here",
+                    //  "flows": [{
+                    //    "stages": ["m.login.password"]
+                    //  }],
+                    //  "params": {}
+                    // }
+                    var response = new
+                    {
+                        session = RandomNumberGenerator.GetString("abcdefghijklmnopqrstuvwxyz", 16),
+                        flows = new[]
+                        {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                        @params = new { }
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                // Find user and check password.
+                var user = Database.Memory.Users.GetUser(token.user_id);
+                if (user == null)
+                {
+                    // Should never happen. We either have a bug or memory corruption,
+                    // if this branch is ever taken.
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN",
+                        error = "User not found."
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
+                }
+                // Verify password.
+                if (string.IsNullOrWhiteSpace(data.Auth.Password) ||
+                    utilities.Hashing.HashPassword(data.Auth.Password, user.salt) != user.password_hash)
+                {
+                    return Results.Json(new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "Invalid password."
+                    },
+                    statusCode: StatusCodes.Status403Forbidden);
                 }
 
                 // Device was found. Now find associated access token and revoke it.
