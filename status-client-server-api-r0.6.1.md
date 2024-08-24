@@ -368,7 +368,8 @@ TODO
 
 #### [13.10.2 Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id75)
 
-* ❌ Not implemented yet (user-interactive authentication).
+* ✅ User-interactive authentication is implemented for device deletion,
+  requiring the user to re-submit the current password to allow deletion.
 
 ### 13.11 [End-to-End Encryption](https://spec.matrix.org/historical/client_server/r0.6.1.html#id76)
 
