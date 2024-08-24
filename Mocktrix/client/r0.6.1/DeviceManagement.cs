@@ -24,16 +24,6 @@ using System.Text.Json.Serialization;
 
 namespace Mocktrix.client.r0_6_1
 {
-    internal class DeleteDevicesData
-    {
-        /// <summary>
-        /// Contains ids of the devices that shall be deleted.
-        /// </summary>
-        [JsonPropertyName("devices")]
-        public required List<string> Devices { get; set; }
-    }
-
-
     /// <summary>
     /// Contains implementation of device management endpoints for version r0.6.1.
     /// </summary>
@@ -383,10 +373,6 @@ namespace Mocktrix.client.r0_6_1
                     return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
                 }
 
-                // TODO: Device deletion should use the user-interactive
-                // authentication API and require the user to re-submit the
-                // current password for the account.
-
                 var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
                 {
                     AllowTrailingCommas = true,
@@ -409,6 +395,59 @@ namespace Mocktrix.client.r0_6_1
                         errcode = "M_NOT_JSON",
                         error = "The request does not contain JSON or contains invalid JSON."
                     });
+                }
+
+                // Note: Device deletion uses the user-interactive
+                // authentication API and requires the user to re-submit the
+                // current password for the account.
+                if (data.Auth == null || data.Auth.Type != "m.login.password")
+                {
+                    // Data for available flows looks like:
+                    // {
+                    //  "session": "random server-generated session ID here",
+                    //  "flows": [{
+                    //    "stages": ["m.login.password"]
+                    //  }],
+                    //  "params": {}
+                    // }
+                    var response = new
+                    {
+                        session = RandomNumberGenerator.GetString("abcdefghijklmnopqrstuvwxyz", 16),
+                        flows = new[]
+                        {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                        @params = new { }
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                // Find user and check password.
+                var user = Database.Memory.Users.GetUser(token.user_id);
+                if (user == null)
+                {
+                    // Should never happen. We either have a bug or memory corruption,
+                    // if this branch is ever taken.
+                    var response = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN",
+                        error = "User not found."
+                    };
+                    return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
+                }
+                // Verify password.
+                if (string.IsNullOrWhiteSpace(data.Auth.Password) ||
+                    utilities.Hashing.HashPassword(data.Auth.Password, user.salt) != user.password_hash)
+                {
+                    return Results.Json(new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "Invalid password."
+                    },
+                    statusCode: StatusCodes.Status403Forbidden);
                 }
 
                 foreach (string deviceId in data.Devices)
