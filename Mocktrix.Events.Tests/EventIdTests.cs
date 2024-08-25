@@ -19,14 +19,14 @@
 namespace Mocktrix.Events.Tests
 {
     /// <summary>
-    /// Contains tests for Id class.
+    /// Contains tests for EventId class.
     /// </summary>
-    public class IdTests
+    public class EventIdTests
     {
         [Fact]
         public void Generate_Simple()
         {
-            var id = Id.Generate(new Uri("https://matrix.example.org/"));
+            var id = EventId.Generate(new Uri("https://matrix.example.org/"));
             Assert.NotNull(id);
             Assert.NotEmpty(id);
             Assert.StartsWith("$", id);
@@ -39,7 +39,7 @@ namespace Mocktrix.Events.Tests
         {
             // localhost
             {
-                var id = Id.Generate(new Uri("http://localhost:8080/"));
+                var id = EventId.Generate(new Uri("http://localhost:8080/"));
                 Assert.NotNull(id);
                 Assert.NotEmpty(id);
                 Assert.StartsWith("$", id);
@@ -49,7 +49,7 @@ namespace Mocktrix.Events.Tests
 
             // foo.example.com
             {
-                var id = Id.Generate(new Uri("https://foo.example.com"));
+                var id = EventId.Generate(new Uri("https://foo.example.com"));
                 Assert.NotNull(id);
                 Assert.NotEmpty(id);
                 Assert.StartsWith("$", id);
@@ -59,7 +59,7 @@ namespace Mocktrix.Events.Tests
 
             // some.domain.tld
             {
-                var id = Id.Generate(new Uri("https://some.domain.tld"));
+                var id = EventId.Generate(new Uri("https://some.domain.tld"));
                 Assert.NotNull(id);
                 Assert.NotEmpty(id);
                 Assert.StartsWith("$", id);
@@ -72,8 +72,8 @@ namespace Mocktrix.Events.Tests
         public void Generate_Twice()
         {
             var uri = new Uri("https://matrix.example.org/");
-            var id1 = Id.Generate(uri);
-            var id2 = Id.Generate(uri);
+            var id1 = EventId.Generate(uri);
+            var id2 = EventId.Generate(uri);
 
             Assert.NotNull(id1);
             Assert.NotNull(id2);

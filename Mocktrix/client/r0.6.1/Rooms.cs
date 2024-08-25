@@ -19,6 +19,7 @@
 using Mocktrix.Events;
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Rooms;
+using EventId = Mocktrix.Events.EventId;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -194,14 +195,14 @@ namespace Mocktrix.client.r0_6_1
 
                 // "Hacky" room id generation.
                 // TODO: Implement separate function that can generate room ids.
-                var room_id = Id.Generate(server).Replace('$', '!');
+                var room_id = EventId.Generate(server).Replace('$', '!');
 
                 var room = Database.Memory.Rooms.Create(room_id, token.user_id, version, data.IsPublic());
 
                 var create_event = new CreateRoomEvent()
                 {
                     Content = create_content,
-                    EventId = Id.Generate(server),
+                    EventId = EventId.Generate(server),
                     OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     RoomId = room_id,
                     Sender = token.user_id,
@@ -225,7 +226,7 @@ namespace Mocktrix.client.r0_6_1
                         IsDirect = data.IsDirect,
                         Membership = "join"
                     },
-                    EventId = Id.Generate(server),
+                    EventId = EventId.Generate(server),
                     OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     RoomId = room_id,
                     Sender = token.user_id,
@@ -255,7 +256,7 @@ namespace Mocktrix.client.r0_6_1
                         },
                         UsersDefault = 0
                     },
-                    EventId = Id.Generate(server),
+                    EventId = EventId.Generate(server),
                     OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     RoomId = room_id,
                     Sender = token.user_id,
@@ -279,7 +280,7 @@ namespace Mocktrix.client.r0_6_1
                             _ => "invite"
                         }
                     },
-                    EventId = Id.Generate(server),
+                    EventId = EventId.Generate(server),
                     OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     RoomId = room_id,
                     Sender = token.user_id,
@@ -308,7 +309,7 @@ namespace Mocktrix.client.r0_6_1
                     {
                         HistoryVisibility = "shared"
                     },
-                    EventId = Id.Generate(server),
+                    EventId = EventId.Generate(server),
                     OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     RoomId = room_id,
                     Sender = token.user_id,
@@ -341,7 +342,7 @@ namespace Mocktrix.client.r0_6_1
                             _ => "can_join"
                         }
                     },
-                    EventId = Id.Generate(server),
+                    EventId = EventId.Generate(server),
                     OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     RoomId = room_id,
                     Sender = token.user_id,
@@ -373,7 +374,7 @@ namespace Mocktrix.client.r0_6_1
                         {
                             Alias = full_alias
                         },
-                        EventId = Id.Generate(server),
+                        EventId = EventId.Generate(server),
                         OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                         RoomId = room_id,
                         Sender = token.user_id,
@@ -405,7 +406,7 @@ namespace Mocktrix.client.r0_6_1
                     }
 
                     BasicStateEvent ev = (BasicStateEvent)element;
-                    ev.EventId = Id.Generate(server);
+                    ev.EventId = EventId.Generate(server);
                     ev.OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                     ev.RoomId = room_id;
                     ev.Sender = token.user_id;
@@ -425,7 +426,7 @@ namespace Mocktrix.client.r0_6_1
                         {
                             Name = data.Name
                         },
-                        EventId = Id.Generate(server),
+                        EventId = EventId.Generate(server),
                         OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                         RoomId = room_id,
                         Sender = token.user_id,
@@ -448,7 +449,7 @@ namespace Mocktrix.client.r0_6_1
                         {
                             Topic = data.Topic
                         },
-                        EventId = Id.Generate(server),
+                        EventId = EventId.Generate(server),
                         OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                         RoomId = room_id,
                         Sender = token.user_id,
@@ -476,7 +477,7 @@ namespace Mocktrix.client.r0_6_1
                             IsDirect = data.IsDirect,
                             Membership = "invite"
                         },
-                        EventId = Id.Generate(server),
+                        EventId = EventId.Generate(server),
                         OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                         RoomId = room_id,
                         Sender = token.user_id,

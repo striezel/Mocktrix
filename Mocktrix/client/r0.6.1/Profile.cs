@@ -21,6 +21,7 @@ using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Profile;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using EventId = Mocktrix.Events.EventId;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -57,7 +58,7 @@ namespace Mocktrix.client.r0_6_1
                     // Note: Do events always belong to the same server that
                     // the rooms belong to, or can the domain be different?
                     // TODO: Investigate.
-                    EventId = Id.Generate(server),
+                    EventId = EventId.Generate(server),
                     OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     RoomId = element.RoomId,
                     Sender = element.UserId,

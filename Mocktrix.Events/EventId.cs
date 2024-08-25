@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Contains utility functions for event ids.
     /// </summary>
-    public static class Id
+    public static class EventId
     {
         /// <summary>
         /// alphabet containing all possible characters for the "localpart" of event ids in rooms of version 1 and 2
