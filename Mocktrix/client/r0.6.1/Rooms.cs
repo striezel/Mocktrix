@@ -19,6 +19,7 @@
 using Mocktrix.Events;
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Rooms;
+using Mocktrix.RoomVersions;
 using EventId = Mocktrix.Events.EventId;
 
 namespace Mocktrix.client.r0_6_1
@@ -193,9 +194,7 @@ namespace Mocktrix.client.r0_6_1
                 create_content.Creator = token.user_id;
                 create_content.Version = version;
 
-                // "Hacky" room id generation.
-                // TODO: Implement separate function that can generate room ids.
-                var room_id = EventId.Generate(server).Replace('$', '!');
+                var room_id = RoomId.Generate(server).Replace('$', '!');
 
                 var room = Database.Memory.Rooms.Create(room_id, token.user_id, version, data.IsPublic());
 
