@@ -83,5 +83,33 @@ namespace Mocktrix.RoomVersions.Tests
             // give us the same sequence twice, although it is very unlikely.
             Assert.NotEqual(id1, id2);
         }
+
+        [Fact]
+        public void Generate_VeryLongServerName()
+        {
+            const string long_domain = "this-is-a-very-long-domain-name.created-for-testing-purposes-only.and-maybe-it-does-not-actually-exist.but-somebody-could-use-it-for-fun.matrix-homeserver-running-on-a-raspberry-pi-2-or-maybe-even-raspberry-pi-3-or-four.who-knows.example.com";
+            var id = RoomId.Generate(new Uri("https://" + long_domain + "/"));
+            Assert.NotNull(id);
+            Assert.NotEmpty(id);
+            Assert.StartsWith("!", id);
+            Assert.EndsWith(":" + long_domain, id);
+            Assert.True(id.Length <= 255);
+            Assert.DoesNotMatch("[A-Za-z0-9]{20}", id);
+        }
+
+        [Fact]
+        public void Generate_EvenLongerServerName()
+        {
+            const string long_domain = "this-is-a-very-long-domain-name.created-for-testing-purposes-only.and-maybe-it-does-not-actually-exist.but-somebody-could-use-it-for-fun.matrix-homeserver-running-on-a-raspberry-pi-2-or-maybe-even-raspberry-pi-3-or-four.who-knows.and-some-more.example.com";
+            Assert.True(long_domain.Length >= 255);
+
+            var id = RoomId.Generate(new Uri("https://" + long_domain + "/"));
+            Assert.NotNull(id);
+            Assert.NotEmpty(id);
+            Assert.StartsWith("!", id);
+            Assert.EndsWith(":" + long_domain, id);
+            Assert.False(id.Length <= 255);
+            Assert.Matches("![A-Za-z0-9]{10}:", id);
+        }
     }
 }

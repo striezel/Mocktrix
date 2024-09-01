@@ -40,7 +40,19 @@ namespace Mocktrix.RoomVersions
         {
             ArgumentNullException.ThrowIfNull(server_uri, nameof(server_uri));
 
-            return '!' + RandomNumberGenerator.GetString(id_alphabet, 20) + ':' + server_uri.Host;
+            // According to the Matrix protocol specification, room ids must not
+            // exceed the length of 255 characters, including sigil character,
+            // localpart and domain.
+            var host = server_uri.Host;
+            // Usually, the generated localpart has 20 characters here. However,
+            // if the host part is too long, it is shortened down to fit into
+            // the 255 character limit. But then again, the size of the
+            // localpart is increased to at least 10 characters. Otherwise we
+            // might have localparts with just one or two letters, and in that
+            // case the probability of generating to identical localparts is too
+            // high.
+            var random_char_count = Math.Max(Math.Min(255 - 2 - host.Length, 20), 10);
+            return '!' + RandomNumberGenerator.GetString(id_alphabet, random_char_count) + ':' + host;
         }
     }
 }
