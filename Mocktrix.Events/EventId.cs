@@ -36,11 +36,25 @@ namespace Mocktrix.Events
         /// </summary>
         /// <param name="server_uri">the server's URI</param>
         /// <returns>Returns an event id for the server.</returns>
+        /// <remarks>These ids are only valid for room versions 1 and 2.
+        /// Starting with room version 3, Matrix rooms use another id format.</remarks>
         public static string Generate(Uri server_uri)
         {
             ArgumentNullException.ThrowIfNull(server_uri, nameof(server_uri));
 
-            return '$' + RandomNumberGenerator.GetString(id_alphabet, 20) + ':' + server_uri.Host;
+            // According to the Matrix protocol specification, event ids must
+            // not exceed the length of 255 characters, including sigil
+            // character, localpart and domain.
+            var host = server_uri.Host;
+            // Usually, the generated localpart has 20 characters here. However,
+            // if the host part is too long, it is shortened down to fit into
+            // the 255 character limit. But then again, the size of the
+            // localpart is increased to at least 10 characters. Otherwise we
+            // might have localparts with just one or two letters, and in that
+            // case the probability of generating to identical localparts is too
+            // high.
+            var random_char_count = Math.Max(Math.Min(255 - 2 - host.Length, 20), 10);
+            return '$' + RandomNumberGenerator.GetString(id_alphabet, random_char_count) + ':' + server_uri.Host;
         }
     }
 }
