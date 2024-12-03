@@ -454,6 +454,20 @@ TODO
 
 * ❌ Not implemented.
 
-### 13.23 to 13.33
+### 13.23 Direct Messaging
+
+#### 13.23.1 Events
+
+* ❌ 13.23.1.1 [m.direct](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-direct)
+
+#### 13.23.2 Client behaviour
+
+Can only be implemented on client side, not on server side.
+
+#### 13.23.3 Server behaviour
+
+* ❌ Not implemented.
+
+### 13.24 to 13.33
 
 TODO
