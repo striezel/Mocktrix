@@ -438,6 +438,22 @@ TODO
 
 ❌ Not implemented yet.
 
-### 13.22 to 13.33
+### 13.22 SSO client login
+
+#### 13.22.1 Client behaviour
+
+* ❌ 13.22.1.1 [GET /_matrix/client/r0/login/sso/redirect](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-login-sso-redirect)
+
+#### 13.22.2 Server behaviour
+
+##### 13.22.2.1 [Handling the redirect endpoint](https://spec.matrix.org/historical/client_server/r0.6.1.html#handling-the-redirect-endpoint)
+
+* ❌ Not implemented.
+
+##### 13.22.2.2 [Handling the authentication endpoint](https://spec.matrix.org/historical/client_server/r0.6.1.html#handling-the-authentication-endpoint)
+
+* ❌ Not implemented.
+
+### 13.23 to 13.33
 
 TODO
