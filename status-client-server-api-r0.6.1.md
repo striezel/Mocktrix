@@ -468,6 +468,20 @@ Can only be implemented on client side, not on server side.
 
 * ❌ Not implemented.
 
-### 13.24 to 13.33
+### 13.24 Ignoring Users
+
+#### 13.24.1 Events
+
+* ❌ 13.24.1.1 [m.ignored_user_list](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-ignored-user-list)
+
+#### 13.24.2 Client behaviour
+
+❌ Not implemented.
+
+#### 13.24.3 Server behaviour
+
+❌ Not implemented.
+
+### 13.25 to 13.33
 
 TODO
