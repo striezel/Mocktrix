@@ -482,6 +482,16 @@ Can only be implemented on client side, not on server side.
 
 ❌ Not implemented.
 
-### 13.25 to 13.33
+### 13.25 Sticker Messages
+
+#### 13.25.1 Events
+
+* ❌ 13.25.1.1 [m.sticker](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-sticker)
+
+#### 13.25.2 Client behaviour
+
+Affects client only, there is no need for changes on server.
+
+### 13.26 to 13.33
 
 TODO
