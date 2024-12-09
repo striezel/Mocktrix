@@ -502,6 +502,17 @@ Affects client only, there is no need for changes on server.
 
 ❌ Not implemented.
 
-### 13.27 to 13.33
+### 13.27 Third Party Networks
+
+#### 13.27.1 Third Party Lookups
+
+* ❌ 13.27.1.1 [GET /_matrix/client/r0/thirdparty/protocols](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-protocols)
+* ❌ 13.27.1.2 [GET /_matrix/client/r0/thirdparty/protocol/{protocol}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-protocol-protocol)
+* ❌ 13.27.1.3 [GET /_matrix/client/r0/thirdparty/location/{protocol}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-location-protocol)
+* ❌ 13.27.1.4 [GET /_matrix/client/r0/thirdparty/user/{protocol}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-user-protocol)
+* ❌ 13.27.1.5 [GET /_matrix/client/r0/thirdparty/location](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-location)
+* ❌ 13.27.1.6 [GET /_matrix/client/r0/thirdparty/user](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-user)
+
+### 13.28 to 13.33
 
 TODO
