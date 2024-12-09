@@ -492,6 +492,16 @@ Can only be implemented on client side, not on server side.
 
 Affects client only, there is no need for changes on server.
 
-### 13.26 to 13.33
+### 13.26 Reporting Content
+
+#### 13.26.1 Client behaviour
+
+* ❌ 13.26.1.1 [POST /_matrix/client/r0/rooms/{roomId}/report/{eventId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-report-eventid)
+
+#### 13.26.2 Server behaviour
+
+❌ Not implemented.
+
+### 13.27 to 13.33
 
 TODO
