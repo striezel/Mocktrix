@@ -513,6 +513,10 @@ Affects client only, there is no need for changes on server.
 * ❌ 13.27.1.5 [GET /_matrix/client/r0/thirdparty/location](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-location)
 * ❌ 13.27.1.6 [GET /_matrix/client/r0/thirdparty/user](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-thirdparty-user)
 
-### 13.28 to 13.33
+### 13.28 OpenID
+
+* ❌ 13.28.1 [POST /_matrix/client/r0/user/{userId}/openid/request_token](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-user-userid-openid-request-token)
+
+### 13.29 to 13.33
 
 TODO
