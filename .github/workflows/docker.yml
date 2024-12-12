@@ -1,0 +1,14 @@
+name: Build Dockerfiles
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build default Dockerfile
+        run: docker build . -t mocktrix-standard
+      - name: Build Dockerfile for Alpine
+        run: docker build . -f Dockerfile.alpine -t mocktrix-alpine
