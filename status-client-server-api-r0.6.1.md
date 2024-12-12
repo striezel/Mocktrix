@@ -517,6 +517,16 @@ Affects client only, there is no need for changes on server.
 
 * ❌ 13.28.1 [POST /_matrix/client/r0/user/{userId}/openid/request_token](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-user-userid-openid-request-token)
 
+### 13.29 Server Access Control Lists (ACLs) for rooms
+
+* ❌ 13.29.1 [m.room.server_acl](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-server-acl)
+* ✅ 13.29.2 [Client behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id155)
+
+  No changes required on server side to guarantee client behaviour.
+
+* ❌ 13.29.3 [Server behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id156)
+* ❌ 13.29.4 [Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id157)
+
 ### 13.29 to 13.33
 
 TODO
