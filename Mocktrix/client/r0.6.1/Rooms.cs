@@ -504,6 +504,86 @@ namespace Mocktrix.client.r0_6_1
             // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-list-room-roomid,
             // i.e. the endpoint to get a room's visibility.
             app.MapGet("/_matrix/client/r0/directory/list/room/{roomId}", GetRoomVisibility);
+
+
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-list-room-roomid,
+            // i. e. the endpoint to set a room's visibility.
+            app.MapPut("/_matrix/client/r0/directory/list/room/{roomId}", async (string roomId, HttpContext context) =>
+            {
+                var access_token = Utilities.GetAccessToken(context);
+                if (string.IsNullOrWhiteSpace(access_token))
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_MISSING_TOKEN",
+                        error = "Missing access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+                var token = Database.Memory.AccessTokens.Find(access_token);
+                if (token == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_UNKNOWN_TOKEN",
+                        error = "Unrecognized access token."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+                }
+
+                var room = Database.Memory.Rooms.GetRoom(roomId);
+                if (room == null)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_NOT_FOUND",
+                        error = "The specified room was not found."
+                    };
+                    return Results.NotFound(error);
+                }
+
+                RoomVisibilityData? data;
+                try
+                {
+                    data = await context.Request.ReadFromJsonAsync<RoomVisibilityData>();
+                }
+                catch (Exception)
+                {
+                    data = null;
+                }
+                if (data == null)
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_NOT_JSON",
+                        error = "The request does not contain JSON or contains invalid JSON."
+                    });
+                }
+
+                data.Visibility ??= "public"; // Default to public, if not set.
+                if (data.Visibility != "public" && data.Visibility != "private")
+                {
+                    return Results.BadRequest(new ErrorResponse
+                    {
+                        errcode = "M_INVALID_PARAM",
+                        error = "The value of visibility must be either 'public' or 'private'."
+                    });
+                }
+
+                // Only the room's creator may change its visibility.
+                if (room.Creator != token.user_id)
+                {
+                    var error = new ErrorResponse
+                    {
+                        errcode = "M_FORBIDDEN",
+                        error = "Only the room's creator may set its visibility."
+                    };
+                    return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
+                }
+
+                room.Public = data.Visibility == "public";
+                return Results.Ok(new { });
+            }); 
         }
     }
 }

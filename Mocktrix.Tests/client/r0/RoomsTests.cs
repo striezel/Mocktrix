@@ -379,5 +379,237 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected);
             Assert.Equal(expected.visibility, content.visibility);
         }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_NoAuthorization()
+        {
+            var data = new
+            {
+                visibility = "public"
+            };
+            var response = await client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+
+            var data = new
+            {
+                visibility = "public"
+            };
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_NotFound()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { visibility = "public" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21does-not-exist%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "The specified room was not found."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_InvalidStringValue()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { visibility = "neither public nor private" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_INVALID_PARAM",
+                error = "The value of visibility must be either 'public' or 'private'."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_OnlyCreatorMaySetVisibility()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { visibility = "public" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_bob%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "Only the room's creator may set its visibility."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_SuccessPublicToPrivate()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { visibility = "private" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            // Check new value.
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                visibility = "private"
+            };
+            var new_content = Utilities.GetContent(response, expected);
+            Assert.Equal("private", new_content.visibility);
+        }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_SuccessPrivateToPublic()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { visibility = "public" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            // Check new value.
+            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                visibility = "public"
+            };
+            var new_content = Utilities.GetContent(response, expected);
+            Assert.Equal("public", new_content.visibility);
+        }
+
+        [Fact]
+        public async Task TestSetRoomVisibility_Success_NoChange()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { visibility = "private" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_no_change%3Amatrix.example.org", JsonContent.Create(data));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("{}", content);
+
+            // Check new value.
+            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                visibility = "private"
+            };
+            var new_content = Utilities.GetContent(response, expected);
+            Assert.Equal("private", new_content.visibility);
+        }
     }
 }

@@ -183,7 +183,7 @@ passwords with error code `M_WEAK_PASSWORD`.
 ### 10.5 Listing rooms
 
 * ✅ 10.5.1 [GET /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-list-room-roomid)
-* ❌ 10.5.2 [PUT /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-list-room-roomid)
+* ✅ 10.5.2 [PUT /_matrix/client/r0/directory/list/room/{roomId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-list-room-roomid)
 * ❌ 10.5.3 [GET /_matrix/client/r0/publicRooms](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-publicrooms)
 * ❌ 10.5.4 [POST /_matrix/client/r0/publicRooms](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-publicrooms)
 

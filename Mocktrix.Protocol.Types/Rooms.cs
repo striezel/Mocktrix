@@ -196,4 +196,19 @@ namespace Mocktrix.Protocol.Types.Rooms
         [JsonPropertyName("address")]
         public string Address { get; set; } = null!;
     }
+
+
+    /// <summary>
+    /// Data sent by a client via PUT request to set the visibility of a room.
+    /// </summary>
+    public class RoomVisibilityData
+    {
+        /// <summary>
+        /// The new visibility setting for the room. Defaults to 'public'.
+        ///
+        /// One of ["private", "public"].
+        /// </summary>
+        [JsonPropertyName("visibility")]
+        public string? Visibility { get; set; } = null;
+    }
 }

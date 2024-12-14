@@ -99,9 +99,15 @@ namespace Mocktrix
 
             _ = Database.Memory.Users.CreateUser("@not_a_joined_user:" + base_address.Host, "some password");
 
-            // Room visibility tests.
+            // Room visibility tests (getting visibility data).
             _ = Database.Memory.Rooms.Create("!public_test_room:matrix.example.org", "@tester:matrix.example.org", "1", true);
             _ = Database.Memory.Rooms.Create("!private_test_room:matrix.example.org", "@tester:matrix.example.org", "1", false);
+
+            // Room visibility tests (setting new visibility).
+            _ = Database.Memory.Rooms.Create("!visibility_test_room_pub:matrix.example.org", "@alice:matrix.example.org", "1", true);
+            _ = Database.Memory.Rooms.Create("!visibility_test_room_priv:matrix.example.org", "@alice:matrix.example.org", "1", false);
+            _ = Database.Memory.Rooms.Create("!visibility_test_room_bob:matrix.example.org", "@bob:matrix.example.org", "1", false);
+            _ = Database.Memory.Rooms.Create("!visibility_test_room_no_change:matrix.example.org", "@alice:matrix.example.org", "1", false);
         }
 
         private static void AddTagData(Uri base_address)
