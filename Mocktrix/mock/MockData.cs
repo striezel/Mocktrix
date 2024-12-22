@@ -108,6 +108,9 @@ namespace Mocktrix
             _ = Database.Memory.Rooms.Create("!visibility_test_room_priv:matrix.example.org", "@alice:matrix.example.org", "1", false);
             _ = Database.Memory.Rooms.Create("!visibility_test_room_bob:matrix.example.org", "@bob:matrix.example.org", "1", false);
             _ = Database.Memory.Rooms.Create("!visibility_test_room_no_change:matrix.example.org", "@alice:matrix.example.org", "1", false);
+
+            // Room alias tests.
+            _ = Database.Memory.RoomAliases.Create("!alias_test_room:matrix.example.org", "#test_alias_one:matrix.example.org", "@alice:matrix.example.org");
         }
 
         private static void AddTagData(Uri base_address)

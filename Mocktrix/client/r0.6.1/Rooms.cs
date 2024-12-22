@@ -587,7 +587,35 @@ namespace Mocktrix.client.r0_6_1
 
             // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-list-room-roomid,
             // i. e. the endpoint to set a room's visibility.
-            app.MapPut("/_matrix/client/r0/directory/list/room/{roomId}", SetRoomVisibility); 
+            app.MapPut("/_matrix/client/r0/directory/list/room/{roomId}", SetRoomVisibility);
+
+
+            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-room-roomalias,
+            // i. e. the endpoint to get a room's alias.
+            app.MapGet("/_matrix/client/r0/directory/room/{roomAlias}", (string roomAlias, HttpContext context) =>
+            {
+                var alias = Database.Memory.RoomAliases.GetAlias(roomAlias);
+                if (alias == null)
+                {
+                    return Results.NotFound(new ErrorResponse()
+                    {
+                        errcode = "M_NOT_FOUND",
+                        error = "The room alias was not found."
+                    });
+                }
+
+                // TODO: Use federation API to get alias data for other servers.
+
+                // Found it!
+                return Results.Ok(new
+                {
+                    room_id = alias.RoomId,
+                    servers = new string[]
+                    {
+                        new Uri(app.Urls.FirstOrDefault("http://localhost")).Host
+                    }
+                });
+            });
         }
     }
 }

@@ -151,7 +151,7 @@ passwords with error code `M_WEAK_PASSWORD`.
 ### 10.2 Room aliases
 
 * ❌ 10.2.1 [PUT /_matrix/client/r0/directory/room/{roomAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-directory-room-roomalias)
-* ❌ 10.2.2 [GET /_matrix/client/r0/directory/room/{roomAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-room-roomalias)
+* 🚧 10.2.2 [GET /_matrix/client/r0/directory/room/{roomAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-directory-room-roomalias)
 * ❌ 10.2.3 [DELETE /_matrix/client/r0/directory/room/{roomAlias}](https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-directory-room-roomalias)
 * ❌ 10.2.4 [GET /_matrix/client/r0/rooms/{roomId}/aliases](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-aliases)
 

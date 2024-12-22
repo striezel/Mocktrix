@@ -611,5 +611,38 @@ namespace MocktrixTests
             var new_content = Utilities.GetContent(response, expected);
             Assert.Equal("private", new_content.visibility);
         }
+
+        [Fact]
+        public async Task TestGetRoomAlias_NotFound()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/directory/room/%23does-not-exist%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_NOT_FOUND",
+                error = "The room alias was not found."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestGetRoomAlias_FoundMatch()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/directory/room/%23test_alias_one%3Amatrix.example.org");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                room_id = "!alias_test_room:matrix.example.org",
+                servers = new string[] { Utilities.BaseAddress.Host }
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.room_id, content.room_id);
+            Assert.Single(content.servers);
+            Assert.Equal(expected.servers[0], content.servers[0]);
+        }
     }
 }
