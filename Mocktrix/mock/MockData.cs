@@ -37,6 +37,11 @@ namespace Mocktrix
             var alice_local = Database.Memory.Users.CreateUser("@alice:" + base_address.Host, "Alice's secret password");
             _ = Database.Memory.Devices.CreateDevice("AliceDeviceId", alice_local.user_id, "Alice's Matrix-enabled comm badge");
 
+            // User "bob" on homeserver at example domain.
+            _ = Database.Memory.Users.CreateUser("@bob:matrix.example.org", "secret password");
+            // User "bob" for domain name of the server.
+            _ = Database.Memory.Users.CreateUser("@bob:" + base_address.Host, "secret password");
+
             // User for test of logging out all access tokens of a user at once.
             _ = Database.Memory.Users.CreateUser("@all_alice:matrix.example.org", "my secret password");
 
@@ -110,7 +115,16 @@ namespace Mocktrix
             _ = Database.Memory.Rooms.Create("!visibility_test_room_no_change:matrix.example.org", "@alice:matrix.example.org", "1", false);
 
             // Room alias tests.
-            _ = Database.Memory.RoomAliases.Create("!alias_test_room:matrix.example.org", "#test_alias_one:matrix.example.org", "@alice:matrix.example.org");
+            var alias_test_room = Database.Memory.Rooms.Create("!alias_test_room:matrix.example.org", "@alice:matrix.example.org", "1", false);
+            _ = Database.Memory.RoomAliases.Create(alias_test_room.RoomId, "#test_alias_one:matrix.example.org", alias_test_room.Creator);
+            _ = Database.Memory.RoomAliases.Create(alias_test_room.RoomId, "#test_alias_two:matrix.example.org", alias_test_room.Creator);
+            _ = Database.Memory.RoomMemberships.Create(alias_test_room.RoomId, alias_test_room.Creator, Enums.Membership.Join);
+
+            var world_readable_alias_test_room = Database.Memory.Rooms.Create("!world_readable_alias_test_room:matrix.example.org", "@alice:matrix.example.org", "1", false);
+            _ = Database.Memory.RoomMemberships.Create(world_readable_alias_test_room.RoomId, world_readable_alias_test_room.Creator, Enums.Membership.Join);
+            _ = Database.Memory.RoomAliases.Create(world_readable_alias_test_room.RoomId, "#world_readable_alias_one:matrix.example.org", world_readable_alias_test_room.Creator);
+            _ = Database.Memory.RoomAliases.Create(world_readable_alias_test_room.RoomId, "#world_readable_alias_two:matrix.example.org", world_readable_alias_test_room.Creator);
+            world_readable_alias_test_room.HistoryVisibility = Enums.HistoryVisibility.WorldReadable;
         }
 
         private static void AddTagData(Uri base_address)

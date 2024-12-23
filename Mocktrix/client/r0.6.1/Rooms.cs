@@ -169,6 +169,68 @@ namespace Mocktrix.client.r0_6_1
             return Results.Ok(new { });
         }
 
+        // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-aliases,
+        // i. e. the endpoint to get all locally maintained aliases of a room.
+        private static IResult ListAliases(string roomId, HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            var room = Database.Memory.Rooms.GetRoom(roomId);
+            if (room == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_NOT_FOUND",
+                    error = "The specified room was not found."
+                };
+                return Results.NotFound(error);
+            }
+
+            bool isWorldReadable = room.HistoryVisibility.GetValueOrDefault(Enums.HistoryVisibility.Joined) == Enums.HistoryVisibility.WorldReadable;
+            bool allow_access = isWorldReadable;
+            if (!allow_access)
+            {
+                var membership = Database.Memory.RoomMemberships.GetRoomMembership(roomId, token.user_id);
+                allow_access = (membership != null) && (membership.Membership == Enums.Membership.Join);
+            }
+
+            if (!allow_access)
+            {
+                return Results.Json(new ErrorResponse()
+                {
+                    errcode = "M_FORBIDDEN",
+                    error = "You are not a member of the room."
+                }, statusCode: StatusCodes.Status403Forbidden);
+            }
+
+            var aliases = Database.Memory.RoomAliases.GetAllRoomAliases(roomId);
+            var response = new { aliases = new List<string>(aliases.Count) };
+            foreach (var alias in aliases)
+            {
+                response.aliases.Add(alias.Alias);
+            }
+            return Results.Ok(response);
+        }
+
 
         /// <summary>
         /// Adds room-related endpoints to the web application.
@@ -616,6 +678,11 @@ namespace Mocktrix.client.r0_6_1
                     }
                 });
             });
+
+
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-aliases,
+            // i. e. the endpoint to get all locally maintained aliases of a room.
+            app.MapGet("/_matrix/client/r0/rooms/{roomId}/aliases", ListAliases);
         }
     }
 }

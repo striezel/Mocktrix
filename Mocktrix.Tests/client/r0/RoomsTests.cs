@@ -644,5 +644,132 @@ namespace MocktrixTests
             Assert.Single(content.servers);
             Assert.Equal(expected.servers[0], content.servers[0]);
         }
+
+        [Fact]
+        public async Task TestGetAllRoomAliases_NoAuthorization()
+        {
+            var response = await client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_MISSING_TOKEN",
+                error = "Missing access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestGetAllRoomAliases_InvalidAccessToken()
+        {
+            HttpClient unauthenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
+
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN_TOKEN",
+                error = "Unrecognized access token."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestGetAllRoomAliases_NoRoomMembership()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client, "@bob:matrix.example.org");
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_FORBIDDEN",
+                error = "You are not a member of the room."
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
+
+        [Fact]
+        public async Task TestGetAllRoomAliases_NoRoomMembershipButWorldReadable()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client, "@bob:matrix.example.org");
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21world_readable_alias_test_room%3Amatrix.example.org/aliases");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                aliases = new List<string>(2)
+                {
+                    "#world_readable_alias_one:matrix.example.org",
+                    "#world_readable_alias_two:matrix.example.org"
+                }
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.True(content.aliases.Count >= 2);
+            Assert.Contains(expected.aliases[0], content.aliases);
+            Assert.Contains(expected.aliases[1], content.aliases);
+        }
+
+        [Fact]
+        public async Task TestGetAllRoomAliases_Success()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client);
+
+            // Use access token in next request.
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                aliases = new List<string>(2)
+                {
+                    "#test_alias_one:matrix.example.org",
+                    "#test_alias_two:matrix.example.org"
+                }
+            };
+            var content = Utilities.GetContent(response, expected);
+            Assert.True(content.aliases.Count >= 2);
+            Assert.Contains(expected.aliases[0], content.aliases);
+            Assert.Contains(expected.aliases[1], content.aliases);
+        }
     }
 }
