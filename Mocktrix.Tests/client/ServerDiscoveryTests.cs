@@ -31,7 +31,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDisoveryInformation()
         {
-            var response = await client.GetAsync("/.well-known/matrix/client");
+            var response = await client.GetAsync("/.well-known/matrix/client", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);

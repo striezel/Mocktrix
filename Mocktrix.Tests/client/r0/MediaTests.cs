@@ -30,7 +30,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestConfig_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/media/r0/config");
+            var response = await client.GetAsync("/_matrix/media/r0/config", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -53,7 +53,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.GetAsync("/_matrix/media/r0/config");
+            var response = await unauthenticated_client.GetAsync("/_matrix/media/r0/config", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -82,7 +82,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/media/r0/config");
+            var response = await authenticated_client.GetAsync("/_matrix/media/r0/config", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -98,7 +98,7 @@ namespace MocktrixTests
         public async Task TestUpload_NoAuthorization()
         {
             byte[] file_data = "Hello there."u8.ToArray();
-            var response = await client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+            var response = await client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -123,7 +123,7 @@ namespace MocktrixTests
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
 
             byte[] file_data = "Hello there."u8.ToArray();
-            var response = await unauthenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+            var response = await unauthenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -155,7 +155,7 @@ namespace MocktrixTests
             long size = 20 * 1024 * 1024;
             byte[] file_data = new byte[size];
             Array.Fill(file_data, Convert.ToByte('A'));
-            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.RequestEntityTooLarge, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -185,7 +185,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             byte[] file_data = "Hello there."u8.ToArray();
-            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data));
+            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload", new ByteArrayContent(file_data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -203,13 +203,13 @@ namespace MocktrixTests
             // Download should also succeed.
             string server_name = Utilities.BaseAddress.Host;
             string media_id = content.content_uri[(content.content_uri.LastIndexOf('/') + 1)..];
-            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id);
+            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, download_response.StatusCode);
             Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
                 download_response.Headers.GetValues("Content-Security-Policy").First());
 
-            string dl_content = await download_response.Content.ReadAsStringAsync();
+            string dl_content = await download_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("Hello there.", dl_content);
         }
 
@@ -230,7 +230,7 @@ namespace MocktrixTests
             byte[] file_data = "Hello there?"u8.ToArray();
             var uploaded_content = new ByteArrayContent(file_data);
             uploaded_content.Headers.Add("Content-Type", "text/plain");
-            var response = await uploading_client.PostAsync("/_matrix/media/r0/upload", uploaded_content);
+            var response = await uploading_client.PostAsync("/_matrix/media/r0/upload", uploaded_content, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -248,14 +248,14 @@ namespace MocktrixTests
             // Download should also succeed.
             string server_name = Utilities.BaseAddress.Host;
             string media_id = content.content_uri[(content.content_uri.LastIndexOf('/') + 1)..];
-            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id);
+            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, download_response.StatusCode);
             Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
                 download_response.Headers.GetValues("Content-Security-Policy").First());
             Assert.Equal("text/plain", download_response.Content.Headers.ContentType?.MediaType);
 
-            string dl_content = await download_response.Content.ReadAsStringAsync();
+            string dl_content = await download_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("Hello there?", dl_content);
         }
 
@@ -274,7 +274,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             byte[] file_data = "Hello there!"u8.ToArray();
-            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload?filename=the_hello.txt", new ByteArrayContent(file_data));
+            var response = await authenticated_client.PostAsync("/_matrix/media/r0/upload?filename=the_hello.txt", new ByteArrayContent(file_data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -292,14 +292,14 @@ namespace MocktrixTests
             // Download should also succeed.
             string server_name = Utilities.BaseAddress.Host;
             string media_id = content.content_uri[(content.content_uri.LastIndexOf('/') + 1)..];
-            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id);
+            var download_response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/" + media_id, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, download_response.StatusCode);
             Assert.Equal("sandbox; default-src 'none'; script-src 'none'; plugin-types application/pdf; style-src 'unsafe-inline'; object-src 'self';",
                 download_response.Headers.GetValues("Content-Security-Policy").First());
             Assert.Equal("the_hello.txt", download_response.Content.Headers.ContentDisposition?.FileName);
 
-            string dl_content = await download_response.Content.ReadAsStringAsync();
+            string dl_content = await download_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("Hello there!", dl_content);
         }
 
@@ -307,7 +307,7 @@ namespace MocktrixTests
         public async Task TestDownload_InvalidParameter()
         {
             string server_name = Utilities.BaseAddress.Host;
-            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/foo?allow_remote=blah");
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/foo?allow_remote=blah", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -325,7 +325,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDownload_RemoteWhenRemoteIsNotAllowed()
         {
-            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo?allow_remote=false");
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo?allow_remote=false", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -343,7 +343,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDownload_RemoteWhenRemoteIsActuallyAllowed()
         {
-            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo?allow_remote=true");
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo?allow_remote=true", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -362,7 +362,7 @@ namespace MocktrixTests
         public async Task TestDownload_NonExistentContent()
         {
             string server_name = Utilities.BaseAddress.Host;
-            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/fooNotHere");
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/fooNotHere", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -381,7 +381,7 @@ namespace MocktrixTests
         public async Task TestDownload_ExistingContent()
         {
             string server_name = Utilities.BaseAddress.Host;
-            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/testDownload");
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/testDownload", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("text/plain", response.Content.Headers.ContentType?.MediaType);
@@ -389,7 +389,7 @@ namespace MocktrixTests
                 response.Headers.GetValues("Content-Security-Policy").First());
             Assert.Equal("hello.txt", response.Content.Headers.ContentDisposition?.FileName);
 
-            string content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("Hello, test code. :)", content);
         }
 
@@ -397,7 +397,7 @@ namespace MocktrixTests
         public async Task TestDownloadWithFileName_InvalidParameter()
         {
             string server_name = Utilities.BaseAddress.Host;
-            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/foo/file.txt?allow_remote=blah");
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/foo/file.txt?allow_remote=blah", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -415,7 +415,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDownloadWithFileName_RemoteWhenRemoteIsNotAllowed()
         {
-            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo/file.dat?allow_remote=false");
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo/file.dat?allow_remote=false", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -433,7 +433,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDownloadWithFileName_RemoteWhenRemoteIsActuallyAllowed()
         {
-            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo/foo.txt?allow_remote=true");
+            var response = await client.GetAsync("/_matrix/media/r0/download/matrix.example.org/foo/foo.txt?allow_remote=true", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -452,7 +452,7 @@ namespace MocktrixTests
         public async Task TestDownloadWithFileName_NonExistentContent()
         {
             string server_name = Utilities.BaseAddress.Host;
-            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/fooNotHere/file.txt");
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/fooNotHere/file.txt", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -471,7 +471,7 @@ namespace MocktrixTests
         public async Task TestDownloadWithFileName_ExistingContent()
         {
             string server_name = Utilities.BaseAddress.Host;
-            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/testDownload/my_file.txt");
+            var response = await client.GetAsync("/_matrix/media/r0/download/" + server_name + "/testDownload/my_file.txt", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("text/plain", response.Content.Headers.ContentType?.MediaType);
@@ -479,7 +479,7 @@ namespace MocktrixTests
                 response.Headers.GetValues("Content-Security-Policy").First());
             Assert.Equal("my_file.txt", response.Content.Headers.ContentDisposition?.FileName);
 
-            string content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("Hello, test code. :)", content);
         }
     }

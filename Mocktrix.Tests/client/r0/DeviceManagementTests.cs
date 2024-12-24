@@ -32,7 +32,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDevices_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/devices");
+            var response = await client.GetAsync("/_matrix/client/r0/devices", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -55,7 +55,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/devices");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/devices", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -87,7 +87,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_id_2",
                 initial_device_display_name = "My device mgmt. dev #2"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -105,7 +105,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -144,7 +144,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDeviceWithId_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/devices/foobar");
+            var response = await client.GetAsync("/_matrix/client/r0/devices/foobar", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -167,7 +167,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/devices/foobar");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/devices/foobar", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -199,7 +199,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_id_1",
                 initial_device_display_name = "My device mgmt. dev #1"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -217,7 +217,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/NonExistentDeviceId1");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/NonExistentDeviceId1", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -248,7 +248,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_id_1",
                 initial_device_display_name = "My device mgmt. dev #1"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -266,7 +266,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id);
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -288,7 +288,7 @@ namespace MocktrixTests
         public async Task TestDeviceChangeName_NoAuthorization()
         {
             DeviceNameChangeData data = new() { DisplayName = "something else" };
-            var response = await client.PutAsync("/_matrix/client/r0/devices/foobar", JsonContent.Create(data));
+            var response = await client.PutAsync("/_matrix/client/r0/devices/foobar", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -312,7 +312,7 @@ namespace MocktrixTests
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
             DeviceNameChangeData data = new() { DisplayName = "something else" };
-            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/devices/foobar", JsonContent.Create(data));
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/devices/foobar", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -344,7 +344,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_name_change_id_1",
                 initial_device_display_name = "My name changed device #1"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -363,7 +363,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             DeviceNameChangeData data = new() { DisplayName = "something else" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/NonExistentDeviceId2", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/NonExistentDeviceId2", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -394,7 +394,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_name_change_id_2",
                 initial_device_display_name = "My name changed device #2"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -413,16 +413,16 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             DeviceNameChangeData data = new() { DisplayName = "This is a new name!" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/" + login_content.device_id, JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/" + login_content.device_id, JsonContent.Create(data), TestContext.Current.CancellationToken);
             // Request should be successful ...
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             // ... and only contain an empty JSON object.
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            string content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Getting the data of the device should reflect the new name.
-            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id);
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var expected_response = new DeviceData
@@ -456,7 +456,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_name_change_id_3",
                 initial_device_display_name = "My name changed device #3"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -475,16 +475,16 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             DeviceNameChangeData data = new() { DisplayName = null };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/" + login_content.device_id, JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/devices/" + login_content.device_id, JsonContent.Create(data), TestContext.Current.CancellationToken);
             // Request should be successful ...
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             // ... and only contain an empty JSON object.
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            string content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Getting the data of the device should still contain the old name.
-            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id);
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices/" + body.device_id, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -503,7 +503,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestDeviceDelete_NoAuthorization()
         {
-            var response = await client.DeleteAsync("/_matrix/client/r0/devices/foobar");
+            var response = await client.DeleteAsync("/_matrix/client/r0/devices/foobar", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -526,7 +526,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.DeleteAsync("/_matrix/client/r0/devices/foobar");
+            var response = await unauthenticated_client.DeleteAsync("/_matrix/client/r0/devices/foobar", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -558,7 +558,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_1",
                 initial_device_display_name = "My deletion device #1"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -575,13 +575,13 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/devices/NonExistentDeviceId3");
+            var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/devices/NonExistentDeviceId3", TestContext.Current.CancellationToken);
             // Deleting a non-existent device will return "200 OK", because as
             // per specification it is assumed that the device has been deleted
             // earlier.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
         }
 
@@ -602,7 +602,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_2_interactive_required",
                 initial_device_display_name = "My deletion device #2 - interactive fail"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -625,7 +625,7 @@ namespace MocktrixTests
                 Method = HttpMethod.Delete,
                 RequestUri = new Uri("/_matrix/client/r0/devices/" + login_content.device_id, UriKind.Relative)
             };
-            var response = await authenticated_client.SendAsync(request);
+            var response = await authenticated_client.SendAsync(request, TestContext.Current.CancellationToken);
             // Deletion should not succeed.
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -646,7 +646,7 @@ namespace MocktrixTests
             Assert.Single(content.flows);
             Assert.Single(content.flows[0].stages);
             Assert.Equal("m.login.password", content.flows[0].stages[0]);
-            var raw_content = await response.Content.ReadAsStringAsync();
+            var raw_content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Contains("\"params\":{}", raw_content);
             Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
         }
@@ -668,7 +668,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_2_wrong_password",
                 initial_device_display_name = "My deletion device #2 - password fail"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -699,7 +699,7 @@ namespace MocktrixTests
                 Method = HttpMethod.Delete,
                 RequestUri = new Uri("/_matrix/client/r0/devices/" + login_content.device_id, UriKind.Relative)
             };
-            var response = await authenticated_client.SendAsync(request);
+            var response = await authenticated_client.SendAsync(request, TestContext.Current.CancellationToken);
             // Deletion should not succeed.
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -730,7 +730,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_2",
                 initial_device_display_name = "My deletion device #2"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -755,7 +755,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_3",
                 initial_device_display_name = "My deletion device #3"
             };
-            login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             login_content = Utilities.GetContent(login_response, login_data);
             var second_access_token = login_content.access_token;
             string second_device_id = login_content.device_id;
@@ -780,15 +780,15 @@ namespace MocktrixTests
                 Method = HttpMethod.Delete,
                 RequestUri = new Uri("/_matrix/client/r0/devices/" + second_device_id, UriKind.Relative)
             };
-            var response = await authenticated_client.SendAsync(request);
+            var response = await authenticated_client.SendAsync(request, TestContext.Current.CancellationToken);
             // Deletion should succeed.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Get current devices to check it.
-            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices");
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var device_response = new
@@ -822,7 +822,7 @@ namespace MocktrixTests
             {
                 devices = new List<string>() { "foo", "bar" }
             };
-            var response = await client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -849,7 +849,7 @@ namespace MocktrixTests
             {
                 devices = new List<string>() { "foo", "bar" }
             };
-            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -881,7 +881,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_5",
                 initial_device_display_name = "My deletion device #5"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -908,13 +908,13 @@ namespace MocktrixTests
                     password = "secret password"
                 }
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data), TestContext.Current.CancellationToken);
             // Deleting a non-existent device will return "200 OK", because as
             // per specification it is assumed that the device has been deleted
             // earlier.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
         }
 
@@ -935,7 +935,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_6_interactive_auth_required",
                 initial_device_display_name = "My deletion device #6 - interactive fail"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -956,7 +956,7 @@ namespace MocktrixTests
             {
                 devices = new List<string>() { login_content.device_id }
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data), TestContext.Current.CancellationToken);
             // Deletion should not succeed.
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -977,7 +977,7 @@ namespace MocktrixTests
             Assert.Single(content.flows);
             Assert.Single(content.flows[0].stages);
             Assert.Equal("m.login.password", content.flows[0].stages[0]);
-            var raw_content = await response.Content.ReadAsStringAsync();
+            var raw_content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Contains("\"params\":{}", raw_content);
             Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
         }
@@ -999,7 +999,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_6_wrong_password",
                 initial_device_display_name = "My deletion device #6 - password fail"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -1026,7 +1026,7 @@ namespace MocktrixTests
                     password = "wrong password will cause failure"
                 }
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data), TestContext.Current.CancellationToken);
             // Deletion should not succeed.
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -1057,7 +1057,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_6",
                 initial_device_display_name = "My deletion device #6"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             var login_data = new
             {
                 user_id = "@alice:matrix.example.org",
@@ -1082,7 +1082,7 @@ namespace MocktrixTests
                 device_id = "test_dev_mgmt_delete_id_7",
                 initial_device_display_name = "My deletion device #7"
             };
-            login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             login_content = Utilities.GetContent(login_response, login_data);
             var second_access_token = login_content.access_token;
             string second_device_id = login_content.device_id;
@@ -1103,15 +1103,15 @@ namespace MocktrixTests
                     password = "secret password"
                 }
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/delete_devices", JsonContent.Create(data), TestContext.Current.CancellationToken);
             // Deletion should succeed.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Get current devices to check it.
-            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices");
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/devices", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var device_response = new

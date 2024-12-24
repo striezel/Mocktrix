@@ -31,7 +31,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestJoinedRooms_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/joined_rooms");
+            var response = await client.GetAsync("/_matrix/client/r0/joined_rooms", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -53,7 +53,7 @@ namespace MocktrixTests
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
 
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/joined_rooms");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/joined_rooms", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -80,7 +80,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/joined_rooms");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/joined_rooms", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -111,7 +111,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/joined_rooms");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/joined_rooms", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -131,7 +131,7 @@ namespace MocktrixTests
             {
                 preset = "public_chat"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -157,7 +157,7 @@ namespace MocktrixTests
             {
                 preset = "public_chat"
             };
-            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -189,7 +189,7 @@ namespace MocktrixTests
                 preset = "private_chat",
                 room_version = "69"
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -221,7 +221,7 @@ namespace MocktrixTests
                 preset = "private_chat",
                 room_alias_name = "abcdef\r\nghijkl"
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -253,7 +253,7 @@ namespace MocktrixTests
                 preset = "private_chat",
                 room_alias_name = "#abcdef:matrix.example.org"
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -288,7 +288,7 @@ namespace MocktrixTests
                 preset = "private_chat",
                 room_alias_name = new string('a', 300)
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -322,7 +322,7 @@ namespace MocktrixTests
                 name = "My first created room",
                 topic = "Just testing ..."
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/createRoom", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -339,7 +339,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestGetRoomVisibility_NotFound()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21does-not-exist%3Amatrix.example.org");
+            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21does-not-exist%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -355,7 +355,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestGetRoomVisibility_PublicVisibility()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21public_test_room%3Amatrix.example.org");
+            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21public_test_room%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -369,7 +369,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestGetRoomVisibility_PrivateVisibility()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21private_test_room%3Amatrix.example.org");
+            var response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21private_test_room%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -387,7 +387,7 @@ namespace MocktrixTests
             {
                 visibility = "public"
             };
-            var response = await client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -413,7 +413,7 @@ namespace MocktrixTests
             {
                 visibility = "public"
             };
-            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -441,7 +441,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { visibility = "public" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21does-not-exist%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21does-not-exist%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -469,7 +469,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { visibility = "neither public nor private" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -497,7 +497,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { visibility = "public" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_bob%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_bob%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -525,15 +525,15 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { visibility = "private" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Check new value.
-            response = await authenticated_client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org");
+            response = await authenticated_client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_pub%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -559,15 +559,15 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { visibility = "public" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Check new value.
-            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org");
+            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -593,15 +593,15 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { visibility = "private" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_no_change%3Amatrix.example.org", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_no_change%3Amatrix.example.org", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Check new value.
-            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org");
+            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -615,7 +615,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestGetRoomAlias_NotFound()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/directory/room/%23does-not-exist%3Amatrix.example.org");
+            var response = await client.GetAsync("/_matrix/client/r0/directory/room/%23does-not-exist%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -631,7 +631,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestGetRoomAlias_FoundMatch()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/directory/room/%23test_alias_one%3Amatrix.example.org");
+            var response = await client.GetAsync("/_matrix/client/r0/directory/room/%23test_alias_one%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -648,7 +648,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestGetAllRoomAliases_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            var response = await client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -670,7 +670,7 @@ namespace MocktrixTests
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
 
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -697,7 +697,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -724,7 +724,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21world_readable_alias_test_room%3Amatrix.example.org/aliases");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21world_readable_alias_test_room%3Amatrix.example.org/aliases", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -755,7 +755,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/rooms/%21alias_test_room%3Amatrix.example.org/aliases", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new

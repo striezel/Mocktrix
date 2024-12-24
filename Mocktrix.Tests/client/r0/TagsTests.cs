@@ -32,7 +32,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestGetTags_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!someRoom:matrix.example.org/tags");
+            var response = await client.GetAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!someRoom:matrix.example.org/tags", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -55,7 +55,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!someRoom:matrix.example.org/tags");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!someRoom:matrix.example.org/tags", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -85,7 +85,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_without_tags:matrix.example.org/tags");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_without_tags:matrix.example.org/tags", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -115,11 +115,11 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_without_tags:matrix.example.org/tags");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_without_tags:matrix.example.org/tags", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
-            string content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{\"tags\":{}}", content);
         }
 
@@ -138,7 +138,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_some_tags:matrix.example.org/tags");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_some_tags:matrix.example.org/tags", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -166,7 +166,7 @@ namespace MocktrixTests
         public async Task TestDeleteTag_NoAuthorization()
         {
             string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
-            var response = await client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+            var response = await client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -190,7 +190,7 @@ namespace MocktrixTests
             };
             string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+            var response = await unauthenticated_client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -220,7 +220,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+            var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -252,31 +252,31 @@ namespace MocktrixTests
 
             // Tag should still be set before deletion.
             {
-                var pre_delete_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags");
+                var pre_delete_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags", TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, pre_delete_response.StatusCode);
                 Assert.Equal("application/json", pre_delete_response.Content.Headers.ContentType?.MediaType);
 
-                string pre_delete_content = await pre_delete_response.Content.ReadAsStringAsync();
+                string pre_delete_content = await pre_delete_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{\"tags\":{\"u.delete_me\":{\"order\":0.5},\"u.keep_me\":{\"order\":0.25}}}", pre_delete_content);
             }
 
             // Perform deletion.
             {
-                var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me");
+                var response = await authenticated_client.DeleteAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags/u.delete_me", TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{}", content);
             }
 
             // Check tags after deletion.
             {
-                var post_delete_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags");
+                var post_delete_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_with_tag_to_delete:matrix.example.org/tags", TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, post_delete_response.StatusCode);
                 Assert.Equal("application/json", post_delete_response.Content.Headers.ContentType?.MediaType);
 
-                string post_delete_content = await post_delete_response.Content.ReadAsStringAsync();
+                string post_delete_content = await post_delete_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{\"tags\":{\"u.keep_me\":{\"order\":0.25}}}", post_delete_content);
             }
         }
@@ -286,7 +286,7 @@ namespace MocktrixTests
         {
             string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
             var data = new { order = 0.25 };
-            var response = await client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+            var response = await client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -311,7 +311,7 @@ namespace MocktrixTests
             string user_id = "@tag_user:" + Utilities.BaseAddress.Host;
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
             var data = new { order = 0.25 };
-            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -342,7 +342,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { order = 0.25 };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/@alice:matrix.example.org/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -374,32 +374,32 @@ namespace MocktrixTests
 
             // No tag should be set before adding tag.
             {
-                var pre_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags");
+                var pre_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags", TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, pre_add_response.StatusCode);
                 Assert.Equal("application/json", pre_add_response.Content.Headers.ContentType?.MediaType);
 
-                string pre_add_content = await pre_add_response.Content.ReadAsStringAsync();
+                string pre_add_content = await pre_add_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{\"tags\":{}}", pre_add_content);
             }
 
             // Perform tag creation.
             {
                 var data = new { order = 0.25 };
-                var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data));
+                var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags/u.add_me", JsonContent.Create(data), TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{}", content);
             }
 
             // Check tags after creation.
             {
-                var post_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags");
+                var post_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_add_tag_to:matrix.example.org/tags", TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, post_add_response.StatusCode);
                 Assert.Equal("application/json", post_add_response.Content.Headers.ContentType?.MediaType);
 
-                string post_add_content = await post_add_response.Content.ReadAsStringAsync();
+                string post_add_content = await post_add_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{\"tags\":{\"u.add_me\":{\"order\":0.25}}}", post_add_content);
             }
         }
@@ -421,32 +421,32 @@ namespace MocktrixTests
 
             // Existing tag should be set before adding/updating tag.
             {
-                var pre_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags");
+                var pre_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags", TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, pre_add_response.StatusCode);
                 Assert.Equal("application/json", pre_add_response.Content.Headers.ContentType?.MediaType);
 
-                string pre_add_content = await pre_add_response.Content.ReadAsStringAsync();
+                string pre_add_content = await pre_add_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{\"tags\":{\"u.existing\":{\"order\":0.5}}}", pre_add_content);
             }
 
             // Perform tag update.
             {
                 var data = new { order = 0.75 };
-                var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags/u.existing", JsonContent.Create(data));
+                var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags/u.existing", JsonContent.Create(data), TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{}", content);
             }
 
             // Check tags after update.
             {
-                var post_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags");
+                var post_add_response = await authenticated_client.GetAsync("/_matrix/client/r0/user/" + user_id + "/rooms/!room_to_change_tag:matrix.example.org/tags", TestContext.Current.CancellationToken);
                 Assert.Equal(HttpStatusCode.OK, post_add_response.StatusCode);
                 Assert.Equal("application/json", post_add_response.Content.Headers.ContentType?.MediaType);
 
-                string post_add_content = await post_add_response.Content.ReadAsStringAsync();
+                string post_add_content = await post_add_response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("{\"tags\":{\"u.existing\":{\"order\":0.75}}}", post_add_content);
             }
         }

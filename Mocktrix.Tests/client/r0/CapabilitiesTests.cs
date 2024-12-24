@@ -31,7 +31,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestCapabilities_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/capabilities");
+            var response = await client.GetAsync("/_matrix/client/r0/capabilities", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -54,7 +54,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/capabilities");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/capabilities", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -83,7 +83,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/capabilities");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/capabilities", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -105,7 +105,7 @@ namespace MocktrixTests
                 }
             };
             var content = Utilities.GetContent(response, expected_response);
-            var text = await response.Content.ReadAsStringAsync();
+            var text = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.NotNull(text);
             string expected_text = "{\"capabilities\":{\"m.change_password\":{\"enabled\":true},\"m.room_versions\":{\"default\":\"1\",\"available\":{\"1\":\"stable\",\"2\":\"unstable\",\"3\":\"unstable\"}}}}";
             Assert.Equal(expected_text, text);

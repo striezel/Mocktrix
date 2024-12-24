@@ -31,7 +31,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestRetrieveDisplayName_NonExistentUser()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host + "/displayname");
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host + "/displayname", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -47,18 +47,18 @@ namespace MocktrixTests
         [Fact]
         public async Task TestRetrieveDisplayName_ExistingUserWithoutDisplayName()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@unnamed_user:" + client.BaseAddress?.Host + "/displayname");
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@unnamed_user:" + client.BaseAddress?.Host + "/displayname", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
         }
 
         [Fact]
         public async Task TestRetrieveDisplayName_ExistingUserWithDisplayName()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@named_user:" + client.BaseAddress?.Host + "/displayname");
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@named_user:" + client.BaseAddress?.Host + "/displayname", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -74,7 +74,7 @@ namespace MocktrixTests
         public async Task TestChangeDisplayName_NoAuthorization()
         {
             var data = new { displayname = "Alice" };
-            var response = await client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/displayname", JsonContent.Create(data));
+            var response = await client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/displayname", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -97,7 +97,7 @@ namespace MocktrixTests
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
 
             var data = new { displayname = "Alice" };
-            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/displayname", JsonContent.Create(data));
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/displayname", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -125,7 +125,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { displayname = "Alice" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@all_alice:matrix.example.org/displayname", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@all_alice:matrix.example.org/displayname", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -153,13 +153,13 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { displayname = "A. N. Other" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@name_change_user:" + authenticated_client.BaseAddress.Host + "/displayname", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@name_change_user:" + authenticated_client.BaseAddress.Host + "/displayname", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
-            response = await client.GetAsync("/_matrix/client/r0/profile/@name_change_user:" + client.BaseAddress?.Host + "/displayname");
+            response = await client.GetAsync("/_matrix/client/r0/profile/@name_change_user:" + client.BaseAddress?.Host + "/displayname", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -174,7 +174,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestRetrieveAvatarUrl_NonExistentUser()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host + "/avatar_url");
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host + "/avatar_url", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -190,18 +190,18 @@ namespace MocktrixTests
         [Fact]
         public async Task TestRetrieveAvatarUrl_ExistingUserWithoutAvatar()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@no_avatar:" + client.BaseAddress?.Host + "/avatar_url");
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@no_avatar:" + client.BaseAddress?.Host + "/avatar_url", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
         }
 
         [Fact]
         public async Task TestRetrieveAvatarUrl_ExistingUserWithAvatar()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_user:" + client.BaseAddress?.Host + "/avatar_url");
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_user:" + client.BaseAddress?.Host + "/avatar_url", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -217,7 +217,7 @@ namespace MocktrixTests
         public async Task TestChangeAvatarUrl_NoAuthorization()
         {
             var data = new { displayname = "Alice" };
-            var response = await client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/avatar_url", JsonContent.Create(data));
+            var response = await client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/avatar_url", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -240,7 +240,7 @@ namespace MocktrixTests
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
 
             var data = new { displayname = "Alice" };
-            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/avatar_url", JsonContent.Create(data));
+            var response = await unauthenticated_client.PutAsync("/_matrix/client/r0/profile/@alice:" + client.BaseAddress?.Host + "/avatar_url", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -268,7 +268,7 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { avatar_url = "mxc://matrix.example.org/SomeOtherMediaId" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@all_alice:matrix.example.org/avatar_url", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@all_alice:matrix.example.org/avatar_url", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -296,13 +296,13 @@ namespace MocktrixTests
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
             var data = new { avatar_url = "mxc://matrix.example.org/LookItHasChangedHere" };
-            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@avatar_change_user:" + authenticated_client.BaseAddress.Host + "/avatar_url", JsonContent.Create(data));
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/profile/@avatar_change_user:" + authenticated_client.BaseAddress.Host + "/avatar_url", JsonContent.Create(data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
-            response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_change_user:" + client.BaseAddress?.Host + "/avatar_url");
+            response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_change_user:" + client.BaseAddress?.Host + "/avatar_url", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -317,7 +317,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestRetrieveProfile_NonExistentUser()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host);
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@does-not-exist:" + client.BaseAddress?.Host, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
@@ -333,40 +333,40 @@ namespace MocktrixTests
         [Fact]
         public async Task TestRetrieveProfile_ExistingUserWithoutAnyProfileInformation()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@unnamed_user:" + client.BaseAddress?.Host);
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@unnamed_user:" + client.BaseAddress?.Host, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
         }
 
         [Fact]
         public async Task TestRetrieveProfile_ExistingUserWithDisplayNameAndNoAvatar()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@named_user:" + client.BaseAddress?.Host);
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@named_user:" + client.BaseAddress?.Host, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{\"displayname\":\"Nomen Nominandum\"}", content);
         }
 
         [Fact]
         public async Task TestRetrieveProfile_ExistingUserWithAvatarAndNoDisplayName()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_user:" + client.BaseAddress?.Host);
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@avatar_user:" + client.BaseAddress?.Host, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{\"avatar_url\":\"mxc://matrix.org/FooBar\"}", content);
         }
 
         [Fact]
         public async Task TestRetrieveProfile_ExistingUserWithAvatarAndDisplayName()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/profile/@profile:" + client.BaseAddress?.Host);
+            var response = await client.GetAsync("/_matrix/client/r0/profile/@profile:" + client.BaseAddress?.Host, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);

@@ -42,7 +42,7 @@ namespace MocktrixTests
                 id_access_token = "some_string"
             };
 
-            var response = await client.PostAsync("/_matrix/client/r0/register/email/requestToken", JsonContent.Create(postData));
+            var response = await client.PostAsync("/_matrix/client/r0/register/email/requestToken", JsonContent.Create(postData), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -71,7 +71,7 @@ namespace MocktrixTests
                 id_access_token = "some_string"
             };
 
-            var response = await client.PostAsync("/_matrix/client/r0/register/msisdn/requestToken", JsonContent.Create(postData));
+            var response = await client.PostAsync("/_matrix/client/r0/register/msisdn/requestToken", JsonContent.Create(postData), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -89,7 +89,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestAvailable_NoUserNameGiven()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/register/available");
+            var response = await client.GetAsync("/_matrix/client/r0/register/available", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -107,7 +107,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestAvailable_EmptyUserName()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=");
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -125,7 +125,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestAvailable_UserNameWithNonAsciiCharacters()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=smørrebrød");
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=smørrebrød", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -143,7 +143,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestAvailable_UserNameWithDisallowedCharacters()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=no spaces allowed");
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=no spaces allowed", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -161,7 +161,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestAvailable_UserNameAlreadyTaken()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=alice");
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=alice", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -179,7 +179,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestAvailable_UserNameStillAvailable()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=not_alice_but_bob");
+            var response = await client.GetAsync("/_matrix/client/r0/register/available?username=not_alice_but_bob", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -200,7 +200,7 @@ namespace MocktrixTests
                 username = "ray_gister",
                 password = "everybody loves account registration"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=foo", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=foo", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -223,7 +223,7 @@ namespace MocktrixTests
                 username = "ray_guest",
                 password = "everybody loves account registration"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=guest", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=guest", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -241,7 +241,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestRegister_ContentNotJSON()
         {
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", new StringContent("foo"));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", new StringContent("foo"), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -264,7 +264,7 @@ namespace MocktrixTests
                 username = "in:valid üser näme",
                 password = "everybody loves account registration"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -287,7 +287,7 @@ namespace MocktrixTests
                 username = "alice",
                 password = "everybody loves account registration"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -315,7 +315,7 @@ namespace MocktrixTests
                 username = "ray_weak_pass",
                 password = inline_password
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -337,7 +337,7 @@ namespace MocktrixTests
             {
                 username = "ray_weak_pass"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -361,7 +361,7 @@ namespace MocktrixTests
                 password = "everybody loves account registration",
                 inhibit_login = true
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -384,7 +384,7 @@ namespace MocktrixTests
                 password = data.password,
                 initial_device_display_name = "My registered device (i)"
             };
-            response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(login_body));
+            response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(login_body), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -413,7 +413,7 @@ namespace MocktrixTests
                 password = "everybody loves account registration",
                 initial_device_display_name = "Yay"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/register?kind=user", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -440,7 +440,7 @@ namespace MocktrixTests
                 password = data.password,
                 initial_device_display_name = "My registered device (i)"
             };
-            response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(login_body));
+            response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(login_body), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);

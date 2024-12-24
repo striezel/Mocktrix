@@ -30,7 +30,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestSupportedSpecVersions()
         {
-            var response = await client.GetAsync("/_matrix/client/versions");
+            var response = await client.GetAsync("/_matrix/client/versions", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);

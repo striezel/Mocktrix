@@ -42,7 +42,7 @@ namespace MocktrixTests
                     password = "foo"
                 }
             };
-            var response = await client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -76,7 +76,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -108,7 +108,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -129,7 +129,7 @@ namespace MocktrixTests
             Assert.Single(content.flows);
             Assert.Single(content.flows[0].stages);
             Assert.Equal("m.login.password", content.flows[0].stages[0]);
-            var raw_content = await response.Content.ReadAsStringAsync();
+            var raw_content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Contains("\"params\":{}", raw_content);
             Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
         }
@@ -157,7 +157,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -194,7 +194,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -231,11 +231,11 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/password", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{}", content);
 
             // Login with new password should work from now on.
@@ -256,7 +256,7 @@ namespace MocktrixTests
                 id_access_token = "some_string"
             };
 
-            var response = await client.PostAsync("/_matrix/client/r0/account/password/email/requestToken", JsonContent.Create(postData));
+            var response = await client.PostAsync("/_matrix/client/r0/account/password/email/requestToken", JsonContent.Create(postData), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -284,7 +284,7 @@ namespace MocktrixTests
                 id_access_token = "some_string"
             };
 
-            var response = await client.PostAsync("/_matrix/client/r0/account/password/msisdn/requestToken", JsonContent.Create(postData));
+            var response = await client.PostAsync("/_matrix/client/r0/account/password/msisdn/requestToken", JsonContent.Create(postData), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -311,7 +311,7 @@ namespace MocktrixTests
                 },
                 id_server = "id.example.org"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+            var response = await client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -344,7 +344,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -375,7 +375,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -396,7 +396,7 @@ namespace MocktrixTests
             Assert.Single(content.flows);
             Assert.Single(content.flows[0].stages);
             Assert.Equal("m.login.password", content.flows[0].stages[0]);
-            var raw_content = await response.Content.ReadAsStringAsync();
+            var raw_content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Contains("\"params\":{}", raw_content);
             Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
         }
@@ -423,7 +423,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -459,11 +459,11 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/deactivate", JsonContent.Create(data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{\"id_server_unbind_result\":\"success\"}", content);
 
             // Login should not work anymore from now on.
@@ -478,7 +478,7 @@ namespace MocktrixTests
                 password = "silly password",
                 initial_device_display_name = "My new device"
             };
-            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body));
+            var login_response = await client.PostAsync("/_matrix/client/r0/login", JsonContent.Create(body), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Forbidden, login_response.StatusCode);
             var expected_error = new
             {
@@ -493,7 +493,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestAccountThreePid_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/account/3pid");
+            var response = await client.GetAsync("/_matrix/client/r0/account/3pid", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -516,7 +516,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/account/3pid");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/account/3pid", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -545,7 +545,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/account/3pid");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/account/3pid", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -556,7 +556,7 @@ namespace MocktrixTests
             var content = Utilities.GetContent(response, expected_response);
             Assert.NotNull(content.threepid);
             Assert.Empty(content.threepid);
-            var plain_content = await response.Content.ReadAsStringAsync();
+            var plain_content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{\"threepid\":[]}", plain_content);
         }
 
@@ -572,7 +572,7 @@ namespace MocktrixTests
                 sid = "abcdefghijklmnop1",
                 client_secret = "secret"
             };
-            var response = await client.PostAsync("/_matrix/client/r0/account/3pid/" + endpoint, JsonContent.Create(post_data));
+            var response = await client.PostAsync("/_matrix/client/r0/account/3pid/" + endpoint, JsonContent.Create(post_data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -605,7 +605,7 @@ namespace MocktrixTests
                 sid = "abcdefghijklmnop1",
                 client_secret = "secret"
             };
-            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/3pid/" + endpoint, JsonContent.Create(post_data));
+            var response = await unauthenticated_client.PostAsync("/_matrix/client/r0/account/3pid/" + endpoint, JsonContent.Create(post_data), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -643,7 +643,7 @@ namespace MocktrixTests
                 sid = "abcdefghijklmnop1",
                 client_secret = "secret"
             };
-            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/3pid/" + endpoint, JsonContent.Create(post_data));
+            var response = await authenticated_client.PostAsync("/_matrix/client/r0/account/3pid/" + endpoint, JsonContent.Create(post_data), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
@@ -670,7 +670,7 @@ namespace MocktrixTests
                 id_access_token = "some_string"
             };
 
-            var response = await client.PostAsync("/_matrix/client/r0/account/3pid/email/requestToken", JsonContent.Create(postData));
+            var response = await client.PostAsync("/_matrix/client/r0/account/3pid/email/requestToken", JsonContent.Create(postData), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -698,7 +698,7 @@ namespace MocktrixTests
                 id_access_token = "some_string"
             };
 
-            var response = await client.PostAsync("/_matrix/client/r0/account/3pid/msisdn/requestToken", JsonContent.Create(postData));
+            var response = await client.PostAsync("/_matrix/client/r0/account/3pid/msisdn/requestToken", JsonContent.Create(postData), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -715,7 +715,7 @@ namespace MocktrixTests
         [Fact]
         public async Task TestWhoami_NoAuthorization()
         {
-            var response = await client.GetAsync("/_matrix/client/r0/account/whoami");
+            var response = await client.GetAsync("/_matrix/client/r0/account/whoami", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -738,7 +738,7 @@ namespace MocktrixTests
                 BaseAddress = Utilities.BaseAddress
             };
             unauthenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer foobar");
-            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/account/whoami");
+            var response = await unauthenticated_client.GetAsync("/_matrix/client/r0/account/whoami", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
@@ -767,7 +767,7 @@ namespace MocktrixTests
             };
             authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
 
-            var response = await authenticated_client.GetAsync("/_matrix/client/r0/account/whoami");
+            var response = await authenticated_client.GetAsync("/_matrix/client/r0/account/whoami", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
 
