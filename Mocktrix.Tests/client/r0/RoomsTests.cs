@@ -601,7 +601,7 @@ namespace MocktrixTests
             Assert.Equal("{}", content);
 
             // Check new value.
-            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_priv%3Amatrix.example.org", TestContext.Current.CancellationToken);
+            response = await client.GetAsync("/_matrix/client/r0/directory/list/room/%21visibility_test_room_no_change%3Amatrix.example.org", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             var expected = new
