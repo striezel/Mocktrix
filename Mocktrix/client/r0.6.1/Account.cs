@@ -103,6 +103,39 @@ namespace Mocktrix.client.r0_6_1
 
 
         /// <summary>
+        /// Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-3pid,
+        /// i.e. gets list of associated third-party ids for the user id
+        /// associated with an access token.
+        /// </summary>
+        private static IResult GetAssociatedThreePIDs(HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            // Third-party ids are not implemented, so the list is always empty.
+            return Results.Ok(new { threepid = new List<object>(0) { } });
+        }
+
+
+        /// <summary>
         /// Adds account management endpoint to the web application.
         /// </summary>
         /// <param name="app">the app to which the endpoint shall be added</param>
@@ -352,7 +385,6 @@ namespace Mocktrix.client.r0_6_1
                 var all_tokens_of_user = Database.Memory.AccessTokens.FindByUser(token.user_id);
                 foreach (var revokable_token in all_tokens_of_user)
                 {
-
                     // Revoke access token.
                     _ = Database.Memory.AccessTokens.Revoke(revokable_token.token);
                     // Delete the associated device.
@@ -363,35 +395,10 @@ namespace Mocktrix.client.r0_6_1
                 return Results.Ok(new { id_server_unbind_result = "success" });
             });
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-3pid,
+            // Adds https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-3pid,
             // i.e. gets list of associated third-party ids for the user id
             // associated with an access token.
-            app.MapGet("/_matrix/client/r0/account/3pid", (HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                // Third-party ids are not implemented, so the list is always empty.
-                return Results.Ok(new { threepid = new List<object>(0) { } });
-            });
+            app.MapGet("/_matrix/client/r0/account/3pid", GetAssociatedThreePIDs);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-add
             // by not allowing it.
