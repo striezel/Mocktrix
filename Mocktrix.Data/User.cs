@@ -57,7 +57,7 @@ namespace Mocktrix.Data
 
 
         /// <summary>
-        /// Whether the user account is inactive, because it has been dectivated.
+        /// Whether the user account is inactive, because it has been deactivated.
         /// </summary>
         public bool inactive = false;
     }
