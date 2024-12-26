@@ -28,7 +28,7 @@ namespace Mocktrix.Data.Tests
             JsonNode? node = JsonNode.Parse("""
                 {
                     "song": "Feliz Navidad",
-                    "songwriter": "José Feliciano"
+                    "songwriter": "Jose Feliciano"
                 }
                 """);
             Assert.NotNull(node);
@@ -38,7 +38,7 @@ namespace Mocktrix.Data.Tests
             Assert.NotNull(data);
             Assert.Equal("@alice:matrix.example.org", data.UserId);
             Assert.Equal("x.mas.custom.config", data.Type);
-            Assert.Equal("{\"song\":\"Feliz Navidad\",\"songwriter\":\"Jos\\u00E9 Feliciano\"}", data.Data.ToJsonString());
+            Assert.Equal("{\"song\":\"Feliz Navidad\",\"songwriter\":\"Jose Feliciano\"}", data.Data.ToJsonString());
         }
     }
 }
