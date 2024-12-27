@@ -73,7 +73,7 @@ namespace Mocktrix.client.r0_6_1
         }
 
         /// <summary>
-        ///Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
+        /// Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
         /// i.e. the endpoint to get information about a specific device.
         /// </summary>
         private static IResult SingleDeviceInfo(string deviceId, HttpContext context)
@@ -120,6 +120,225 @@ namespace Mocktrix.client.r0_6_1
         }
 
         /// <summary>
+        /// Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-devices-deviceid,
+        /// i.e. the possibility to chance the display name of a device.
+        /// </summary>
+        /// <param name="deviceId">id of the device to update</param>
+        private static async Task<IResult> ChangeDeviceName(string deviceId, HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+            if (dev == null)
+            {
+                return Results.NotFound(new ErrorResponse
+                {
+                    errcode = "M_NOT_FOUND",
+                    error = "Device not found"
+                });
+            }
+
+            var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
+            {
+                AllowTrailingCommas = true,
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+            };
+            DeviceNameChangeData? data = null;
+            try
+            {
+                data = await context.Request.ReadFromJsonAsync<DeviceNameChangeData>(options);
+            }
+            catch (Exception)
+            {
+                data = null;
+            }
+
+            if (data == null)
+            {
+                return Results.BadRequest(new ErrorResponse
+                {
+                    errcode = "M_NOT_JSON",
+                    error = "The request does not contain JSON or contains invalid JSON."
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(data.DisplayName))
+            {
+                dev.display_name = data.DisplayName;
+            }
+
+            // Update done.
+            return Results.Ok(new { });
+        }
+
+        /// <summary>
+        /// Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-devices-deviceid,
+        /// i.e. the endpoint to remove a specific device and the corresponding
+        /// access token.
+        /// </summary>
+        /// <param name="deviceId">id of the device to delete</param>
+        private static async Task<IResult> DeleteSingleDevice(string deviceId, HttpContext context)
+        {
+            var access_token = Utilities.GetAccessToken(context);
+            if (string.IsNullOrWhiteSpace(access_token))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_MISSING_TOKEN",
+                    error = "Missing access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+            var token = Database.Memory.AccessTokens.Find(access_token);
+            if (token == null)
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN_TOKEN",
+                    error = "Unrecognized access token."
+                };
+                return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
+            if (dev == null)
+            {
+                // As per specification, status code 200 is also send for a
+                // device that cannot be found, because the assumption is
+                // that it was deleted earlier. Assumption is not that it
+                // never existed in the first place.
+                return Results.Ok(new { });
+            }
+
+            // Note: Device deletion uses the user-interactive
+            // authentication API and requires the user to re-submit the
+            // current password for the account.
+            //
+            // A possible response could be HTTP 401 and then:
+            // {
+            //  "session": "random server-generated session ID here",
+            //  "flows": [{
+            //    "stages": ["m.login.password"]
+            //  }],
+            //  "params": {}
+            // }
+            //
+            // Then the client has to resubmit the request, but with auth
+            // data containing the current password, for example:
+            // {
+            //   "auth": {
+            //     "type": "m.login.password",
+            //     "session": "same session ID that the server gave",
+            //     "password": "the actual secret password"
+            //   }
+            // }
+            //
+            // Then the actual deletion can be performed.
+
+            var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
+            {
+                AllowTrailingCommas = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+            };
+            DeviceDeletionData? data;
+            try
+            {
+                data = await context.Request.ReadFromJsonAsync<DeviceDeletionData>(options);
+            }
+            catch (Exception)
+            {
+                data = null;
+            }
+            if (data == null)
+            {
+                return Results.BadRequest(new ErrorResponse
+                {
+                    errcode = "M_NOT_JSON",
+                    error = "The request does not contain JSON or contains invalid JSON."
+                });
+            }
+            if (data.Auth == null || data.Auth.Type != "m.login.password")
+            {
+                // Data for available flows looks like:
+                // {
+                //  "session": "random server-generated session ID here",
+                //  "flows": [{
+                //    "stages": ["m.login.password"]
+                //  }],
+                //  "params": {}
+                // }
+                var response = new
+                {
+                    session = RandomNumberGenerator.GetString("abcdefghijklmnopqrstuvwxyz", 16),
+                    flows = new[]
+                    {
+                          new
+                          {
+                              stages = new[] { "m.login.password" }
+                          }
+                        },
+                    @params = new { }
+                };
+                return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
+            // Find user and check password.
+            var user = Database.Memory.Users.GetUser(token.user_id);
+            if (user == null)
+            {
+                // Should never happen. We either have a bug or memory corruption,
+                // if this branch is ever taken.
+                var response = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN",
+                    error = "User not found."
+                };
+                return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
+            }
+            // Verify password.
+            if (string.IsNullOrWhiteSpace(data.Auth.Password) ||
+                utilities.Hashing.HashPassword(data.Auth.Password, user.salt) != user.password_hash)
+            {
+                return Results.Json(new ErrorResponse
+                {
+                    errcode = "M_FORBIDDEN",
+                    error = "Invalid password."
+                },
+                statusCode: StatusCodes.Status403Forbidden);
+            }
+
+            // Device was found. Now find associated access token and revoke it.
+            var token_to_revoke = Database.Memory.AccessTokens.FindByUserAndDevice(dev.user_id, deviceId);
+            if (token_to_revoke != null)
+            {
+                Database.Memory.AccessTokens.Revoke(token_to_revoke.token);
+            }
+            // Delete device.
+            _ = Database.Memory.Devices.Remove(dev.device_id, token.user_id);
+            return Results.Ok(new { });
+        }
+
+        /// <summary>
         /// Adds device management endpoints to the web application.
         /// </summary>
         /// <param name="app">the app to which the endpoint shall be added</param>
@@ -129,223 +348,18 @@ namespace Mocktrix.client.r0_6_1
             // i.e. the endpoint to list all devices of the user.
             app.MapGet("/_matrix/client/r0/devices", ListDevicesOfUser);
 
-
             // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-devices-deviceid,
             // i.e. the endpoint to get information about a specific device.
             app.MapGet("/_matrix/client/r0/devices/{deviceId}", SingleDeviceInfo);
 
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-devices-deviceid,
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-devices-deviceid,
             // i.e. the possibility to chance the display name of a device.
-            app.MapPut("/_matrix/client/r0/devices/{deviceId}", async (string deviceId, HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
+            app.MapPut("/_matrix/client/r0/devices/{deviceId}", ChangeDeviceName);
 
-                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
-                if (dev == null)
-                {
-                    return Results.NotFound(new ErrorResponse
-                    {
-                        errcode = "M_NOT_FOUND",
-                        error = "Device not found"
-                    });
-                }
-
-                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
-                {
-                    AllowTrailingCommas = true,
-                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-                };
-                DeviceNameChangeData? data = null;
-                try
-                {
-                    data = await context.Request.ReadFromJsonAsync<DeviceNameChangeData>(options);
-                }
-                catch (Exception)
-                {
-                    data = null;
-                }
-
-                if (data == null)
-                {
-                    return Results.BadRequest(new ErrorResponse
-                    {
-                        errcode = "M_NOT_JSON",
-                        error = "The request does not contain JSON or contains invalid JSON."
-                    });
-                }
-
-                if (!string.IsNullOrWhiteSpace(data.DisplayName))
-                {
-                    dev.display_name = data.DisplayName;
-                }
-
-                // Update done.
-                return Results.Ok(new { });
-            });
-
-            // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-devices-deviceid,
+            // Add https://spec.matrix.org/historical/client_server/r0.6.1.html#delete-matrix-client-r0-devices-deviceid,
             // i.e. the endpoint to remove a specific device and the
             // corresponding access token.
-            app.MapDelete("/_matrix/client/r0/devices/{deviceId}", async (string deviceId, HttpContext context) =>
-            {
-                var access_token = Utilities.GetAccessToken(context);
-                if (string.IsNullOrWhiteSpace(access_token))
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_MISSING_TOKEN",
-                        error = "Missing access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-                var token = Database.Memory.AccessTokens.Find(access_token);
-                if (token == null)
-                {
-                    var error = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN_TOKEN",
-                        error = "Unrecognized access token."
-                    };
-                    return Results.Json(error, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                Data.Device? dev = Database.Memory.Devices.GetDevice(deviceId, token.user_id);
-                if (dev == null)
-                {
-                    // As per specification, status code 200 is also send for a
-                    // device that cannot be found, because the assumption is
-                    // that it was deleted earlier. Assumption is not that it
-                    // never existed in the first place.
-                    return Results.Ok(new { });
-                }
-
-                // Note: Device deletion uses the user-interactive
-                // authentication API and requires the user to re-submit the
-                // current password for the account.
-                //
-                // A possible response could be HTTP 401 and then:
-                // {
-                //  "session": "random server-generated session ID here",
-                //  "flows": [{
-                //    "stages": ["m.login.password"]
-                //  }],
-                //  "params": {}
-                // }
-                //
-                // Then the client has to resubmit the request, but with auth
-                // data containing the current password, for example:
-                // {
-                //   "auth": {
-                //     "type": "m.login.password",
-                //     "session": "same session ID that the server gave",
-                //     "password": "the actual secret password"
-                //   }
-                // }
-                //
-                // Then the actual deletion can be performed.
-
-                var options = new JsonSerializerOptions(JsonSerializerOptions.Default)
-                {
-                    AllowTrailingCommas = true,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-                };
-                DeviceDeletionData? data;
-                try
-                {
-                    data = await context.Request.ReadFromJsonAsync<DeviceDeletionData>(options);
-                }
-                catch (Exception)
-                {
-                    data = null;
-                }
-                if (data == null)
-                {
-                    return Results.BadRequest(new ErrorResponse
-                    {
-                        errcode = "M_NOT_JSON",
-                        error = "The request does not contain JSON or contains invalid JSON."
-                    });
-                }
-                if (data.Auth == null || data.Auth.Type != "m.login.password")
-                {
-                    // Data for available flows looks like:
-                    // {
-                    //  "session": "random server-generated session ID here",
-                    //  "flows": [{
-                    //    "stages": ["m.login.password"]
-                    //  }],
-                    //  "params": {}
-                    // }
-                    var response = new
-                    {
-                        session = RandomNumberGenerator.GetString("abcdefghijklmnopqrstuvwxyz", 16),
-                        flows = new[]
-                        {
-                          new
-                          {
-                              stages = new[] { "m.login.password" }
-                          }
-                        },
-                        @params = new { }
-                    };
-                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
-                }
-
-                // Find user and check password.
-                var user = Database.Memory.Users.GetUser(token.user_id);
-                if (user == null)
-                {
-                    // Should never happen. We either have a bug or memory corruption,
-                    // if this branch is ever taken.
-                    var response = new ErrorResponse
-                    {
-                        errcode = "M_UNKNOWN",
-                        error = "User not found."
-                    };
-                    return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
-                }
-                // Verify password.
-                if (string.IsNullOrWhiteSpace(data.Auth.Password) ||
-                    utilities.Hashing.HashPassword(data.Auth.Password, user.salt) != user.password_hash)
-                {
-                    return Results.Json(new ErrorResponse
-                    {
-                        errcode = "M_FORBIDDEN",
-                        error = "Invalid password."
-                    },
-                    statusCode: StatusCodes.Status403Forbidden);
-                }
-
-                // Device was found. Now find associated access token and revoke it.
-                var token_to_revoke = Database.Memory.AccessTokens.FindByUserAndDevice(dev.user_id, deviceId);
-                if (token_to_revoke != null)
-                {
-                    Database.Memory.AccessTokens.Revoke(token_to_revoke.token);
-                }
-                // Delete device.
-                _ = Database.Memory.Devices.Remove(dev.device_id, token.user_id);
-                return Results.Ok(new { });
-            });
+            app.MapDelete("/_matrix/client/r0/devices/{deviceId}", DeleteSingleDevice);
 
             // Implement https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-delete-devices,
             // i.e. the endpoint to delete a list of specified devices and
