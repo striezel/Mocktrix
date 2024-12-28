@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text.Json.Nodes;
+
 namespace Mocktrix
 {
     /// <summary>
@@ -61,6 +63,7 @@ namespace Mocktrix
 
             AddRoomData(base_address);
             AddTagData(base_address);
+            AddClientConfigData(base_address);
         }
 
         private static void AddProfileTestData(Uri base_address)
@@ -162,6 +165,22 @@ namespace Mocktrix
             _ = Database.Memory.Rooms.Create(room_to_change_tag_id, tag_user_id, "1", false);
             Database.Memory.RoomMemberships.Create(room_to_change_tag_id, tag_user.user_id, Enums.Membership.Join);
             Database.Memory.Tags.Create(tag_user_id, room_to_change_tag_id, "u.existing", 0.5);
+        }
+
+
+        private static void AddClientConfigData(Uri base_address)
+        {
+            string user_id = "@account_data_user:" + base_address.Host;
+            var account_data_user = Database.Memory.Users.CreateUser(user_id, "secret password");
+
+            JsonNode? node = JsonNode.Parse("""
+                {
+                    "snow": "glistening",
+                    "sleigh_bells": "ring, ring",
+                    "building_snowman": true
+                }
+                """);
+            _ = Database.Memory.ConfigData.Create(user_id, "x.mas.song", node!);
         }
     }
 }
