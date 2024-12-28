@@ -18,7 +18,7 @@
 
 using System.Net;
 
-namespace MocktrixTests
+namespace MocktrixTests.client
 {
     public class VersionsTests
     {

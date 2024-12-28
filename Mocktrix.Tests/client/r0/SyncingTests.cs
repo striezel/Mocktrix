@@ -18,7 +18,7 @@
 
 using System.Net;
 
-namespace MocktrixTests
+namespace MocktrixTests.client.r0
 {
     public class SyncingTests
     {

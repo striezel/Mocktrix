@@ -19,7 +19,7 @@
 using Mocktrix.Protocol.Types;
 using System.Net;
 
-namespace MocktrixTests
+namespace MocktrixTests.client
 {
     public class ServerDiscoveryTests
     {

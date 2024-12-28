@@ -20,7 +20,7 @@ using Mocktrix.Events;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace MocktrixTests
+namespace MocktrixTests.client.r0
 {
     public class TagsTests
     {
