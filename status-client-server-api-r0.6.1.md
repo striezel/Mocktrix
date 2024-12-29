@@ -420,7 +420,8 @@ TODO
 
 #### 13.19.3 Server Behaviour
 
-❌ Not implemented yet.
+🚧 Rejection of server-managed types is currently only implemented for the
+endpoints in 13.19.2.1 and 13.19.2.2.
 
 ### 13.20 Server Administration
 

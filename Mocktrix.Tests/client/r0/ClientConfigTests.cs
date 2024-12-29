@@ -357,5 +357,35 @@ namespace MocktrixTests.client.r0
             plain_json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Equal("{\"oh\":\"Tannenbaum\",\"oh2\":\"Tannenbaum\",\"en\":\"Oh, christmas tree\"}", plain_json);
         }
+
+        [Fact]
+        public async Task TestSetClientData_RejectServerManagedType()
+        {
+            // We need to be logged in and have an access token before we can
+            // use the endpoint. So let's do the login first.
+            var access_token = await Utilities.PerformLogin(client, "account_data_user");
+
+            HttpClient authenticated_client = new()
+            {
+                BaseAddress = Utilities.BaseAddress
+            };
+            authenticated_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + access_token);
+
+            var data = new { event_id = "$what_ever:matrix.example.org" };
+            var response = await authenticated_client.PutAsync("/_matrix/client/r0/user/%40account_data_user%3A" + Utilities.BaseAddress.Host + "/account_data/m.fully_read",
+                JsonContent.Create(data), TestContext.Current.CancellationToken);
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            var expected = new
+            {
+                errcode = "M_UNKNOWN",
+                error = "The m.fully_read type cannot be set via this API."
+            };
+
+            var content = Utilities.GetContent(response, expected);
+            Assert.Equal(expected.errcode, content.errcode);
+            Assert.Equal(expected.error, content.error);
+        }
     }
 }

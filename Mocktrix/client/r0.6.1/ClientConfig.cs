@@ -80,6 +80,21 @@ namespace Mocktrix.client.r0_6_1
 
 
         /// <summary>
+        /// Checks whether a data type is managed by the server.
+        /// </summary>
+        /// <param name="type">the type to check</param>
+        /// <returns>Returns true, if the type is managed by the server.
+        /// Returns false otherwise.</returns>
+        private static bool IsServerManagedType(string type)
+        {
+            // In version r.0.6.1 of the client-server specification of the
+            // Matrix protocol, the only type that is managed by the server is
+            // "m.fully_read".
+            return type == "m.fully_read";
+        }
+
+
+        /// <summary>
         /// Implements https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-account-data-type,
         /// i. e. the endpoint to set account data for the client.
         /// </summary>
@@ -115,6 +130,17 @@ namespace Mocktrix.client.r0_6_1
                     error = "You cannot set account data of another user."
                 };
                 return Results.Json(error, statusCode: StatusCodes.Status403Forbidden);
+            }
+
+            // Server-managed types must be rejected, as per specification.
+            if (IsServerManagedType(type))
+            {
+                var error = new ErrorResponse
+                {
+                    errcode = "M_UNKNOWN",
+                    error = "The m.fully_read type cannot be set via this API."
+                };
+                return Results.BadRequest(error);
             }
 
             JsonNode? node;
