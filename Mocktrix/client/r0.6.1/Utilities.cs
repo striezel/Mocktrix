@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
+
 namespace Mocktrix.client.r0_6_1
 {
     /// <summary>
@@ -43,6 +45,28 @@ namespace Mocktrix.client.r0_6_1
 
             // No Authorization header present, so no access token is there.
             return null;
+        }
+
+        /// <summary>
+        /// Reads the whole body of a request into a string.
+        /// </summary>
+        /// <param name="context">context of the incoming request</param>
+        /// <returns>Returns the content of the request body as string.</returns>
+        public static async Task<string> GetRequestBodyAsString(HttpContext context)
+        {
+            if (!context.Request.Body.CanSeek)
+            {
+                context.Request.EnableBuffering();
+            }
+            context.Request.Body.Position = 0;
+
+            var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
+            var body = await reader.ReadToEndAsync();
+
+            // Rewind, in case somebody else uses it later.
+            context.Request.Body.Position = 0;
+
+            return body;
         }
     }
 }

@@ -413,7 +413,7 @@ TODO
 
 #### 13.19.2 Client Behaviour
 
-* ❌ 13.19.2.1 [PUT /_matrix/client/r0/user/{userId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-account-data-type)
+* ✅ 13.19.2.1 [PUT /_matrix/client/r0/user/{userId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-account-data-type)
 * ✅ 13.19.2.2 [GET /_matrix/client/r0/user/{userId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-user-userid-account-data-type)
 * ❌ 13.19.2.3 [PUT /_matrix/client/r0/user/{userId}/rooms/{roomId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-rooms-roomid-account-data-type)
 * ❌ 13.19.2.4 [GET /_matrix/client/r0/user/{userId}/rooms/{roomId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-user-userid-rooms-roomid-account-data-type)
