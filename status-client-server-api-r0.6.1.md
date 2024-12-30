@@ -415,13 +415,13 @@ TODO
 
 * ✅ 13.19.2.1 [PUT /_matrix/client/r0/user/{userId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-account-data-type)
 * ✅ 13.19.2.2 [GET /_matrix/client/r0/user/{userId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-user-userid-account-data-type)
-* ❌ 13.19.2.3 [PUT /_matrix/client/r0/user/{userId}/rooms/{roomId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-rooms-roomid-account-data-type)
+* ✅ 13.19.2.3 [PUT /_matrix/client/r0/user/{userId}/rooms/{roomId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#put-matrix-client-r0-user-userid-rooms-roomid-account-data-type)
 * ✅ 13.19.2.4 [GET /_matrix/client/r0/user/{userId}/rooms/{roomId}/account_data/{type}](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-user-userid-rooms-roomid-account-data-type)
 
 #### 13.19.3 Server Behaviour
 
-🚧 Rejection of setting server-managed types is currently only implemented for the
-endpoint in 13.19.2.2.
+✅ The server prevents clients from setting account data for server-managed types
+  (currently only `m.fully_read`).
 
 ### 13.20 Server Administration
 
