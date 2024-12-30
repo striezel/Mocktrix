@@ -47,7 +47,7 @@ namespace Mocktrix.Data
         public string Type { get; set; } = type;
 
         /// <summary>
-        /// The configuration data for the given user and type.
+        /// The configuration data for the given user and room and type.
         /// </summary>
         public JsonNode Data { get; set; } = data;
     }

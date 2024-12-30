@@ -173,14 +173,30 @@ namespace Mocktrix
             string user_id = "@account_data_user:" + base_address.Host;
             var account_data_user = Database.Memory.Users.CreateUser(user_id, "secret password");
 
-            JsonNode? node = JsonNode.Parse("""
+            {
+                JsonNode? node = JsonNode.Parse("""
                 {
                     "snow": "glistening",
                     "sleigh_bells": "ring, ring",
                     "building_snowman": true
                 }
                 """);
-            _ = Database.Memory.ConfigData.Create(user_id, "x.mas.song", node!);
+                _ = Database.Memory.ConfigData.Create(user_id, "x.mas.song", node!);
+            }
+
+            {
+                JsonNode? node = JsonNode.Parse("""
+                {
+                    "snow": "glistening",
+                    "sleigh_bells": "ring, ring, ring",
+                    "building_snowman": true
+                }
+                """);
+                const string room_id = "!account_data_room:matrix.example.org";
+                _ = Database.Memory.Rooms.Create(room_id, user_id, "1", false);
+                _ = Database.Memory.RoomMemberships.Create(room_id, account_data_user.user_id, Enums.Membership.Join);
+                _ = Database.Memory.RoomConfigData.Create(user_id, room_id, "org.snow.data", node!);
+            }
         }
     }
 }
