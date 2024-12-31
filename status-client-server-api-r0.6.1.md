@@ -9,6 +9,7 @@ Legend:
 * ✅ - implemented
 * 🚧 - partially implemented / work in progress
 * ❌ - not implemented yet
+* 🗑️ - deprecated according to the specification, will not be implemented
 
 Note: The parts that are marked as deprecated by the specification will not get
 implemented.
@@ -55,7 +56,7 @@ passwords with error code `M_WEAK_PASSWORD`.
 ### 5.7 Adding Account Administrative Contact Information
 
 * ✅ 5.7.1 [GET /_matrix/client/r0/account/3pid](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-account-3pid)
-* ❌ 5.7.2 [Deprecated: POST /_matrix/client/r0/account/3pid](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-post-matrix-client-r0-account-3pid)
+* 🗑️ 5.7.2 [Deprecated: POST /_matrix/client/r0/account/3pid](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-post-matrix-client-r0-account-3pid)
 * ✅ 5.7.3 [POST /_matrix/client/r0/account/3pid/add](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-add)
 * ✅ 5.7.4 [POST /_matrix/client/r0/account/3pid/bind](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-bind)
 * ✅ 5.7.5 [POST /_matrix/client/r0/account/3pid/delete](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-account-3pid-delete)
@@ -113,9 +114,9 @@ passwords with error code `M_WEAK_PASSWORD`.
 ### 9.4 Syncing
 
 * 🚧 9.4.1 [GET /_matrix/client/r0/sync](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-sync)
-* ❌ 9.4.2 [Deprecated: GET /_matrix/client/r0/events](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-events)
-* ❌ 9.4.3 [Deprecated: GET /_matrix/client/r0/initialSync](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-initialsync)
-* ❌ 9.4.4 [Deprecated: GET /_matrix/client/r0/events/{eventId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-events-eventid)
+* 🗑️ 9.4.2 [Deprecated: GET /_matrix/client/r0/events](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-events)
+* 🗑️ 9.4.3 [Deprecated: GET /_matrix/client/r0/initialSync](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-initialsync)
+* 🗑️ 9.4.4 [Deprecated: GET /_matrix/client/r0/events/{eventId}](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-events-eventid)
 
 ### 9.5 Getting events for a room
 
@@ -125,7 +126,7 @@ passwords with error code `M_WEAK_PASSWORD`.
 * ❌ 9.5.4 [GET /_matrix/client/r0/rooms/{roomId}/members](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-members)
 * ❌ 9.5.5 [GET /_matrix/client/r0/rooms/{roomId}/joined_members](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-joined-members)
 * ❌ 9.5.6 [GET /_matrix/client/r0/rooms/{roomId}/messages](https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-rooms-roomid-messages)
-* ❌ 9.5.7 [Deprecated: GET /_matrix/client/r0/rooms/{roomId}/initialSync](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-rooms-roomid-initialsync)
+* 🗑️ 9.5.7 [Deprecated: GET /_matrix/client/r0/rooms/{roomId}/initialSync](https://spec.matrix.org/historical/client_server/r0.6.1.html#deprecated-get-matrix-client-r0-rooms-roomid-initialsync)
 
 ### 9.6 Sending events to a room
 
