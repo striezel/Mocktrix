@@ -17,6 +17,7 @@
 */
 
 using Mocktrix.Protocol.Types;
+using Mocktrix.Protocol.Types.Sync;
 
 namespace Mocktrix.client.r0_6_1
 {
@@ -25,6 +26,34 @@ namespace Mocktrix.client.r0_6_1
     /// </summary>
     public static class Syncing
     {
+        /// <summary>
+        /// Adds user-specific account data to the sync response, if any such
+        /// data is set.
+        /// </summary>
+        /// <param name="user_id">id of the Matrix user, e. g. "@alice:matrix.example.org"</param>
+        /// <param name="response">the response object to fill with data</param>
+        private static void PrepareAccountData(string user_id, SyncResponse response)
+        {
+            var config_data = Database.Memory.ConfigData.GetAllConfigData(user_id);
+            if (config_data.Count > 0)
+            {
+                response.AccountData = new AccountData()
+                {
+                    Events = new List<ConfigDataEvent>(config_data.Count)
+                };
+                foreach (var entry in config_data)
+                {
+                    var ev = new ConfigDataEvent()
+                    {
+                        Content = entry.Data,
+                        Type = entry.Type
+                    };
+                    response.AccountData.Events.Add(ev);
+                }
+            }
+        }
+
+
         /// <summary>
         /// Mock https://spec.matrix.org/historical/client_server/r0.6.1.html#get-matrix-client-r0-sync,
         /// i.e. the endpoint to sync events.
@@ -53,7 +82,19 @@ namespace Mocktrix.client.r0_6_1
             }
 
             // Return empty event list.
-            return Results.Ok(new { next_batch = "not_implemented" });
+            var response = new SyncResponse()
+            {
+                AccountData = null,
+
+                // Pagination by using next_batch values in the since parameter
+                // to subsequent requests is not implemented yet.
+                NextBatch = "not_implemented"
+            };
+
+            // Prepare "account_data", if any such data is set.
+            PrepareAccountData(token.user_id, response);
+
+            return Results.Ok(response);
         }
 
         /// <summary>

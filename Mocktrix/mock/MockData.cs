@@ -64,6 +64,7 @@ namespace Mocktrix
             AddRoomData(base_address);
             AddTagData(base_address);
             AddClientConfigData(base_address);
+            AddSyncData(base_address);
         }
 
         private static void AddProfileTestData(Uri base_address)
@@ -196,6 +197,32 @@ namespace Mocktrix
                 _ = Database.Memory.Rooms.Create(room_id, user_id, "1", false);
                 _ = Database.Memory.RoomMemberships.Create(room_id, account_data_user.user_id, Enums.Membership.Join);
                 _ = Database.Memory.RoomConfigData.Create(user_id, room_id, "org.snow.data", node!);
+            }
+        }
+
+        private static void AddSyncData(Uri base_address)
+        {
+            string sync_user_id = "@sync_user_with_account_data:" + base_address.Host;
+            _ = Database.Memory.Users.CreateUser(sync_user_id, "secret password");
+
+            {
+                JsonNode? node = JsonNode.Parse("""
+                {
+                    "foo": "bar",
+                    "baz": "quux"
+                }
+                """);
+                _ = Database.Memory.ConfigData.Create(sync_user_id, "org.example.foo", node!);
+            }
+
+            {
+                JsonNode? node = JsonNode.Parse("""
+                {
+                    "hey": "there",
+                    "go": true
+                }
+                """);
+                _ = Database.Memory.ConfigData.Create(sync_user_id, "org.test.hey", node!);
             }
         }
     }

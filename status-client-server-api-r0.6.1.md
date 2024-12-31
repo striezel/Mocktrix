@@ -409,7 +409,8 @@ TODO
 
 #### 13.19.1 Events
 
-❌ Not implemented yet.
+🚧 Partially implemented. Only global account data is returned by the `/sync`
+  endpoint. Room-specific account data is not returned (yet).
 
 #### 13.19.2 Client Behaviour
 
