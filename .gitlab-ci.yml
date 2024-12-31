@@ -3,6 +3,8 @@
 image: mcr.microsoft.com/dotnet/sdk:8.0
 
 build:
+  variables:
+    GIT_DEPTH: "0"
   stage: build
   before_script:
     - apt-get update && apt-get upgrade -y
