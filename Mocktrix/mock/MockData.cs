@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2025  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -205,6 +205,7 @@ namespace Mocktrix
             string sync_user_id = "@sync_user_with_account_data:" + base_address.Host;
             _ = Database.Memory.Users.CreateUser(sync_user_id, "secret password");
 
+            // user-specific config data
             {
                 JsonNode? node = JsonNode.Parse("""
                 {
@@ -223,6 +224,37 @@ namespace Mocktrix
                 }
                 """);
                 _ = Database.Memory.ConfigData.Create(sync_user_id, "org.test.hey", node!);
+            }
+
+            // room-specific config data
+            {
+                const string joined_room_id = "!joined_room_with_account_data:matrix.example.org";
+                _ = Database.Memory.Rooms.Create(joined_room_id, sync_user_id, "1", false);
+                _ = Database.Memory.RoomMemberships.Create(joined_room_id, sync_user_id, Enums.Membership.Join);
+                {
+                    JsonNode? node = JsonNode.Parse("""
+                    {
+                        "what": "joined room config data",
+                        "count": 3
+                    }
+                    """);
+                    _ = Database.Memory.RoomConfigData.Create(sync_user_id, joined_room_id, "test.join.data", node!);
+                }
+            }
+
+            {
+                const string left_room_id = "!left_room_with_account_data:matrix.example.org";
+                _ = Database.Memory.Rooms.Create(left_room_id, sync_user_id, "1", false);
+                _ = Database.Memory.RoomMemberships.Create(left_room_id, sync_user_id, Enums.Membership.Leave);
+                {
+                    JsonNode? node = JsonNode.Parse("""
+                    {
+                        "what": "left room config data",
+                        "count": 5
+                    }
+                    """);
+                    _ = Database.Memory.RoomConfigData.Create(sync_user_id, left_room_id, "test.leave.data", node!);
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of test suite for Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2025  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,17 +21,32 @@ using System.Text.Json.Nodes;
 
 namespace MocktrixTests.client.r0
 {
+#pragma warning disable IDE1006 // naming style
     /// <summary>
     /// Class to test account data events in a /sync response.
     /// </summary>
     internal class AccountDataEvent
     {
-#pragma warning disable IDE1006 // naming style
         public JsonNode? content { get; set; } = null;
         public string? type { get; set; } = null;
-#pragma warning restore IDE1006 // naming style
     }
 
+    /// <summary>
+    /// Class to test room-specific data in a /sync response.
+    /// </summary>
+    internal class PseudoRoom
+    {
+        public AccountDataInRoom? account_data { get; set; } = null;
+    }
+
+    /// <summary>
+    /// Class to test room-specific account data events in a /sync response.
+    /// </summary>
+    internal class AccountDataInRoom
+    {
+        public List<AccountDataEvent>? events { get; set; } = null;
+    }
+#pragma warning restore IDE1006 // naming style
 
     public class SyncingTests
     {
@@ -121,9 +136,11 @@ namespace MocktrixTests.client.r0
             var foo_object = JsonNode.Parse("{\"foo\":\"bar\",\"baz\":\"quux\"}");
             var hey_object = JsonNode.Parse("{\"hey\":\"there\",\"go\":true}");
 
+            var join_object = JsonNode.Parse("{\"what\":\"joined room config data\",\"count\":3}");
+            var left_object = JsonNode.Parse("{\"what\":\"left room config data\",\"count\":5}");
+
             var expected = new
             {
-                next_batch = "not_implemented",
                 account_data = new
                 {
                     events = new List<AccountDataEvent>
@@ -139,9 +156,52 @@ namespace MocktrixTests.client.r0
                             type = "org.test.hey"
                         }
                     }
+                },
+                next_batch = "not_implemented",
+                rooms = new
+                {
+                    join = new Dictionary<string, PseudoRoom>
+                     {
+                        {
+                            "!joined_room_with_account_data:matrix.example.org",
+                            new PseudoRoom()
+                            {
+                                account_data = new AccountDataInRoom()
+                                {
+                                    events =
+                                    [
+                                        new()
+                                        {
+                                            content = join_object,
+                                            type = "test.join.data"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    leave = new Dictionary<string, PseudoRoom>
+                    {
+                        {
+                            "!left_room_with_account_data:matrix.example.org",
+                            new PseudoRoom()
+                            {
+                                account_data = new()
+                                {
+                                    events =
+                                    [
+                                        new()
+                                        {
+                                            content = left_object,
+                                            type = "test.leave.data"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
                 }
             };
-
 
             var content = Utilities.GetContent(response, expected);
             Assert.Equal(expected.next_batch, content.next_batch);
@@ -173,9 +233,50 @@ namespace MocktrixTests.client.r0
                 Assert.True(obj["go"]!.GetValue<bool>());
             }
 
+            Assert.NotNull(content.rooms);
+            Assert.NotNull(content.rooms.join);
+            Assert.Contains("!joined_room_with_account_data:matrix.example.org", content.rooms.join);
+            var joined_room = content.rooms.join["!joined_room_with_account_data:matrix.example.org"];
+            Assert.NotNull(joined_room.account_data);
+            Assert.NotNull(joined_room.account_data.events);
+            Assert.Single(joined_room.account_data.events);
+
+            {
+                var join_event = joined_room.account_data.events[0];
+                Assert.NotNull(join_event);
+                var expected_acc_data = expected.rooms.join["!joined_room_with_account_data:matrix.example.org"].account_data;
+                Assert.NotNull(expected_acc_data);
+                Assert.NotNull(expected_acc_data.events);
+                Assert.Equal(expected_acc_data.events[0].type, join_event.type);
+                var obj = join_event.content as JsonObject;
+                Assert.NotNull(obj);
+                Assert.Equal("joined room config data", obj["what"]!.GetValue<string>());
+                Assert.Equal(3, obj["count"]!.GetValue<int>());
+            }
+
+            Assert.NotNull(content.rooms.leave);
+            Assert.Contains("!left_room_with_account_data:matrix.example.org", content.rooms.leave);
+            var left_room = content.rooms.leave["!left_room_with_account_data:matrix.example.org"];
+            Assert.NotNull(left_room.account_data);
+            Assert.NotNull(left_room.account_data.events);
+            Assert.Single(left_room.account_data.events);
+
+            {
+                var leave_event = left_room.account_data.events[0];
+                Assert.NotNull(leave_event);
+                var expected_acc_data = expected.rooms.leave["!left_room_with_account_data:matrix.example.org"].account_data;
+                Assert.NotNull(expected_acc_data);
+                Assert.NotNull(expected_acc_data.events);
+                Assert.Equal(expected_acc_data.events[0].type, leave_event.type);
+                var obj = leave_event.content as JsonObject;
+                Assert.NotNull(obj);
+                Assert.Equal("left room config data", obj["what"]!.GetValue<string>());
+                Assert.Equal(5, obj["count"]!.GetValue<int>());
+            }
+
             var plain_text = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             // Note: Technically, this assertion could fail, if the order of account_data events changes.
-            Assert.Equal("{\"account_data\":{\"events\":[{\"content\":{\"foo\":\"bar\",\"baz\":\"quux\"},\"type\":\"org.example.foo\"},{\"content\":{\"hey\":\"there\",\"go\":true},\"type\":\"org.test.hey\"}]},\"next_batch\":\"not_implemented\"}", plain_text);
+            Assert.Equal("{\"account_data\":{\"events\":[{\"content\":{\"foo\":\"bar\",\"baz\":\"quux\"},\"type\":\"org.example.foo\"},{\"content\":{\"hey\":\"there\",\"go\":true},\"type\":\"org.test.hey\"}]},\"next_batch\":\"not_implemented\",\"rooms\":{\"join\":{\"!joined_room_with_account_data:matrix.example.org\":{\"account_data\":{\"events\":[{\"content\":{\"what\":\"joined room config data\",\"count\":3},\"type\":\"test.join.data\"}]}}},\"leave\":{\"!left_room_with_account_data:matrix.example.org\":{\"account_data\":{\"events\":[{\"content\":{\"what\":\"left room config data\",\"count\":5},\"type\":\"test.leave.data\"}]}}}}}", plain_text);
         }
     }
 }

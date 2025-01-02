@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2025  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ namespace Mocktrix.client.r0_6_1
         /// </summary>
         /// <param name="user_id">id of the Matrix user, e. g. "@alice:matrix.example.org"</param>
         /// <param name="response">the response object to fill with data</param>
-        private static void PrepareAccountData(string user_id, SyncResponse response)
+        private static void AddGlobalAccountData(string user_id, SyncResponse response)
         {
             var config_data = Database.Memory.ConfigData.GetAllConfigData(user_id);
             if (config_data.Count > 0)
@@ -51,6 +51,109 @@ namespace Mocktrix.client.r0_6_1
                     response.AccountData.Events.Add(ev);
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Adds user-specific account data for joined rooms to the sync response.
+        /// </summary>
+        /// <param name="joined_rooms">list of joined rooms of the user (e. g. membership is "join")</param>
+        /// <param name="response">the response object to add the data to</param>
+        private static void AddJoinedRoomAccountData(List<Data.RoomMembership> joined_rooms, SyncResponse response)
+        {
+            foreach (var membership in joined_rooms)
+            {
+                var data = Database.Memory.RoomConfigData.GetAllConfigData(membership.UserId, membership.RoomId);
+                if (data.Count == 0)
+                {
+                    continue;
+                }
+                response.Rooms ??= new Protocol.Types.Sync.Rooms()
+                {
+                    Joined = []
+                };
+                if (response.Rooms.Joined == null)
+                {
+                    response.Rooms.Joined = [];
+                }
+                var acc_data = new AccountData()
+                {
+                    Events = new List<ConfigDataEvent>(data.Count)
+                };
+                foreach (var entry in data)
+                {
+                    acc_data.Events.Add(new ConfigDataEvent()
+                    {
+                        Content = entry.Data,
+                        Type = entry.Type
+                    });
+                }
+                if (!response.Rooms.Joined.ContainsKey(membership.RoomId))
+                {
+                    response.Rooms.Joined.Add(membership.RoomId, new JoinedRoom());
+                }
+                response.Rooms.Joined[membership.RoomId].AccountData = acc_data;
+            }
+        }
+
+
+        /// <summary>
+        /// Adds user-specific account data for left rooms to the sync response.
+        /// </summary>
+        /// <param name="left_rooms">list of left rooms of the user (e. g. membership is "leave")</param>
+        /// <param name="response">the response object to add the data to</param>
+        private static void AddLeftRoomAccountData(List<Data.RoomMembership> left_rooms, SyncResponse response)
+        {
+            foreach (var membership in left_rooms)
+            {
+                var data = Database.Memory.RoomConfigData.GetAllConfigData(membership.UserId, membership.RoomId);
+                if (data.Count == 0)
+                {
+                    continue;
+                }
+                response.Rooms ??= new Protocol.Types.Sync.Rooms()
+                {
+                    Left = []
+                };
+                if (response.Rooms.Left == null)
+                {
+                    response.Rooms.Left = [];
+                }
+                var acc_data = new AccountData()
+                {
+                    Events = new List<ConfigDataEvent>(data.Count)
+                };
+                foreach (var entry in data)
+                {
+                    acc_data.Events.Add(new ConfigDataEvent()
+                    {
+                        Content = entry.Data,
+                        Type = entry.Type
+                    });
+                }
+                if (!response.Rooms.Left.ContainsKey(membership.RoomId))
+                {
+                    response.Rooms.Left.Add(membership.RoomId, new LeftRoom());
+                }
+                response.Rooms.Left[membership.RoomId].AccountData = acc_data;
+            }
+        }
+
+
+        /// <summary>
+        /// Adds room-related account data to a sync response.
+        /// </summary>
+        /// <param name="user_id">id of the Matrix user, e. g. "@alice:matrix.example.org"</param>
+        /// <param name="response">the response object to fill with data</param>
+        private static void AddRoomAccountData(string user_id, SyncResponse response)
+        {
+            List<Data.RoomMembership> memberships = Database.Memory.RoomMemberships.GetAllMembershipsOfUser(user_id);
+
+            var joined_rooms = memberships.FindAll(m => m.Membership == Enums.Membership.Join);
+            AddJoinedRoomAccountData(joined_rooms, response);
+
+            var left_rooms = memberships.FindAll(m => m.Membership == Enums.Membership.Leave);
+            AddLeftRoomAccountData(left_rooms, response);
         }
 
 
@@ -91,8 +194,10 @@ namespace Mocktrix.client.r0_6_1
                 NextBatch = "not_implemented"
             };
 
-            // Prepare "account_data", if any such data is set.
-            PrepareAccountData(token.user_id, response);
+            // Add "account_data", if any such data is set.
+            AddGlobalAccountData(token.user_id, response);
+            // And the same for room-related account data.
+            AddRoomAccountData(token.user_id, response);
 
             return Results.Ok(response);
         }

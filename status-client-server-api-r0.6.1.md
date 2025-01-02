@@ -410,8 +410,9 @@ TODO
 
 #### 13.19.1 Events
 
-🚧 Partially implemented. Only global account data is returned by the `/sync`
-  endpoint. Room-specific account data is not returned (yet).
+🚧 Partially implemented. Global account data and room-specific account data is
+  returned by the `/sync` endpoint. Tag data events (type `m.tag`) are not
+  returned (yet).
 
 #### 13.19.2 Client Behaviour
 

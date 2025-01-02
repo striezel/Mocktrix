@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2025  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,6 +41,14 @@ namespace Mocktrix.Protocol.Types.Sync
         /// </summary>
         [JsonPropertyName("next_batch")]
         public required string NextBatch { get; set; }
+
+
+        /// <summary>
+        /// Room-related sync data.
+        /// </summary>
+        [JsonPropertyName("rooms")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Rooms? Rooms { get; set; } = null;
     }
 
 
@@ -77,5 +85,58 @@ namespace Mocktrix.Protocol.Types.Sync
         /// </summary>
         [JsonPropertyName("type")]
         public required string Type { get; set; }
+    }
+
+
+    /// <summary>
+    /// Contains room events and other room-related information for a sync
+    /// request.
+    /// </summary>
+    public class Rooms
+    {
+        /// <summary>
+        /// Rooms that the user has joined.
+        /// </summary>
+        [JsonPropertyName("join")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<string, JoinedRoom>? Joined { get; set; } = null;
+
+
+        /// <summary>
+        /// Rooms that the user has left.
+        /// </summary>
+        [JsonPropertyName("leave")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<string, LeftRoom>? Left { get; set; } = null;
+    }
+
+
+    /// <summary>
+    /// Sync information about a room that the user has joined.
+    /// </summary>
+    public class JoinedRoom
+    {
+        /// <summary>
+        /// Contains user-specific room configuration data (called "account
+        /// data" by the Matrix specification).
+        /// </summary>
+        [JsonPropertyName("account_data")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public AccountData? AccountData { get; set; } = null;
+    }
+
+
+    /// <summary>
+    /// Sync information about a room that the user has left.
+    /// </summary>
+    public class LeftRoom
+    {
+        /// <summary>
+        /// Contains user-specific room configuration data (called "account
+        /// data" by the Matrix specification).
+        /// </summary>
+        [JsonPropertyName("account_data")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public AccountData? AccountData { get; set; } = null;
     }
 }
