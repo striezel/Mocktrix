@@ -80,6 +80,8 @@ namespace Mocktrix.client.r0_6_1
         /// i.e. the endpoint to query a user's display name.
         /// </summary>
         /// <param name="user_id">id of the Matrix user to look up, e. g. "@alice:matrix.example.org"</param>
+        /// <param name="context">request context</param>
+        /// <returns>Returns a result for an HTTP(S) endpoint.</returns>
         private static IResult GetUserDisplayName(string userId, HttpContext context)
         {
             // TODO: Implement lookup for cases where user id is on a
@@ -115,6 +117,9 @@ namespace Mocktrix.client.r0_6_1
         /// i.e. the possibility to change the own display name.
         /// </summary>
         /// <param name="user_id">own Matrix user id, e. g. "@alice:matrix.example.org"</param>
+        /// <param name="context">request context</param>
+        /// <param name="app">the app which handles the request</param>
+        /// <returns>Returns a result for an HTTP(S) endpoint.</returns>
         private static async Task<IResult> ChangeUserDisplayName(string userId, HttpContext context, WebApplication app)
         {
             var access_token = Utilities.GetAccessToken(context);
@@ -187,6 +192,8 @@ namespace Mocktrix.client.r0_6_1
         /// i.e. the possibility to query a user's avatar URL.
         /// </summary>
         /// <param name="user_id">id of the Matrix user to look up, e. g. "@alice:matrix.example.org"</param>
+        /// <param name="context">request context</param>
+        /// <returns>Returns a result for an HTTP(S) endpoint.</returns>
         private static IResult GetUserAvatar(string userId, HttpContext context)
         {
             // TODO: Implement lookup for cases where user id is on a
@@ -222,6 +229,9 @@ namespace Mocktrix.client.r0_6_1
         /// i.e. the possibility to change the own avatar URL.
         /// </summary>
         /// <param name="user_id">own Matrix user id, e. g. "@alice:matrix.example.org"</param>
+        /// <param name="context">request context</param>
+        /// <param name="app">the app which handles the request</param>
+        /// <returns>Returns a result for an HTTP(S) endpoint.</returns>
         private static async Task<IResult> ChangeUserAvatar(string userId, HttpContext context, WebApplication app)
         {
             var access_token = Utilities.GetAccessToken(context);
@@ -294,6 +304,8 @@ namespace Mocktrix.client.r0_6_1
         /// i.e. the endpoint to get a user's profile information.
         /// </summary>
         /// <param name="user_id">id of the Matrix user to look up, e. g. "@alice:matrix.example.org"</param>
+        /// <param name="context">request context</param>
+        /// <returns>Returns a result for an HTTP(S) endpoint.</returns>
         private static IResult GetUserProfileData(string userId, HttpContext context)
         {
             // TODO: Implement lookup for cases where user id is on a
