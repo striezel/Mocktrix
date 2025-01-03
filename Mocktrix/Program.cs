@@ -1,6 +1,6 @@
 /*
     This file is part of Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2025  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ namespace Mocktrix
             Console.WriteLine(name + ", version " + ver?.ToString(3));
             Console.WriteLine("(running on " + System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription + ")");
             Console.WriteLine();
-            Console.WriteLine("Copyright (C) 2024  Dirk Stolle");
+            Console.WriteLine("Copyright (C) 2024, 2025  Dirk Stolle");
             Console.WriteLine("License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>");
             Console.WriteLine("This is free software: you are free to change and redistribute it under the");
             Console.WriteLine("terms of the GNU General Public License version 3 or any later version.");

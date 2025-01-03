@@ -43,7 +43,7 @@ homeserver, it comes with some limitations. These are:
 
 ## Copyright and Licensing
 
-Copyright 2024  Dirk Stolle
+Copyright 2024, 2025  Dirk Stolle
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
