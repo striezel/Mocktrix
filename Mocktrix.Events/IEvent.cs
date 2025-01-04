@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2025  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(VoIP.CallCandidatesEvent), "m.call.candidates")]
     [JsonDerivedType(typeof(VoIP.CallHangUpEvent), "m.call.hangup")]
     [JsonDerivedType(typeof(VoIP.CallInviteEvent), "m.call.invite")]
+    [JsonDerivedType(typeof(AliasesEvent), "m.room.aliases")]
+    [JsonDerivedType(typeof(RoomAvatarEvent), "m.room.avatar")]
     [JsonDerivedType(typeof(CanonicalAliasEvent), "m.room.canonical_alias")]
     [JsonDerivedType(typeof(CreateRoomEvent), "m.room.create")]
     [JsonDerivedType(typeof(EncryptionEvent), "m.room.encryption")]
@@ -35,10 +37,12 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(HistoryVisibilityEvent), "m.room.history_visibility")]
     [JsonDerivedType(typeof(JoinRulesEvent), "m.room.join_rules")]
     [JsonDerivedType(typeof(MembershipEvent), "m.room.member")]
+    [JsonDerivedType(typeof(FeedbackEvent), "m.room.message.feedback")]
     [JsonDerivedType(typeof(NameEvent), "m.room.name")]
     [JsonDerivedType(typeof(PinnedEventsEvent), "m.room.pinned_events")]
     [JsonDerivedType(typeof(PowerLevelsEvent), "m.room.power_levels")]
     [JsonDerivedType(typeof(TopicEvent), "m.room.topic")]
+    [JsonDerivedType(typeof(TagEvent), "m.tag")]
     public interface IEvent
     {
         /// <summary>
