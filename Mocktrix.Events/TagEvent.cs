@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2025  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
-    /// Event for end of a user-set tag of a room.
+    /// Event for a user-set tags of a room.
     /// </summary>
     public class TagEvent : IEvent
     {
