@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Mocktrix.Events;
 using Mocktrix.Protocol.Types;
 using Mocktrix.Protocol.Types.Sync;
 
