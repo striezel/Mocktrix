@@ -62,7 +62,7 @@ namespace Mocktrix.Protocol.Types.Sync
         /// List containing the account data events.
         /// </summary>
         [JsonPropertyName("events")]
-        public List<ConfigDataEvent>? Events { get; set; } = null;
+        public List<AccountDataEvent>? Events { get; set; } = null;
     }
 
 

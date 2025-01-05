@@ -16,31 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace Mocktrix.Events
 {
-    /// <summary>
-    /// Event for user-specific configuration data ("account data").
-    /// </summary>
-    public class ConfigDataEvent: AccountDataEvent
+    [JsonDerivedType(typeof(ConfigDataEvent))]
+    [JsonDerivedType(typeof(TagEvent))]
+    public abstract class AccountDataEvent : IEvent
     {
-        /// <summary>
-        /// The content object of the event. Type and available fields differ
-        /// depending on the concrete type.
-        /// </summary>
-        [JsonPropertyName("content")]
-        [JsonPropertyOrder(IEvent.ContentPropertyOrder)]
-        public JsonNode Content { get; set; } = null!;
-
-
-        /// <summary>
-        /// The type of event. This should be namespaced similar to Java package
-        /// naming conventions e.g. 'com.example.subdomain.event.type'.
-        /// </summary>
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
-        public required override string Type { get; set; }
+        public abstract string Type { get; set; }
+
+
+        /// <summary>
+        /// Indicates whether this event is a state event.
+        /// </summary>
+        /// <returns>Returns true, if the event is a state event.
+        /// Returns false otherwise.</returns>
+        public bool IsStateEvent()
+        {
+            return false;
+        }
     }
 }

@@ -63,6 +63,7 @@ namespace Mocktrix
 
             AddRoomData(base_address);
             AddTagData(base_address);
+            AddTagDataForSync(base_address);
             AddClientConfigData(base_address);
             AddSyncData(base_address);
         }
@@ -166,6 +167,33 @@ namespace Mocktrix
             _ = Database.Memory.Rooms.Create(room_to_change_tag_id, tag_user_id, "1", false);
             Database.Memory.RoomMemberships.Create(room_to_change_tag_id, tag_user.user_id, Enums.Membership.Join);
             Database.Memory.Tags.Create(tag_user_id, room_to_change_tag_id, "u.existing", 0.5);
+        }
+
+        private static void AddTagDataForSync(Uri base_address)
+        {
+            // User and rooms and tags for test of sync with tags.
+            string tag_user_id = "@sync_tag_user:" + base_address.Host;
+            var tag_user = Database.Memory.Users.CreateUser(tag_user_id, "secret password");
+
+            {
+                const string joined_room_with_tags_id = "!joined_room_with_some_tags:matrix.example.org";
+                _ = Database.Memory.Rooms.Create(joined_room_with_tags_id, tag_user_id, "1", false);
+                Database.Memory.RoomMemberships.Create(joined_room_with_tags_id, tag_user.user_id, Enums.Membership.Join);
+
+                Database.Memory.Tags.Create(tag_user_id, joined_room_with_tags_id, "m.favourite", 0.25);
+                Database.Memory.Tags.Create(tag_user_id, joined_room_with_tags_id, "u.null", null);
+                Database.Memory.Tags.Create(tag_user_id, joined_room_with_tags_id, "u.some_tag", 1.0);
+            }
+
+            {
+                const string left_room_with_tags_id = "!left_room_with_some_tags:matrix.example.org";
+                _ = Database.Memory.Rooms.Create(left_room_with_tags_id, tag_user_id, "1", false);
+                Database.Memory.RoomMemberships.Create(left_room_with_tags_id, tag_user.user_id, Enums.Membership.Leave);
+
+                Database.Memory.Tags.Create(tag_user_id, left_room_with_tags_id, "u.ooooh", 0.25);
+                Database.Memory.Tags.Create(tag_user_id, left_room_with_tags_id, "u.null", null);
+                Database.Memory.Tags.Create(tag_user_id, left_room_with_tags_id, "u.some_tag", 0.75);
+            }
         }
 
 

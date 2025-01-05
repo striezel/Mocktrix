@@ -23,7 +23,7 @@ namespace Mocktrix.Events
     /// <summary>
     /// Event for a user-set tags of a room.
     /// </summary>
-    public class TagEvent : IEvent
+    public class TagEvent : AccountDataEvent
     {
         /// <summary>
         /// The content object of the event. Type and available field differ
@@ -36,7 +36,7 @@ namespace Mocktrix.Events
 
         [JsonPropertyName("type")]
         [JsonPropertyOrder(-30)]
-        public string Type
+        public override string Type
         {
             get => "m.tag";
             set
@@ -46,17 +46,6 @@ namespace Mocktrix.Events
                     throw new ArgumentOutOfRangeException(nameof(value), "Value must be 'm.tag'.");
                 }
             }
-        }
-
-
-        /// <summary>
-        /// Indicates whether this event is a state event.
-        /// </summary>
-        /// <returns>Returns true, if the event is a state event.
-        /// Returns false otherwise.</returns>
-        public bool IsStateEvent()
-        {
-            return false;
         }
     }
 

@@ -43,6 +43,7 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(PowerLevelsEvent), "m.room.power_levels")]
     [JsonDerivedType(typeof(TopicEvent), "m.room.topic")]
     [JsonDerivedType(typeof(TagEvent), "m.tag")]
+    [JsonDerivedType(typeof(ConfigDataEvent))]
     public interface IEvent
     {
         /// <summary>

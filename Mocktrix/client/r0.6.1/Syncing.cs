@@ -40,7 +40,7 @@ namespace Mocktrix.client.r0_6_1
             {
                 response.AccountData = new AccountData()
                 {
-                    Events = new List<ConfigDataEvent>(config_data.Count)
+                    Events = new List<AccountDataEvent>(config_data.Count)
                 };
                 foreach (var entry in config_data)
                 {
@@ -64,8 +64,9 @@ namespace Mocktrix.client.r0_6_1
         {
             foreach (var membership in joined_rooms)
             {
-                var data = Database.Memory.RoomConfigData.GetAllConfigData(membership.UserId, membership.RoomId);
-                if (data.Count == 0)
+                var config_data = Database.Memory.RoomConfigData.GetAllConfigData(membership.UserId, membership.RoomId);
+                var tag_data = Database.Memory.Tags.GetAllRoomTags(membership.UserId, membership.RoomId);
+                if (config_data.Count == 0 && tag_data.Count == 0)
                 {
                     continue;
                 }
@@ -79,15 +80,25 @@ namespace Mocktrix.client.r0_6_1
                 }
                 var acc_data = new AccountData()
                 {
-                    Events = new List<ConfigDataEvent>(data.Count)
+                    Events = new List<AccountDataEvent>(config_data.Count + (tag_data.Count > 0 ? 1 : 0))
                 };
-                foreach (var entry in data)
+                foreach (var entry in config_data)
                 {
                     acc_data.Events.Add(new ConfigDataEvent()
                     {
                         Content = entry.Data,
                         Type = entry.Type
                     });
+                }
+                if (tag_data.Count != 0)
+                {
+                    var tag_event = new TagEvent();
+                    tag_event.Content.Tags = [];
+                    foreach (var tag in tag_data)
+                    {
+                        tag_event.Content.Tags.Add(tag.Name, new OrderInfo() { Order = tag.Order });
+                    }
+                    acc_data.Events.Add(tag_event);
                 }
                 if (!response.Rooms.Joined.ContainsKey(membership.RoomId))
                 {
@@ -107,8 +118,9 @@ namespace Mocktrix.client.r0_6_1
         {
             foreach (var membership in left_rooms)
             {
-                var data = Database.Memory.RoomConfigData.GetAllConfigData(membership.UserId, membership.RoomId);
-                if (data.Count == 0)
+                var config_data = Database.Memory.RoomConfigData.GetAllConfigData(membership.UserId, membership.RoomId);
+                var tag_data = Database.Memory.Tags.GetAllRoomTags(membership.UserId, membership.RoomId);
+                if (config_data.Count == 0 && tag_data.Count == 0)
                 {
                     continue;
                 }
@@ -122,15 +134,25 @@ namespace Mocktrix.client.r0_6_1
                 }
                 var acc_data = new AccountData()
                 {
-                    Events = new List<ConfigDataEvent>(data.Count)
+                    Events = new List<AccountDataEvent>(config_data.Count + (tag_data.Count > 0 ? 1 : 0))
                 };
-                foreach (var entry in data)
+                foreach (var entry in config_data)
                 {
                     acc_data.Events.Add(new ConfigDataEvent()
                     {
                         Content = entry.Data,
                         Type = entry.Type
                     });
+                }
+                if (tag_data.Count != 0)
+                {
+                    var tag_event = new TagEvent();
+                    tag_event.Content.Tags = [];
+                    foreach (var tag in tag_data)
+                    {
+                        tag_event.Content.Tags.Add(tag.Name, new OrderInfo() { Order = tag.Order });
+                    }
+                    acc_data.Events.Add(tag_event);
                 }
                 if (!response.Rooms.Left.ContainsKey(membership.RoomId))
                 {

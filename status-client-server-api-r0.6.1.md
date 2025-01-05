@@ -410,9 +410,8 @@ TODO
 
 #### 13.19.1 Events
 
-🚧 Partially implemented. Global account data and room-specific account data is
-  returned by the `/sync` endpoint. Tag data events (type `m.tag`) are not
-  returned (yet).
+✅ Implemented. Global account data, room-specific account data and tag data
+  events (type `m.tag`) are returned by the `/sync` endpoint.
 
 #### 13.19.2 Client Behaviour
 
