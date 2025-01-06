@@ -530,6 +530,24 @@ Affects client only, there is no need for changes on server.
 * ❌ 13.29.3 [Server behaviour](https://spec.matrix.org/historical/client_server/r0.6.1.html#id156)
 * ❌ 13.29.4 [Security considerations](https://spec.matrix.org/historical/client_server/r0.6.1.html#id157)
 
-### 13.29 to 13.33
+### 13.30 User, room, and group mentions
+
+✅ This module does not have any server-specific behaviour to it.
+
+### 13.31 Room Upgrades
+
+#### 13.31.1 Events
+
+* ❌ 13.31.1.1 [m.room.tombstone](https://spec.matrix.org/historical/client_server/r0.6.1.html#m-room-tombstone)
+
+#### 13.31.2 Client behaviour
+
+* ❌ 13.31.2.1 [POST /_matrix/client/r0/rooms/{roomId}/upgrade](https://spec.matrix.org/historical/client_server/r0.6.1.html#post-matrix-client-r0-rooms-roomid-upgrade)
+
+#### 13.31.3 Server behaviour
+
+❌ Not implemented.
+
+### 13.32 to 13.33
 
 TODO
