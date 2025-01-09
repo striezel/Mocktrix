@@ -9,7 +9,7 @@
     <DockerfileContext>.</DockerfileContext>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Authors>Dirk Stolle</Authors>
-    <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2025 Dirk Stolle</Copyright>
     <Version>0.1.0</Version>
     <Deterministic>True</Deterministic>
   </PropertyGroup>
