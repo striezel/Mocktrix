@@ -19,7 +19,7 @@
 namespace Mocktrix.Enums
 {
     /// <summary>
-    /// Enumeration for posssible join rules of a room.
+    /// Enumeration for possible join rules of a room.
     /// </summary>
     public enum JoinRule
     {
@@ -29,7 +29,7 @@ namespace Mocktrix.Enums
         Public,
 
         /// <summary>
-        /// Reserverd for future use.
+        /// Reserved for future use.
         /// </summary>
         Knock,
 

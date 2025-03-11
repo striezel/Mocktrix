@@ -21,7 +21,7 @@ using System.Text.Json.Serialization;
 namespace Mocktrix.Events
 {
     /// <summary>
-    /// Event for a user-set tags of a room.
+    /// Event for user-set tags of a room.
     /// </summary>
     public class TagEvent : AccountDataEvent
     {

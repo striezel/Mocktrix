@@ -119,7 +119,7 @@ namespace Mocktrix.Protocol.Types.Rooms
         /// the new room. The expected format of the state events are an object
         /// with type, state_key and content keys set.
         /// 
-        /// Takes precedence over events set by preset, but gets overriden by
+        /// Takes precedence over events set by preset, but gets overridden by
         /// name and topic keys.
         /// </summary>
         [JsonPropertyName("initial_state")]
