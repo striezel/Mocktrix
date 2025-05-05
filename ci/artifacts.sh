@@ -2,7 +2,7 @@
 
 # Utility script to handle artifact creation.
 #
-# Copyright (C) 2024  Dirk Stolle
+# Copyright (C) 2024, 2025  Dirk Stolle
 #
 # License: GNU GPL 3+
 
@@ -14,7 +14,7 @@ VERSION=${VERSION:-unknown_version}
 ARCHIVE_MTIME=$(git log -1 --format="%cI")
 ARCHIVE_MTIME=${ARCHIVE_MTIME:-1970-01-01 00:00:00 +0000}
 mkdir -p artifacts/publish
-RIDS="linux-arm linux-arm64 linux-x64 linux-musl-x64 osx-x64 osx-arm64 win-x64 win-x86"
+RIDS="linux-arm linux-arm64 linux-x64 linux-musl-x64 linux-musl-arm64 osx-x64 osx-arm64 win-x64 win-x86"
 for RID in $RIDS
 do
     # framework-dependent build
