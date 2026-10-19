@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -9,7 +9,7 @@
     <DockerfileContext>.</DockerfileContext>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Authors>Dirk Stolle</Authors>
-    <Copyright>Copyright (C) 2024, 2025 Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2025, 2026 Dirk Stolle</Copyright>
     <Version>0.1.0</Version>
     <Deterministic>True</Deterministic>
   </PropertyGroup>
