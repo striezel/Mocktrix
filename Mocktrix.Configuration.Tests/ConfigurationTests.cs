@@ -1,6 +1,6 @@
 /*
     This file is part of test suite for Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace Mocktrix.Configuration.Tests
             var location = Assembly.GetExecutingAssembly().Location;
             // Location includes the DLL file name, so let's get rid of that.
             string directory = Path.GetDirectoryName(location) ?? "";
-            // Assembly is usually inside "bin\\Debug\\net8.0" directory, so we
+            // Assembly is usually inside "bin\\Debug\\net9.0" directory, so we
             // have to get three levels higher in the file system hierarchy.
             return Path.GetFullPath(Path.Combine(directory, "..", "..", ".."));
         }

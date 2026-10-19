@@ -1,8 +1,8 @@
-# Copyright (C) 2024  Dirk Stolle
+# Copyright (C) 2024, 2026  Dirk Stolle
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY . .
