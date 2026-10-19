@@ -1,6 +1,6 @@
 /*
     This file is part of test suite for Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@ namespace Mocktrix.Events.Tests
 
             Assert.NotNull(content);
             Assert.NotNull(content.Pinned);
-            Assert.Single(content.Pinned);
-            Assert.Equal("$someevent:example.org", content.Pinned[0]);
+            var pinned_id = Assert.Single(content.Pinned);
+            Assert.Equal("$someevent:example.org", pinned_id);
         }
 
         [Fact]

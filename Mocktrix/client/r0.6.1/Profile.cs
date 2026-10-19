@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of Mocktrix.
-    Copyright (C) 2024, 2025  Dirk Stolle
+    Copyright (C) 2024, 2025, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ namespace Mocktrix.client.r0_6_1
                 });
             }
 
-            DisplayNameChangeData? data = null;
+            DisplayNameChangeData? data;
             try
             {
                 data = await context.Request.ReadFromJsonAsync<DisplayNameChangeData>();
@@ -266,7 +266,7 @@ namespace Mocktrix.client.r0_6_1
                 });
             }
 
-            AvatarUrlChangeData? data = null;
+            AvatarUrlChangeData? data;
             try
             {
                 data = await context.Request.ReadFromJsonAsync<AvatarUrlChangeData>();

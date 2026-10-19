@@ -1,6 +1,6 @@
 /*
     This file is part of test suite for Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,10 +74,10 @@ namespace Mocktrix.Events.VoIP.Tests
             Assert.NotNull(ev.Content);
             Assert.Equal("12345", ev.Content.CallId);
             Assert.NotNull(ev.Content.Candidates);
-            Assert.Single(ev.Content.Candidates);
-            Assert.Equal("candidate:863018703 1 udp 2122260223 10.9.64.156 43670 typ host generation 0", ev.Content.Candidates[0].Candidate);
-            Assert.Equal(0, ev.Content.Candidates[0].SdpMLineIndex);
-            Assert.Equal("audio", ev.Content.Candidates[0].SdpMid);
+            CallCandidate item = Assert.Single(ev.Content.Candidates);
+            Assert.Equal("candidate:863018703 1 udp 2122260223 10.9.64.156 43670 typ host generation 0", item.Candidate);
+            Assert.Equal(0, item.SdpMLineIndex);
+            Assert.Equal("audio", item.SdpMid);
             Assert.Equal(0, ev.Content.Version);
 
             Assert.Equal("$143273582443PhrSn:example.org", ev.EventId);

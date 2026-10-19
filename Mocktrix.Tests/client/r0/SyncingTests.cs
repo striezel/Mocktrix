@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of test suite for Mocktrix.
-    Copyright (C) 2024, 2025  Dirk Stolle
+    Copyright (C) 2024, 2025, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -214,8 +214,7 @@ namespace MocktrixTests.client.r0
                 Assert.NotNull(foo_event);
                 Assert.Equal(expected.account_data.events[0].type, foo_event.type);
                 Assert.NotNull(foo_event.content);
-                Assert.IsType<JsonObject>(foo_event.content);
-                var obj = foo_event.content as JsonObject;
+                JsonObject obj = Assert.IsType<JsonObject>(foo_event.content);
                 Assert.NotNull(obj);
                 Assert.Equal("bar", obj["foo"]!.GetValue<string>());
                 Assert.Equal("quux", obj["baz"]!.GetValue<string>());
@@ -226,8 +225,7 @@ namespace MocktrixTests.client.r0
                 Assert.NotNull(hey_event);
                 Assert.Equal(expected.account_data.events[1].type, hey_event.type);
                 Assert.NotNull(hey_event.content);
-                Assert.IsType<JsonObject>(hey_event.content);
-                var obj = hey_event.content as JsonObject;
+                JsonObject obj = Assert.IsType<JsonObject>(hey_event.content);
                 Assert.NotNull(obj);
                 Assert.Equal("there", obj["hey"]!.GetValue<string>());
                 Assert.True(obj["go"]!.GetValue<bool>());
@@ -239,10 +237,9 @@ namespace MocktrixTests.client.r0
             var joined_room = content.rooms.join["!joined_room_with_account_data:matrix.example.org"];
             Assert.NotNull(joined_room.account_data);
             Assert.NotNull(joined_room.account_data.events);
-            Assert.Single(joined_room.account_data.events);
+            var join_event = Assert.Single(joined_room.account_data.events);
 
             {
-                var join_event = joined_room.account_data.events[0];
                 Assert.NotNull(join_event);
                 var expected_acc_data = expected.rooms.join["!joined_room_with_account_data:matrix.example.org"].account_data;
                 Assert.NotNull(expected_acc_data);
@@ -259,10 +256,9 @@ namespace MocktrixTests.client.r0
             var left_room = content.rooms.leave["!left_room_with_account_data:matrix.example.org"];
             Assert.NotNull(left_room.account_data);
             Assert.NotNull(left_room.account_data.events);
-            Assert.Single(left_room.account_data.events);
+            var leave_event = Assert.Single(left_room.account_data.events);
 
             {
-                var leave_event = left_room.account_data.events[0];
                 Assert.NotNull(leave_event);
                 var expected_acc_data = expected.rooms.leave["!left_room_with_account_data:matrix.example.org"].account_data;
                 Assert.NotNull(expected_acc_data);
@@ -381,10 +377,9 @@ namespace MocktrixTests.client.r0
             var joined_room = content.rooms.join["!joined_room_with_some_tags:matrix.example.org"];
             Assert.NotNull(joined_room.account_data);
             Assert.NotNull(joined_room.account_data.events);
-            Assert.Single(joined_room.account_data.events);
+            var join_event = Assert.Single(joined_room.account_data.events);
 
             {
-                var join_event = joined_room.account_data.events[0];
                 Assert.NotNull(join_event);
                 var expected_acc_data = expected.rooms.join["!joined_room_with_some_tags:matrix.example.org"].account_data;
                 Assert.NotNull(expected_acc_data);
@@ -401,10 +396,9 @@ namespace MocktrixTests.client.r0
             var left_room = content.rooms.leave["!left_room_with_some_tags:matrix.example.org"];
             Assert.NotNull(left_room.account_data);
             Assert.NotNull(left_room.account_data.events);
-            Assert.Single(left_room.account_data.events);
+            var leave_event = Assert.Single(left_room.account_data.events);
 
             {
-                var leave_event = left_room.account_data.events[0];
                 Assert.NotNull(leave_event);
                 var expected_acc_data = expected.rooms.leave["!left_room_with_some_tags:matrix.example.org"].account_data;
                 Assert.NotNull(expected_acc_data);

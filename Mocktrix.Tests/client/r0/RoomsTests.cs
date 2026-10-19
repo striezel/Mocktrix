@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of test suite for Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -641,8 +641,8 @@ namespace MocktrixTests.client.r0
             };
             var content = Utilities.GetContent(response, expected);
             Assert.Equal(expected.room_id, content.room_id);
-            Assert.Single(content.servers);
-            Assert.Equal(expected.servers[0], content.servers[0]);
+            string server = Assert.Single(content.servers);
+            Assert.Equal(expected.servers[0], server);
         }
 
         [Fact]

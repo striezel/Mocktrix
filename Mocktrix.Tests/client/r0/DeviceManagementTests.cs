@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of test suite for Mocktrix.
-    Copyright (C) 2024  Dirk Stolle
+    Copyright (C) 2024, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -643,9 +643,9 @@ namespace MocktrixTests.client.r0
             };
             var content = Utilities.GetContent(response, expected);
             Assert.NotEmpty(content.session);
-            Assert.Single(content.flows);
-            Assert.Single(content.flows[0].stages);
-            Assert.Equal("m.login.password", content.flows[0].stages[0]);
+            var flow = Assert.Single(content.flows);
+            var stage = Assert.Single(flow.stages);
+            Assert.Equal("m.login.password", stage);
             var raw_content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Contains("\"params\":{}", raw_content);
             Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
@@ -974,9 +974,9 @@ namespace MocktrixTests.client.r0
             };
             var content = Utilities.GetContent(response, expected);
             Assert.NotEmpty(content.session);
-            Assert.Single(content.flows);
-            Assert.Single(content.flows[0].stages);
-            Assert.Equal("m.login.password", content.flows[0].stages[0]);
+            var flow = Assert.Single(content.flows);
+            var stage = Assert.Single(flow.stages);
+            Assert.Equal("m.login.password", stage);
             var raw_content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
             Assert.Contains("\"params\":{}", raw_content);
             Assert.Contains("\"flows\":[{\"stages\":[\"m.login.password\"]}]", raw_content);
