@@ -39,7 +39,7 @@ namespace Mocktrix.Configuration.Tests
             var location = Assembly.GetExecutingAssembly().Location;
             // Location includes the DLL file name, so let's get rid of that.
             string directory = Path.GetDirectoryName(location) ?? "";
-            // Assembly is usually inside "bin\\Debug\\net9.0" directory, so we
+            // Assembly is usually inside "bin\\Debug\\net10.0" directory, so we
             // have to get three levels higher in the file system hierarchy.
             return Path.GetFullPath(Path.Combine(directory, "..", "..", ".."));
         }

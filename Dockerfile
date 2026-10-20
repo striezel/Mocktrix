@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY . .
@@ -10,7 +10,7 @@ RUN dotnet restore ./Mocktrix/Mocktrix.sln
 RUN dotnet build ./Mocktrix/Mocktrix.csproj -c $BUILD_CONFIGURATION -o /app/build
 RUN dotnet publish ./Mocktrix/Mocktrix.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 LABEL org.opencontainers.image.authors="Dirk Stolle <striezel-dev@web.de>"
 LABEL org.opencontainers.image.source=https://gitlab.com/striezel/mocktrix
 LABEL org.opencontainers.image.licenses=GPL-3.0-or-later

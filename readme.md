@@ -8,9 +8,9 @@ A list of implemented features can be seen
 
 ## Prerequisites
 
-To run the program you need the .NET 9 runtime.
-The current .NET 9 runtime can be downloaded from
-<https://dotnet.microsoft.com/en-us/download/dotnet/9.0/runtime>.
+To run the program you need the .NET 10 runtime.
+The current .NET 10 runtime can be downloaded from
+<https://dotnet.microsoft.com/en-us/download/dotnet/10.0/runtime>.
 
 ## Usage
 
