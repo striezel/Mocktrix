@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <Authors>Dirk Stolle</Authors>
     <Description>Contains enumeration types for use by Mocktrix.</Description>
-    <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2026 Dirk Stolle</Copyright>
     <Version>0.1.1-next</Version>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>

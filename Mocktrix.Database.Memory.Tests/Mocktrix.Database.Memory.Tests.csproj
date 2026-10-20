@@ -8,7 +8,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Authors>Dirk Stolle</Authors>
-    <Copyright>Copyright (C) 2024  Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2026  Dirk Stolle</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Description>Contains tests for Mocktrix.Database.Memory.</Description>
   </PropertyGroup>

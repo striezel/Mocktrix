@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <Version>0.1.0</Version>
     <Authors>Dirk Stolle</Authors>
-    <Copyright>Copyright (C) 2024  Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2026  Dirk Stolle</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Description>Contains an in-memory media repository to hold the media content uploaded to the Mocktrix server.
 The repository contents are not persisted and vanish when the server process exits.</Description>

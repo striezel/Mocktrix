@@ -9,7 +9,7 @@
     <IsTestProject>true</IsTestProject>
     <Authors>Dirk Stolle</Authors>
     <Description>Contains tests for Mocktrix.Data.</Description>
-    <Copyright>Copyright (C) 2024  Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2026  Dirk Stolle</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 

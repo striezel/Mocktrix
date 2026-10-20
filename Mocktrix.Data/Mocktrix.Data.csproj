@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2026 Dirk Stolle</Copyright>
     <Description>Contains basic data types for Mocktrix server.</Description>
     <Authors>Dirk Stolle</Authors>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>

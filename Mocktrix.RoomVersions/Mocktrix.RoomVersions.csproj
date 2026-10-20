@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Copyright>Copyright (C) 2024 Dirk Stolle</Copyright>
+    <Copyright>Copyright (C) 2024, 2026 Dirk Stolle</Copyright>
     <Version>0.1.0</Version>
     <Authors>Dirk Stolle</Authors>
     <Description>Contains information about supported Matrix room versions.</Description>
