@@ -1,6 +1,6 @@
 ﻿/*
     This file is part of Mocktrix.
-    Copyright (C) 2024, 2025  Dirk Stolle
+    Copyright (C) 2024, 2025, 2026  Dirk Stolle
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@ namespace Mocktrix.Events
     /// <summary>
     /// Basic interface for all event types.
     /// </summary>
+    /* Polymorphic stuff had to be disabled due to a breaking change in .NET 10:
+     * https://learn.microsoft.com/en-us/dotnet/core/compatibility/serialization/10/property-name-validation
+     * The class EventJsonConverter will now handle event serialization.
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
     [JsonDerivedType(typeof(VoIP.CallAnswerEvent), "m.call.answer")]
     [JsonDerivedType(typeof(VoIP.CallCandidatesEvent), "m.call.candidates")]
@@ -43,7 +46,7 @@ namespace Mocktrix.Events
     [JsonDerivedType(typeof(PowerLevelsEvent), "m.room.power_levels")]
     [JsonDerivedType(typeof(TopicEvent), "m.room.topic")]
     [JsonDerivedType(typeof(TagEvent), "m.tag")]
-    [JsonDerivedType(typeof(ConfigDataEvent))]
+    [JsonDerivedType(typeof(ConfigDataEvent))]*/
     public interface IEvent
     {
         /// <summary>
