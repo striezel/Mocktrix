@@ -6,7 +6,7 @@ improvements may be omitted.)_
 
 ## Next Version
 
-This versions switches the required .NET version from .NET 8 to .NET 10.
+This version uses .NET 10 (instead of .NET 8 as in the previous version).
 
 It also adds some new features:
 

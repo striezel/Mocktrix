@@ -33,8 +33,9 @@ homeserver, it comes with some limitations. These are:
   federation API or identity server API is implemented.
 * Supports only version r0.6.1 of the client-server API.
 * Just a few relevant parts of the client-server API are currently implemented.
-  These are basically login and logout, account and device management, and the
-  upload to and download from the Matrix content repository.
+  These are basically login and logout, account and device management, the
+  upload to and download from the Matrix content repository, client
+  configuration values ("account data"), and room tagging.
 * Rate-limiting is not implemented.
 * At the moment, the server responses do not contain CORS headers.
 * Any server data (like accounts, uploaded content, etc.) is kept in memory.
