@@ -2,7 +2,7 @@
 
 # Utility script to handle artifact creation.
 #
-# Copyright (C) 2024, 2025  Dirk Stolle
+# Copyright (C) 2024, 2025, 2026  Dirk Stolle
 #
 # License: GNU GPL 3+
 
@@ -24,6 +24,7 @@ do
     rm "$DESTINATION"/*.pdb
     cp LICENSE "$DESTINATION"/
     cp readme.md "$DESTINATION"/
+    cp changelog.md "$DESTINATION"/
     cp status-client-server-api-r0.6.1.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
@@ -38,6 +39,7 @@ do
     rm "$DESTINATION"/*.pdb
     cp LICENSE "$DESTINATION"/
     cp readme.md "$DESTINATION"/
+    cp changelog.md "$DESTINATION"/
     cp status-client-server-api-r0.6.1.md "$DESTINATION"/
     cp third-party.md "$DESTINATION"/
     cp ./Mocktrix/example.configuration.xml "$DESTINATION"/
