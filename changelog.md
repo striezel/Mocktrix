@@ -4,7 +4,7 @@ _(Note: This changelog focuses on the major changes between the different
 versions. Therefore, it may not contain all changes. Especially smaller fixes or
 improvements may be omitted.)_
 
-## Next Version
+## Version 0.2.0
 
 This version uses .NET 10 (instead of .NET 8 as in the previous version).
 

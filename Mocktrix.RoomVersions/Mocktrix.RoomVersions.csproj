@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Copyright>Copyright (C) 2024, 2026 Dirk Stolle</Copyright>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>Dirk Stolle</Authors>
     <Description>Contains information about supported Matrix room versions.</Description>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>

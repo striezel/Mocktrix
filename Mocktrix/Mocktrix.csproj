@@ -10,7 +10,7 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Authors>Dirk Stolle</Authors>
     <Copyright>Copyright (C) 2024, 2025, 2026 Dirk Stolle</Copyright>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Deterministic>True</Deterministic>
   </PropertyGroup>
 
